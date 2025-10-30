@@ -13,12 +13,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MDLC_Consent_Manager {
+class MDCC_Consent_Manager {
 
     /**
      * Single instance
      *
-     * @var MDLC_Consent_Manager
+     * @var MDCC_Consent_Manager
      */
     private static $instance = null;
 
@@ -27,12 +27,12 @@ class MDLC_Consent_Manager {
      *
      * @var string
      */
-    const STORAGE_KEY = 'mdlc_consent';
+    const STORAGE_KEY = 'mdcc_consent';
 
     /**
      * Get instance
      *
-     * @return MDLC_Consent_Manager
+     * @return MDCC_Consent_Manager
      */
     public static function get_instance() {
         if (null === self::$instance) {
@@ -73,17 +73,17 @@ class MDLC_Consent_Manager {
 
         // Enqueue the consent runtime script
         wp_enqueue_script(
-            'mdlc-consent-runtime',
-            MDLC_PLUGIN_URL . 'assets/js/consent-runtime.js',
+            'mdcc-consent-runtime',
+            MDCC_PLUGIN_URL . 'assets/js/consent-runtime.js',
             array(), // No dependencies (vanilla JS)
-            MDLC_VERSION,
+            MDCC_VERSION,
             true // Load in footer
         );
 
         // Pass configuration to JavaScript
         wp_localize_script(
-            'mdlc-consent-runtime',
-            'mdlcConfig',
+            'mdcc-consent-runtime',
+            'mdccConfig',
             array(
                 'storageKey' => self::STORAGE_KEY,
                 'debug'      => defined('WP_DEBUG') && WP_DEBUG,

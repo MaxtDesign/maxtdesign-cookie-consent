@@ -1,8 +1,8 @@
-# MaxtDesign Lean Consent - Translations
+# Cookie Consent - Google Consent Mode v2 - Translations
 
 ## For Translators
 
-Thank you for helping translate MaxtDesign Lean Consent!
+Thank you for helping translate Cookie Consent - Google Consent Mode v2!
 
 ### Translation Process
 
@@ -10,20 +10,20 @@ Thank you for helping translate MaxtDesign Lean Consent!
 
 Once the plugin is approved on WordPress.org, you can contribute translations directly through the WordPress.org translation portal:
 
-1. Visit: https://translate.wordpress.org/projects/wp-plugins/maxtdesign-lean-consent
+1. Visit: https://translate.wordpress.org/projects/wp-plugins/maxtdesign-cookie-consent
 2. Select your language
 3. Translate strings online
 4. Translations will be automatically distributed with the plugin
 
 **Option 2: Manual Translation (Before WordPress.org Approval)**
 
-1. Download `maxtdesign-lean-consent.pot` from this directory
+1. Download `maxtdesign-cookie-consent.pot` from this directory
 2. Open with Poedit (https://poedit.net/) or similar translation tool
 3. Create a new translation from the .pot file
 4. Translate all strings
-5. Save as `maxtdesign-lean-consent-{locale}.po` and `maxtdesign-lean-consent-{locale}.mo`
-   - Example: `maxtdesign-lean-consent-es_ES.po` for Spanish (Spain)
-   - Example: `maxtdesign-lean-consent-fr_FR.po` for French (France)
+5. Save as `maxtdesign-cookie-consent-{locale}.po` and `maxtdesign-cookie-consent-{locale}.mo`
+   - Example: `maxtdesign-cookie-consent-es_ES.po` for Spanish (Spain)
+   - Example: `maxtdesign-cookie-consent-fr_FR.po` for French (France)
 6. Place both .po and .mo files in this `/languages/` directory
 7. Contact us to include your translation in the next release
 

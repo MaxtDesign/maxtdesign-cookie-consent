@@ -26,7 +26,7 @@ Low Priority: 0
 ## Scope
 
 Files reviewed:
-- `maxtdesign-lean-consent.php`
+- `maxtdesign-cookie-consent.php`
 - `includes/class-admin-settings.php`
 - `includes/class-consent-manager.php`
 - `includes/class-popup-system.php`
@@ -115,7 +115,7 @@ Verdict: PASS
 
 ## WordPress.org Compliance
 
-- Text domain matches slug: `maxtdesign-lean-consent`
+- Text domain matches slug: `maxtdesign-cookie-consent`
 - License: GPLv2 or later
 - Internationalization: present and consistent
 - `readme.txt` fields complete; stable tag matches plugin header version (1.6.0)

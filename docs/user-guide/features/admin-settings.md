@@ -44,11 +44,11 @@ Configure the consent popup using a clean settings page at Settings > Lean Conse
 | `elementor_popup_id` | integer/string | `''` | If set, built-in popup is disabled |
 
 ## Shortcodes
-- `[mdlc_consent_status]` – Displays current consent status chips.
-- `[mdlc_manage_consent]` – Renders consent management buttons.
+- `[mdcc_consent_status]` – Displays current consent status chips.
+- `[mdcc_manage_consent]` – Renders consent management buttons.
 
 ## Troubleshooting
-- **Popup not showing**: Ensure `popup_enabled` is true, `elementor_popup_id` is empty, and clear the `mdlc_popup_shown` cookie.
+- **Popup not showing**: Ensure `popup_enabled` is true, `elementor_popup_id` is empty, and clear the `mdcc_popup_shown` cookie.
 - **Color not applied**: Provide a valid hex color (e.g., `#0073aa`).
 - **Cookie duration ignored**: Values outside 1–365 are reset to defaults.
 

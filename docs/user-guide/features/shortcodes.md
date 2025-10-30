@@ -13,8 +13,8 @@ version: 1.6.0
 
 Two shortcodes let you display the current consent status and offer a full manage interface anywhere (pages, posts, widgets, builders):
 
-- `mdlc_consent_status` — compact status chips (Analytics, Ads) that update in real time
-- `mdlc_manage_consent` — buttons to Accept All, Analytics Only, Decline All, plus Reset Preferences and live status
+- `mdcc_consent_status` — compact status chips (Analytics, Ads) that update in real time
+- `mdcc_manage_consent` — buttons to Accept All, Analytics Only, Decline All, plus Reset Preferences and live status
 
 Both shortcodes update instantly when consent changes (`mdlc:changed` event) and integrate with the JavaScript API (`window.mdlcConsent`).
 
@@ -30,7 +30,7 @@ Both shortcodes update instantly when consent changes (`mdlc:changed` event) and
 Usage:
 
 ```text
-[mdlc_consent_status]
+[mdcc_consent_status]
 ```
 
 Parameters:
@@ -41,7 +41,7 @@ Parameters:
 Examples:
 
 ```text
-[mdlc_consent_status show_ads="no"]
+[mdcc_consent_status show_ads="no"]
 ```
 
 ### 2) Manage Consent
@@ -49,7 +49,7 @@ Examples:
 Usage:
 
 ```text
-[mdlc_manage_consent]
+[mdcc_manage_consent]
 ```
 
 Parameters:
@@ -61,7 +61,7 @@ Parameters:
 Examples:
 
 ```text
-[mdlc_manage_consent title="Cookie Settings" show_status="no"]
+[mdcc_manage_consent title="Cookie Settings" show_status="no"]
 ```
 
 ## Real-time Updates
@@ -85,7 +85,7 @@ Examples:
 ## Styling
 
 - Lightweight inline CSS is auto-enqueued only when a shortcode is present
-- Uses the `.mdlc-` prefix to avoid theme conflicts
+- Uses the `.mdcc-` prefix to avoid theme conflicts
 
 ## Troubleshooting
 

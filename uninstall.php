@@ -11,11 +11,11 @@
  * === What Gets Deleted ===
  *
  * OPTIONS:
- * - mdlc_settings (array) - All plugin configuration
- * - mdlc_version (string) - Plugin version number
+ * - mdcc_settings (array) - All plugin configuration
+ * - mdcc_version (string) - Plugin version number
  *
  * TRANSIENTS:
- * - mdlc_cache (if exists) - Any cached data
+ * - mdcc_cache (if exists) - Any cached data
  *
  * NOT DELETED (Does Not Exist):
  * - Custom database tables (plugin doesn't create any)
@@ -32,7 +32,7 @@
  * with default settings. User consent choices (in localStorage) are
  * unaffected as they're stored client-side.
  *
- * @package MaxtDesign_Lean_Consent
+ * @package MaxtDesign_Cookie_Consent
  * @since 1.6.0
  */
 
@@ -57,11 +57,11 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
  * and confirms what this plugin uses/doesn't use:
  *
  * [✓] wp_options table:
- *     - mdlc_settings (USED - deleted in uninstall)
- *     - mdlc_version (USED - deleted in uninstall)
+ *     - mdcc_settings (USED - deleted in uninstall)
+ *     - mdcc_version (USED - deleted in uninstall)
  *
  * [✓] Transients (wp_options):
- *     - mdlc_cache (POTENTIALLY USED - deleted in uninstall)
+ *     - mdcc_cache (POTENTIALLY USED - deleted in uninstall)
  *
  * [✗] Custom database tables:
  *     - NOT USED (plugin doesn't create custom tables)
@@ -105,13 +105,13 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
  *
  * @since 1.6.0
  */
-function mdlc_uninstall_site() {
+function mdcc_uninstall_site() {
     // Delete plugin options
-    delete_option('mdlc_settings');
-    delete_option('mdlc_version');
+    delete_option('mdcc_settings');
+    delete_option('mdcc_version');
 
     // Delete any transients (none currently used, but cleanup just in case)
-    delete_transient('mdlc_cache');
+    delete_transient('mdcc_cache');
 
     // No custom database tables to drop (plugin doesn't create any)
     // No scheduled cron jobs to remove (plugin doesn't use wp-cron)
@@ -145,7 +145,7 @@ function mdlc_uninstall_site() {
  *
  * @since 1.6.0
  */
-function mdlc_uninstall() {
+function mdcc_uninstall() {
     if (is_multisite()) {
         $sites = get_sites(array(
             'number' => 0, // Get all sites
@@ -153,11 +153,11 @@ function mdlc_uninstall() {
 
         foreach ($sites as $site) {
             switch_to_blog($site->blog_id);
-            mdlc_uninstall_site();
+            mdcc_uninstall_site();
             restore_current_blog();
         }
     } else {
-        mdlc_uninstall_site();
+        mdcc_uninstall_site();
     }
 }
 
@@ -174,8 +174,8 @@ function mdlc_uninstall() {
  *    - Verify settings saved
  *
  * 3. Check database for plugin data:
- *    SELECT * FROM wp_options WHERE option_name LIKE 'mdlc_%';
- *    Should return: mdlc_settings, mdlc_version
+ *    SELECT * FROM wp_options WHERE option_name LIKE 'mdcc_%';
+ *    Should return: mdcc_settings, mdcc_version
  *
  * 4. Deactivate plugin (data should persist)
  *    - Run query again
@@ -185,7 +185,7 @@ function mdlc_uninstall() {
  *    - WordPress will call this uninstall script
  *
  * 6. Check database again:
- *    SELECT * FROM wp_options WHERE option_name LIKE 'mdlc_%';
+ *    SELECT * FROM wp_options WHERE option_name LIKE 'mdcc_%';
  *    Should return: ZERO rows (all data removed)
  *
  * 7. For multisite, repeat on multiple sites:
@@ -201,5 +201,5 @@ function mdlc_uninstall() {
  */
 
 // Run the uninstall
-mdlc_uninstall();
+mdcc_uninstall();
 

@@ -1,10 +1,10 @@
 /**
- * MaxtDesign Lean Consent - Runtime
+ * MaxtDesign Cookie Consent - Runtime
  * 
  * Lightweight consent manager with Google Consent Mode v2 implementation.
  * localStorage-based, zero server requests, vanilla JavaScript.
  * 
- * @package MaxtDesign_Lean_Consent
+ * @package MaxtDesign_Cookie_Consent
  * @since 1.6.0
  */
 
@@ -12,13 +12,13 @@
     'use strict';
     
     // Prevent duplicate initialization
-    if (window.mdlcConsent) {
+    if (window.mdccConsent) {
         return;
     }
     
     // Configuration from WordPress
-    var config = window.mdlcConfig || {
-        storageKey: 'mdlc_consent',
+    var config = window.mdccConfig || {
+        storageKey: 'mdcc_consent',
         debug: false
     };
     
@@ -27,7 +27,7 @@
      */
     function debug(message, data) {
         if (config.debug && console && console.log) {
-            console.log('[MDLC] ' + message, data || '');
+            console.log('[MDCC] ' + message, data || '');
         }
     }
     
@@ -118,7 +118,7 @@
      */
     function dispatchChangeEvent(state) {
         try {
-            var event = new CustomEvent('mdlc:changed', {
+            var event = new CustomEvent('mdcc:changed', {
                 detail: state,
                 bubbles: true,
                 cancelable: false
@@ -144,7 +144,7 @@
     /**
      * Public API
      */
-    window.mdlcConsent = {
+    window.mdccConsent = {
         
         /**
          * Get current consent state

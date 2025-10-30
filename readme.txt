@@ -1,8 +1,8 @@
-=== MaxtDesign Lean Consent ===
+=== Cookie Consent - Google Consent Mode v2 ===
 
 Contributors: slaacr
-Donate link: https://maxtdesign.com/lean-consent
-Tags: consent, privacy, gdpr, google-consent-mode, ccpa
+Donate link: https://maxtdesign.com/cookie-consent
+Tags: cookie-consent, gdpr, google-consent-mode, ccpa, analytics
 Requires at least: 5.8
 Tested up to: 6.8
 Stable tag: 1.6.0
@@ -10,7 +10,7 @@ Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Lightweight consent management (<10KB gzipped) with proper Google Consent Mode v2. CCPA/GDPR compliance without slowing your site.
+Free cookie consent that actually controls Google Analytics & Ads (not just a banner). 10x lighter than $50/month alternatives. GDPR/CCPA.
 
 
 == Description ==
@@ -95,13 +95,13 @@ Primary color picker to match your brand
 
 **Display Current Status:**
 
-`[mdlc_consent_status]`
+`[mdcc_consent_status]`
 
 Shows consent chips: "Analytics: On/Off" and "Ads: On/Off"
 
 **Manage Consent Interface:**
 
-`[mdlc_manage_consent title="Your Privacy Choices"]`
+`[mdcc_manage_consent title="Your Privacy Choices"]`
 
 Full consent management with Accept/Analytics/Decline buttons and current status display.
 
@@ -194,11 +194,11 @@ The consent signals will automatically apply to any Google tracking on your site
 
 **Display consent status anywhere:**
 
-Place `[mdlc_consent_status]` in any page, post, or widget to show current consent state.
+Place `[mdcc_consent_status]` in any page, post, or widget to show current consent state.
 
 **Add consent management interface:**
 
-Place `[mdlc_manage_consent]` in your privacy policy page or footer to let users change their preferences.
+Place `[mdcc_manage_consent]` in your privacy policy page or footer to let users change their preferences.
 
 = Optional: Elementor Integration =
 
@@ -263,7 +263,7 @@ The plugin works for CCPA compliance as it provides clear opt-out mechanisms for
 
 = Can users change their consent after dismissing the popup? =
 
-Yes! Use the `[mdlc_manage_consent]` shortcode anywhere on your site (typically in the footer or privacy policy page) to provide a consent management interface.
+Yes! Use the `[mdcc_manage_consent]` shortcode anywhere on your site (typically in the footer or privacy policy page) to provide a consent management interface.
 
 = How long is the "popup shown" cookie stored? =
 
@@ -295,12 +295,12 @@ Yes. The plugin is designed to work with all major caching plugins (WP Rocket, W
 
 = Can I translate this plugin? =
 
-Yes! The plugin is fully translation-ready. Contribute translations at: [https://translate.wordpress.org/projects/wp-plugins/maxtdesign-lean-consent](https://translate.wordpress.org/projects/wp-plugins/maxtdesign-lean-consent)
+Yes! The plugin is fully translation-ready. Contribute translations at: [https://translate.wordpress.org/projects/wp-plugins/maxtdesign-cookie-consent](https://translate.wordpress.org/projects/wp-plugins/maxtdesign-cookie-consent)
 
 = Where can I get support? =
 
 * **Documentation:** [https://maxtdesign.com/lean-consent/docs](https://maxtdesign.com/lean-consent/docs)
-* **Support Forum:** [https://wordpress.org/support/plugin/maxtdesign-lean-consent](https://wordpress.org/support/plugin/maxtdesign-lean-consent)
+* **Support Forum:** [https://wordpress.org/support/plugin/maxtdesign-cookie-consent](https://wordpress.org/support/plugin/maxtdesign-cookie-consent)
 * **Email:** support@maxtdesign.com (for Pro customers)
 
 = Is there a Pro version? =
@@ -337,7 +337,7 @@ Coming in 2025! Pro will include multi-platform tracking control (Facebook, Hotj
 * Cookie-based "popup shown" tracking (configurable duration: 1-365 days)
 * Optional re-prompt on decline (once per session)
 * Optional Elementor popup integration
-* Two shortcodes: [mdlc_consent_status] and [mdlc_manage_consent]
+* Two shortcodes: [mdcc_consent_status] and [mdcc_manage_consent]
 * Real-time consent status updates (chips update when consent changes)
 * Full keyboard accessibility (ESC to close, Tab navigation, focus trap)
 * Screen reader support (ARIA labels, role attributes)
@@ -377,7 +377,7 @@ It is your responsibility to include appropriate disclosures in your site's priv
 
 == Support ==
 
-For support, please use the [WordPress.org support forum](https://wordpress.org/support/plugin/maxtdesign-lean-consent).
+For support, please use the [WordPress.org support forum](https://wordpress.org/support/plugin/maxtdesign-cookie-consent).
 
 For documentation, visit: [https://maxtdesign.com/lean-consent/docs](https://maxtdesign.com/lean-consent/docs)
 

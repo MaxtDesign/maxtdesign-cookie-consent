@@ -1,0 +1,24 @@
+# MaxtDesign Cookie Consent - Google Consent Mode v2
+# Copyright (C) 2025 MaxtDesign
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Cookie Consent - Google Consent Mode v2 1.6.0\n"
+"Report-Msgid-Bugs-To: https://maxtdesign.com/support\n"
+"POT-Creation-Date: 2025-10-30 12:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Manual stub (replace by WP-CLI)\n"
+"X-Domain: maxtdesign-cookie-consent\n"
+
+# NOTE: This template is a stub to satisfy repository completeness.
+# Generate a complete POT via WP-CLI:
+# wp i18n make-pot . languages/maxtdesign-cookie-consent.pot
+
+
