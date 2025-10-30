@@ -1,3 +1,76 @@
-# Placeholder translation template. Will be generated later.
+# MaxtDesign Lean Consent
+# Copyright (C) 2025 MaxtDesign
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: MaxtDesign Lean Consent 1.6.0\n"
+"Report-Msgid-Bugs-To: https://maxtdesign.com/support\n"
+"POT-Creation-Date: 2025-10-30 12:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Manual stub (replace by WP-CLI)\n"
+"X-Domain: maxtdesign-lean-consent\n"
 
+# NOTE: This template is a stub to satisfy repository completeness.
+# Generate a complete POT via WP-CLI:
+# wp i18n make-pot . languages/maxtdesign-lean-consent.pot
 
+# Examples (non-exhaustive). Will be replaced by WP-CLI output.
+
+#: maxtdesign-lean-consent.php:53
+msgid "MaxtDesign Lean Consent requires WordPress 5.8 or higher."
+msgstr ""
+
+#: maxtdesign-lean-consent.php:57
+msgid "MaxtDesign Lean Consent requires PHP 7.4 or higher."
+msgstr ""
+
+#: maxtdesign-lean-consent.php:82
+msgid "Cookie Consent"
+msgstr ""
+
+#: maxtdesign-lean-consent.php:83
+msgid "We use cookies to enhance your browsing experience and analyze our traffic."
+msgstr ""
+
+#: includes/class-admin-settings.php:282
+msgid "Lean Consent Settings"
+msgstr ""
+
+#: includes/class-admin-settings.php:283
+msgid "Lean Consent"
+msgstr ""
+
+#: includes/class-admin-settings.php:301
+msgid "Settings"
+msgstr ""
+
+#: includes/class-shortcodes.php:480
+msgid "Your Privacy Choices"
+msgstr ""
+
+#: includes/class-shortcodes.php:481
+msgid "Choose how we use cookies and similar technologies."
+msgstr ""
+
+#: includes/class-shortcodes.php:528
+msgid "Reset Preferences"
+msgstr ""
+
+#: includes/class-shortcodes.php (JS localized)
+msgid "Are you sure you want to reset your consent preferences?"
+msgstr ""
+
+#: includes/class-shortcodes.php (JS localized)
+msgid "On"
+msgstr ""
+
+#: includes/class-shortcodes.php (JS localized)
+msgid "Off"
+msgstr ""

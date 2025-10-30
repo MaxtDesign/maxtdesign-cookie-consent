@@ -85,6 +85,17 @@ class MDLC_Shortcodes {
         wp_register_script('mdlc-shortcodes', false, array('mdlc-consent-runtime'), MDLC_VERSION, true);
         wp_enqueue_script('mdlc-shortcodes');
 
+        // Localize user-facing strings used in shortcode JavaScript
+        wp_localize_script(
+            'mdlc-shortcodes',
+            'mdlcShortcodeI18n',
+            array(
+                'confirmReset' => __('Are you sure you want to reset your consent preferences?', 'maxtdesign-lean-consent'),
+                'onLabel'      => __('On', 'maxtdesign-lean-consent'),
+                'offLabel'     => __('Off', 'maxtdesign-lean-consent'),
+            )
+        );
+
         $js = $this->get_shortcode_javascript();
         wp_add_inline_script('mdlc-shortcodes', $js);
     }
@@ -324,7 +335,9 @@ class MDLC_Shortcodes {
                 
                 var valueEl = chip.querySelector('.mdlc-status__value');
                 if (valueEl) {
-                    valueEl.textContent = isOn ? 'On' : 'Off';
+                    var onLabel = (window.mdlcShortcodeI18n && window.mdlcShortcodeI18n.onLabel) ? window.mdlcShortcodeI18n.onLabel : 'On';
+                    var offLabel = (window.mdlcShortcodeI18n && window.mdlcShortcodeI18n.offLabel) ? window.mdlcShortcodeI18n.offLabel : 'Off';
+                    valueEl.textContent = isOn ? onLabel : offLabel;
                 }
             } else if (type === 'ads') {
                 var isOn = state.ads;
@@ -333,7 +346,9 @@ class MDLC_Shortcodes {
                 
                 var valueEl = chip.querySelector('.mdlc-status__value');
                 if (valueEl) {
-                    valueEl.textContent = isOn ? 'On' : 'Off';
+                    var onLabel = (window.mdlcShortcodeI18n && window.mdlcShortcodeI18n.onLabel) ? window.mdlcShortcodeI18n.onLabel : 'On';
+                    var offLabel = (window.mdlcShortcodeI18n && window.mdlcShortcodeI18n.offLabel) ? window.mdlcShortcodeI18n.offLabel : 'Off';
+                    valueEl.textContent = isOn ? onLabel : offLabel;
                 }
             }
         });
@@ -367,7 +382,10 @@ class MDLC_Shortcodes {
                 mdlcConsent.declineAll();
                 break;
             case 'reset':
-                if (confirm('Are you sure you want to reset your consent preferences?')) {
+                var confirmMsg = (window.mdlcShortcodeI18n && window.mdlcShortcodeI18n.confirmReset)
+                    ? window.mdlcShortcodeI18n.confirmReset
+                    : 'Are you sure you want to reset your consent preferences?';
+                if (confirm(confirmMsg)) {
                     mdlcConsent.reset();
                 }
                 break;
