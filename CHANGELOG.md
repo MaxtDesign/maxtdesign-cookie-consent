@@ -17,9 +17,12 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Standalone Popup System with Minimal/Modern/Bold styles, positions (top/bottom/center), animations (slide/fade/none), full accessibility, cookie-based shown tracking, and integration with `window.mdlcConsent`
 - Comprehensive Admin Settings page under Settings > Lean Consent (Settings API, sanitization, color picker, Elementor integration)
 - Internationalization: audited all user-facing strings, ensured consistent text domain `maxtdesign-lean-consent`, localized JavaScript strings (confirm reset, On/Off), added translator guide in `languages/README.md`, and ensured `.pot` template present in `languages/`
+- SECURITY: Added SECURITY-AUDIT.md documenting full security/compliance review and results
+- Docs: Added security note above sanitize_settings() explaining Settings API nonce/capability flow
 ### Changed
 - Flattened plugin structure to repository root (removed nested folder)
 - Refined .gitignore to include docs in repo; confirmed .svnignore for WP.org
+- Readme: Updated Contributors to WordPress.org username `slaacr`
 ### Fixed
 - Shortcodes: Center shortcode blocks within viewport when theme containers are absent; changed `.mdlc-status` to block-level flex and constrained width
 - Admin: Avoid duplicate "Settings saved." notices by removing custom notice and relying on core

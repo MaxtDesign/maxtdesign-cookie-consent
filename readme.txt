@@ -1,6 +1,6 @@
 === MaxtDesign Lean Consent ===
 
-Contributors: maxtdesign
+Contributors: slaacr
 Donate link: https://maxtdesign.com/lean-consent
 Tags: consent, privacy, gdpr, google-consent-mode, ccpa
 Requires at least: 5.8
