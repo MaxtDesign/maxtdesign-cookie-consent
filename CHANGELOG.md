@@ -6,6 +6,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 ### Added
+- Complete uninstall cleanup script: deletes `mdlc_settings`, `mdlc_version`, clears `mdlc_cache` transient, and supports multisite cleanup across all sites
 - Shortcodes: `[mdlc_consent_status]` and `[mdlc_manage_consent]` with inline CSS/JS, real-time updates via `mdlc:changed`, accessibility, and mobile responsiveness
 - Initial plugin scaffolding: main file, includes, assets, languages
 - Autoloader, activation/deactivation hooks, default settings
