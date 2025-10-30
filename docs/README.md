@@ -27,3 +27,12 @@ When you delete the plugin from WordPress (Plugins > Delete), all plugin data is
 Reinstalling the plugin starts with default settings.
 
 
+## Validation & Release Docs
+
+- Submission Guide: `docs/submission-guide.md`
+- Validation Report & Checklists: `docs/validation-report.md`
+- Post-Launch Monitoring Plan: `docs/monitoring-plan.md`
+- Assets Checklist: `docs/assets/assets-checklist.md`
+- Screenshots Plan: `docs/assets/screenshots.md`
+
+
