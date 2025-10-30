@@ -1,7 +1,3 @@
-# Ignore all markdown files except README.md
-*.md
-!README.md
-
 # WordPress specific ignores
 wp-config.php
 wp-content/uploads/
@@ -44,16 +40,14 @@ yarn-error.log
 svn-upload/
 .svnignore
 
-# Development and documentation files
+# Development notes (keep docs in repo)
 .notes/
-docs/
 
-# WordPress Plugin Directory assets (these should be in svn-upload only)
+# WordPress Plugin Directory assets (packaged separately for WP.org)
 assets/banner-*.png
 assets/icon-*.png
 assets/screenshot-*.png
 
-# Development documentation
-*.md
+# Keep documentation files
 !README.md
 !readme.txt
