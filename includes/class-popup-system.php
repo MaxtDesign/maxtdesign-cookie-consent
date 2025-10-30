@@ -329,14 +329,18 @@ class MDCC_Popup_System {
                 var state = e.detail;
                 if (!state.analytics && !state.ads) {
                     // User declined - show popup again once per session
+                    // But only if popup was actually shown and closed (not on initial load)
                     var repromptKey = 'mdcc_reprompted_session';
                     if (!sessionStorage.getItem(repromptKey)) {
-                        sessionStorage.setItem(repromptKey, '1');
-                        setTimeout(function() {
-                            popup.style.display = 'block';
-                            popup.classList.add('mdcc-popup--visible');
-                            setupFocusTrap();
-                        }, 2000); // Wait 2 seconds before re-showing
+                        // Check if popup exists and was previously hidden (user closed it)
+                        if (popup && popup.style.display === 'none') {
+                            sessionStorage.setItem(repromptKey, '1');
+                            setTimeout(function() {
+                                popup.style.display = 'block';
+                                popup.classList.add('mdcc-popup--visible');
+                                setupFocusTrap();
+                            }, 2000); // Wait 2 seconds before re-showing
+                        }
                     }
                 }
             });
