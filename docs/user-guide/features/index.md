@@ -14,5 +14,6 @@ version: 1.6.0
 - Core Consent Manager (Google Consent Mode v2)
 - Standalone Popup System (Minimal/Modern/Bold, accessible)
 - Admin Settings (Settings > Lean Consent)
+- Shortcodes (Consent status and manage interface)
 
 
