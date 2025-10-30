@@ -1,3 +1,440 @@
-/* Popup styles placeholder */
+/**
+ * MaxtDesign Lean Consent - Popup Styles
+ * 
+ * Three style presets: Minimal, Modern, Bold
+ * Position options: top, bottom, center
+ * Animations: slide, fade, none
+ * Mobile-first responsive design
+ * 
+ * @package MaxtDesign_Lean_Consent
+ * @since 1.6.0
+ */
 
+/* ========================================================================
+   BASE POPUP STRUCTURE
+   ======================================================================== */
+
+.mdlc-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.mdlc-popup--visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.mdlc-popup--closing {
+    opacity: 0;
+}
+
+/* Overlay (only for center modal) */
+.mdlc-popup__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0);
+    transition: background 0.3s ease;
+}
+
+.mdlc-popup--position-center .mdlc-popup__overlay {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* Container positioning */
+.mdlc-popup__container {
+    position: relative;
+    z-index: 2;
+}
+
+.mdlc-popup--position-top .mdlc-popup__container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.mdlc-popup--position-bottom .mdlc-popup__container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.mdlc-popup--position-center .mdlc-popup__container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 600px;
+    width: 90%;
+}
+
+/* Content box */
+.mdlc-popup__content {
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    position: relative;
+}
+
+/* Close button */
+.mdlc-popup__close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 28px;
+    line-height: 1;
+    color: #666;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: color 0.2s ease;
+    z-index: 10;
+}
+
+.mdlc-popup__close:hover,
+.mdlc-popup__close:focus {
+    color: #000;
+    outline: 2px solid #0073aa;
+    outline-offset: 2px;
+}
+
+/* Typography */
+.mdlc-popup__title {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: #1a1a1a;
+}
+
+.mdlc-popup__message {
+    margin: 0 0 20px 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #4a4a4a;
+}
+
+/* Actions container */
+.mdlc-popup__actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Buttons base styles */
+.mdlc-popup__button {
+    padding: 10px 20px;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1 1 auto;
+    min-width: 120px;
+}
+
+.mdlc-popup__button:focus {
+    outline: 2px solid #0073aa;
+    outline-offset: 2px;
+}
+
+/* Primary button (dynamically colored via inline CSS) */
+.mdlc-popup__button--primary {
+    background-color: #0073aa;
+    border-color: #0073aa;
+    color: #fff;
+}
+
+.mdlc-popup__button--primary:hover,
+.mdlc-popup__button--primary:focus {
+    background-color: #005a87;
+    border-color: #005a87;
+}
+
+/* Secondary button */
+.mdlc-popup__button--secondary {
+    background-color: #fff;
+    border-color: #ddd;
+    color: #333;
+}
+
+.mdlc-popup__button--secondary:hover,
+.mdlc-popup__button--secondary:focus {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+}
+
+/* Tertiary button */
+.mdlc-popup__button--tertiary {
+    background-color: transparent;
+    border-color: transparent;
+    color: #666;
+    text-decoration: underline;
+    min-width: auto;
+}
+
+.mdlc-popup__button--tertiary:hover,
+.mdlc-popup__button--tertiary:focus {
+    color: #333;
+}
+
+/* ========================================================================
+   ANIMATIONS
+   ======================================================================== */
+
+/* Slide animation */
+.mdlc-popup--animation-slide.mdlc-popup--position-top .mdlc-popup__container {
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+}
+
+.mdlc-popup--animation-slide.mdlc-popup--position-top.mdlc-popup--visible .mdlc-popup__container {
+    transform: translateY(0);
+}
+
+.mdlc-popup--animation-slide.mdlc-popup--position-bottom .mdlc-popup__container {
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.mdlc-popup--animation-slide.mdlc-popup--position-bottom.mdlc-popup--visible .mdlc-popup__container {
+    transform: translateY(0);
+}
+
+.mdlc-popup--animation-slide.mdlc-popup--position-center .mdlc-popup__container {
+    transform: translate(-50%, -50%) scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.mdlc-popup--animation-slide.mdlc-popup--position-center.mdlc-popup--visible .mdlc-popup__container {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Fade animation (default opacity transition handles this) */
+
+/* No animation */
+.mdlc-popup--animation-none {
+    transition: none;
+}
+
+.mdlc-popup--animation-none .mdlc-popup__container {
+    transition: none;
+}
+
+/* ========================================================================
+   STYLE PRESET: MINIMAL
+   ======================================================================== */
+
+.mdlc-popup--style-minimal .mdlc-popup__content {
+    border: 1px solid #e5e5e5;
+    border-radius: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mdlc-popup--style-minimal .mdlc-popup__title {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.mdlc-popup--style-minimal .mdlc-popup__message {
+    font-size: 14px;
+}
+
+.mdlc-popup--style-minimal .mdlc-popup__button {
+    border-radius: 2px;
+    font-weight: 500;
+}
+
+/* ========================================================================
+   STYLE PRESET: MODERN
+   ======================================================================== */
+
+.mdlc-popup--style-modern .mdlc-popup__content {
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.mdlc-popup--style-modern .mdlc-popup__title {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.mdlc-popup--style-modern .mdlc-popup__button {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 12px 24px;
+}
+
+.mdlc-popup--style-modern .mdlc-popup__close {
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mdlc-popup--style-modern .mdlc-popup__close:hover {
+    background: #f5f5f5;
+}
+
+/* ========================================================================
+   STYLE PRESET: BOLD
+   ======================================================================== */
+
+.mdlc-popup--style-bold .mdlc-popup__content {
+    border-radius: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    border-left: 6px solid #0073aa;
+}
+
+.mdlc-popup--style-bold .mdlc-popup__title {
+    font-size: 24px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.mdlc-popup--style-bold .mdlc-popup__message {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.mdlc-popup--style-bold .mdlc-popup__button {
+    border-radius: 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 14px 28px;
+    border-width: 3px;
+}
+
+.mdlc-popup--style-bold .mdlc-popup__close {
+    font-weight: 700;
+    font-size: 32px;
+}
+
+/* ========================================================================
+   RESPONSIVE
+   ======================================================================== */
+
+@media (max-width: 768px) {
+    .mdlc-popup__content {
+        padding: 16px;
+    }
+    
+    .mdlc-popup__title {
+        font-size: 18px;
+    }
+    
+    .mdlc-popup__message {
+        font-size: 14px;
+    }
+    
+    .mdlc-popup__actions {
+        flex-direction: column;
+    }
+    
+    .mdlc-popup__button {
+        width: 100%;
+        min-width: 0;
+    }
+    
+    /* Center modal responsive */
+    .mdlc-popup--position-center .mdlc-popup__container {
+        width: 95%;
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .mdlc-popup__content {
+        padding: 12px;
+    }
+    
+    .mdlc-popup__title {
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+    
+    .mdlc-popup__message {
+        font-size: 13px;
+        margin-bottom: 16px;
+    }
+    
+    .mdlc-popup__button {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+    
+    .mdlc-popup--style-bold .mdlc-popup__title {
+        font-size: 18px;
+    }
+    
+    .mdlc-popup--style-modern .mdlc-popup__button {
+        padding: 10px 20px;
+    }
+}
+
+/* ========================================================================
+   ACCESSIBILITY
+   ======================================================================== */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .mdlc-popup__content {
+        border: 2px solid #000;
+    }
+    
+    .mdlc-popup__button--primary {
+        border: 2px solid #000;
+    }
+    
+    .mdlc-popup__button--secondary {
+        border: 2px solid #000;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .mdlc-popup,
+    .mdlc-popup__container,
+    .mdlc-popup__overlay {
+        transition: none !important;
+    }
+}
+
+/* Focus visible for keyboard navigation */
+.mdlc-popup__button:focus-visible,
+.mdlc-popup__close:focus-visible {
+    outline: 3px solid #0073aa;
+    outline-offset: 3px;
+}
+
+/* Screen reader only text */
+.mdlc-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
 
