@@ -12,6 +12,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Core Consent Manager with Google Consent Mode v2
 - Frontend runtime `assets/js/consent-runtime.js` with localStorage storage
 - Frontend enqueue + localization for runtime (zero dependencies)
+- Standalone Popup System with Minimal/Modern/Bold styles, positions (top/bottom/center), animations (slide/fade/none), full accessibility, cookie-based shown tracking, and integration with `window.mdlcConsent`
 ### Changed
 - Flattened plugin structure to repository root (removed nested folder)
  - Refined .gitignore to include docs in repo; confirmed .svnignore for WP.org
