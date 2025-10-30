@@ -19,7 +19,17 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Internationalization: audited all user-facing strings, ensured consistent text domain `maxtdesign-lean-consent`, localized JavaScript strings (confirm reset, On/Off), added translator guide in `languages/README.md`, and ensured `.pot` template present in `languages/`
 ### Changed
 - Flattened plugin structure to repository root (removed nested folder)
- - Refined .gitignore to include docs in repo; confirmed .svnignore for WP.org
+- Refined .gitignore to include docs in repo; confirmed .svnignore for WP.org
+### Fixed
+- Shortcodes: Center shortcode blocks within viewport when theme containers are absent; changed `.mdlc-status` to block-level flex and constrained width
+- Admin: Avoid duplicate "Settings saved." notices by removing custom notice and relying on core
+- PHPCS: Escaped checkbox attributes using `checked()` in `includes/class-admin-settings.php`
+- PHPCS: Escaped popup title/message on output and removed double-escaping in `includes/class-popup-system.php`
+- PHPCS: Replaced `__()` with `esc_html__()` in `wp_die()` checks in `maxtdesign-lean-consent.php`
+- Plugin Check: Removed discouraged `load_plugin_textdomain()` for WP.org hosted translations
+- Readme: Updated "Tested up to" to 6.8
+- Shortcodes: Added version parameter to `wp_register_style()` handle
+- Packaging: Removed `site-consent-ORIGINAL.php` from distribution
 
 ## [1.6.0] - 2025-10-30
 ### Added
