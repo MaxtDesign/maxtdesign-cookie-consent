@@ -27,13 +27,13 @@ version: 1.6.0
 
 3) screenshot-3.png
 - Subject: Consent status shortcode
-- Show: `[mdlc_consent_status]` live on a page
+- Show: `[mdcc_consent_status]` live on a page
 - Include: Chips showing “Analytics: On” and “Ads: Off”
 - Context: Embed in a page with some content
 
 4) screenshot-4.png
 - Subject: Manage consent shortcode
-- Show: `[mdlc_manage_consent]` interface
+- Show: `[mdcc_manage_consent]` interface
 - Include: All buttons plus current status area
 - Context: Privacy policy page or similar
 

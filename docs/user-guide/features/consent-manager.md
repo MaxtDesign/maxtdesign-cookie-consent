@@ -52,7 +52,7 @@ Denied by default: `{ analytics: false, ads: false }`.
 Passed via WordPress localization:
 ```json
 {
-  "storageKey": "mdlc_consent",
+  "storageKey": "mdcc_consent",
   "debug": true
 }
 ```

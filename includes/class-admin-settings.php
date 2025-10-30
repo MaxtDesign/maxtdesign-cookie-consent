@@ -13,11 +13,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MDLC_Admin_Settings {
+class MDCC_Admin_Settings {
     /**
      * Single instance
      *
-     * @var MDLC_Admin_Settings
+     * @var MDCC_Admin_Settings
      */
     private static $instance = null;
 
@@ -26,26 +26,26 @@ class MDLC_Admin_Settings {
      *
      * @var string
      */
-    const OPTION_NAME = 'mdlc_settings';
+    const OPTION_NAME = 'mdcc_settings';
 
     /**
      * Settings option group
      *
      * @var string
      */
-    const OPTION_GROUP = 'mdlc_settings_group';
+    const OPTION_GROUP = 'mdcc_settings_group';
 
     /**
      * Settings page slug
      *
      * @var string
      */
-    const PAGE_SLUG = 'mdlc-settings';
+    const PAGE_SLUG = 'mdcc-settings';
 
     /**
      * Get instance
      *
-     * @return MDLC_Admin_Settings
+     * @return MDCC_Admin_Settings
      */
     public static function get_instance() {
         if (null === self::$instance) {
@@ -72,7 +72,7 @@ class MDLC_Admin_Settings {
         add_action('admin_menu', array($this, 'add_settings_page'));
 
         // Add settings link on plugins page
-        add_filter('plugin_action_links_' . MDLC_PLUGIN_BASENAME, array($this, 'add_settings_link'));
+        add_filter('plugin_action_links_' . MDCC_PLUGIN_BASENAME, array($this, 'add_settings_link'));
 
         // Enqueue admin assets
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
@@ -91,120 +91,120 @@ class MDLC_Admin_Settings {
             array(
                 'type'              => 'array',
                 'sanitize_callback' => array($this, 'sanitize_settings'),
-                'default'           => mdlc_default_settings(),
+                'default'           => mdcc_default_settings(),
             )
         );
 
         // Section: Popup Appearance
         add_settings_section(
-            'mdlc_section_appearance',
-            __('Popup Appearance', 'maxtdesign-lean-consent'),
+            'mdcc_section_appearance',
+            __('Popup Appearance', 'maxtdesign-cookie-consent'),
             array($this, 'render_section_appearance'),
             self::PAGE_SLUG
         );
 
         add_settings_field(
             'popup_enabled',
-            __('Enable Popup', 'maxtdesign-lean-consent'),
+            __('Enable Popup', 'maxtdesign-cookie-consent'),
             array($this, 'render_field_popup_enabled'),
             self::PAGE_SLUG,
-            'mdlc_section_appearance'
+            'mdcc_section_appearance'
         );
 
         add_settings_field(
             'popup_style',
-            __('Style Preset', 'maxtdesign-lean-consent'),
+            __('Style Preset', 'maxtdesign-cookie-consent'),
             array($this, 'render_field_popup_style'),
             self::PAGE_SLUG,
-            'mdlc_section_appearance'
+            'mdcc_section_appearance'
         );
 
         add_settings_field(
             'popup_position',
-            __('Position', 'maxtdesign-lean-consent'),
+            __('Position', 'maxtdesign-cookie-consent'),
             array($this, 'render_field_popup_position'),
             self::PAGE_SLUG,
-            'mdlc_section_appearance'
+            'mdcc_section_appearance'
         );
 
         add_settings_field(
             'popup_primary_color',
-            __('Primary Color', 'maxtdesign-lean-consent'),
+            __('Primary Color', 'maxtdesign-cookie-consent'),
             array($this, 'render_field_popup_primary_color'),
             self::PAGE_SLUG,
-            'mdlc_section_appearance'
+            'mdcc_section_appearance'
         );
 
         add_settings_field(
             'popup_animation',
-            __('Animation', 'maxtdesign-lean-consent'),
+            __('Animation', 'maxtdesign-cookie-consent'),
             array($this, 'render_field_popup_animation'),
             self::PAGE_SLUG,
-            'mdlc_section_appearance'
+            'mdcc_section_appearance'
         );
 
         // Section: Popup Content
         add_settings_section(
-            'mdlc_section_content',
-            __('Popup Content', 'maxtdesign-lean-consent'),
+            'mdcc_section_content',
+            __('Popup Content', 'maxtdesign-cookie-consent'),
             array($this, 'render_section_content'),
             self::PAGE_SLUG
         );
 
         add_settings_field(
             'popup_title',
-            __('Popup Title', 'maxtdesign-lean-consent'),
+            __('Popup Title', 'maxtdesign-cookie-consent'),
             array($this, 'render_field_popup_title'),
             self::PAGE_SLUG,
-            'mdlc_section_content'
+            'mdcc_section_content'
         );
 
         add_settings_field(
             'popup_message',
-            __('Popup Message', 'maxtdesign-lean-consent'),
+            __('Popup Message', 'maxtdesign-cookie-consent'),
             array($this, 'render_field_popup_message'),
             self::PAGE_SLUG,
-            'mdlc_section_content'
+            'mdcc_section_content'
         );
 
         // Section: Behavior Settings
         add_settings_section(
-            'mdlc_section_behavior',
-            __('Behavior Settings', 'maxtdesign-lean-consent'),
+            'mdcc_section_behavior',
+            __('Behavior Settings', 'maxtdesign-cookie-consent'),
             array($this, 'render_section_behavior'),
             self::PAGE_SLUG
         );
 
         add_settings_field(
             'popup_shown_duration',
-            __('Cookie Duration', 'maxtdesign-lean-consent'),
+            __('Cookie Duration', 'maxtdesign-cookie-consent'),
             array($this, 'render_field_popup_shown_duration'),
             self::PAGE_SLUG,
-            'mdlc_section_behavior'
+            'mdcc_section_behavior'
         );
 
         add_settings_field(
             'reprompt_on_decline',
-            __('Re-prompt on Decline', 'maxtdesign-lean-consent'),
+            __('Re-prompt on Decline', 'maxtdesign-cookie-consent'),
             array($this, 'render_field_reprompt_on_decline'),
             self::PAGE_SLUG,
-            'mdlc_section_behavior'
+            'mdcc_section_behavior'
         );
 
         // Section: Elementor Integration
         add_settings_section(
-            'mdlc_section_elementor',
-            __('Elementor Integration (Optional)', 'maxtdesign-lean-consent'),
+            'mdcc_section_elementor',
+            __('Elementor Integration (Optional)', 'maxtdesign-cookie-consent'),
             array($this, 'render_section_elementor'),
             self::PAGE_SLUG
         );
 
         add_settings_field(
             'elementor_popup_id',
-            __('Elementor Popup ID', 'maxtdesign-lean-consent'),
+            __('Elementor Popup ID', 'maxtdesign-cookie-consent'),
             array($this, 'render_field_elementor_popup_id'),
             self::PAGE_SLUG,
-            'mdlc_section_elementor'
+            'mdcc_section_elementor'
         );
     }
 
@@ -225,7 +225,7 @@ class MDLC_Admin_Settings {
      */
     public function sanitize_settings($input) {
         $sanitized = array();
-        $defaults = mdlc_default_settings();
+        $defaults = mdcc_default_settings();
 
         // Popup enabled (boolean)
         $sanitized['popup_enabled'] = !empty($input['popup_enabled']);
@@ -287,8 +287,8 @@ class MDLC_Admin_Settings {
      */
     public function add_settings_page() {
         add_options_page(
-            __('Lean Consent Settings', 'maxtdesign-lean-consent'),
-            __('Lean Consent', 'maxtdesign-lean-consent'),
+            __('Cookie Consent Settings', 'maxtdesign-cookie-consent'),
+            __('Cookie Consent', 'maxtdesign-cookie-consent'),
             'manage_options',
             self::PAGE_SLUG,
             array($this, 'render_settings_page')
@@ -306,7 +306,7 @@ class MDLC_Admin_Settings {
         $settings_link = sprintf(
             '<a href="%s">%s</a>',
             esc_url(admin_url('options-general.php?page=' . self::PAGE_SLUG)),
-            esc_html__('Settings', 'maxtdesign-lean-consent')
+            esc_html__('Settings', 'maxtdesign-cookie-consent')
         );
 
         array_unshift($links, $settings_link);
@@ -331,18 +331,18 @@ class MDLC_Admin_Settings {
 
         // Enqueue admin CSS
         wp_enqueue_style(
-            'mdlc-admin',
-            MDLC_PLUGIN_URL . 'assets/css/admin.css',
+            'mdcc-admin',
+            MDCC_PLUGIN_URL . 'assets/css/admin.css',
             array(),
-            MDLC_VERSION
+            MDCC_VERSION
         );
 
         // Enqueue admin JS
         wp_enqueue_script(
-            'mdlc-admin',
-            MDLC_PLUGIN_URL . 'assets/js/admin.js',
+            'mdcc-admin',
+            MDCC_PLUGIN_URL . 'assets/js/admin.js',
             array('jquery', 'wp-color-picker'),
-            MDLC_VERSION,
+            MDCC_VERSION,
             true
         );
     }
@@ -363,9 +363,9 @@ class MDLC_Admin_Settings {
         <div class="wrap">
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 
-            <div class="mdlc-admin-header">
+            <div class="mdcc-admin-header">
                 <p class="description">
-                    <?php esc_html_e('Configure your consent popup appearance, content, and behavior. Lightweight consent management with proper Google Consent Mode v2 implementation.', 'maxtdesign-lean-consent'); ?>
+                    <?php esc_html_e('Configure your consent popup appearance, content, and behavior. Lightweight consent management with proper Google Consent Mode v2 implementation.', 'maxtdesign-cookie-consent'); ?>
                 </p>
             </div>
 
@@ -373,30 +373,30 @@ class MDLC_Admin_Settings {
                 <?php
                 settings_fields(self::OPTION_GROUP);
                 do_settings_sections(self::PAGE_SLUG);
-                submit_button(__('Save Settings', 'maxtdesign-lean-consent'));
+                submit_button(__('Save Settings', 'maxtdesign-cookie-consent'));
                 ?>
             </form>
 
-            <div class="mdlc-admin-sidebar">
-                <div class="mdlc-info-box">
-                    <h3><?php esc_html_e('Shortcodes Available', 'maxtdesign-lean-consent'); ?></h3>
-                    <p><code>[mdlc_consent_status]</code></p>
+            <div class="mdcc-admin-sidebar">
+                <div class="mdcc-info-box">
+                    <h3><?php esc_html_e('Shortcodes Available', 'maxtdesign-cookie-consent'); ?></h3>
+                    <p><code>[mdcc_consent_status]</code></p>
                     <p class="description">
-                        <?php esc_html_e('Displays current consent status chips (Analytics: On/Off, Ads: On/Off)', 'maxtdesign-lean-consent'); ?>
+                        <?php esc_html_e('Displays current consent status chips (Analytics: On/Off, Ads: On/Off)', 'maxtdesign-cookie-consent'); ?>
                     </p>
 
-                    <p><code>[mdlc_manage_consent]</code></p>
+                    <p><code>[mdcc_manage_consent]</code></p>
                     <p class="description">
-                        <?php esc_html_e('Displays consent management interface with Accept/Analytics/Decline buttons', 'maxtdesign-lean-consent'); ?>
+                        <?php esc_html_e('Displays consent management interface with Accept/Analytics/Decline buttons', 'maxtdesign-cookie-consent'); ?>
                     </p>
                 </div>
 
-                <div class="mdlc-info-box">
-                    <h3><?php esc_html_e('Documentation', 'maxtdesign-lean-consent'); ?></h3>
+                <div class="mdcc-info-box">
+                    <h3><?php esc_html_e('Documentation', 'maxtdesign-cookie-consent'); ?></h3>
                     <ul>
-                        <li><a href="https://maxtdesign.com/lean-consent/docs" target="_blank"><?php esc_html_e('Getting Started Guide', 'maxtdesign-lean-consent'); ?></a></li>
-                        <li><a href="https://maxtdesign.com/lean-consent/google-consent-mode" target="_blank"><?php esc_html_e('Google Consent Mode v2', 'maxtdesign-lean-consent'); ?></a></li>
-                        <li><a href="https://maxtdesign.com/lean-consent/elementor-integration" target="_blank"><?php esc_html_e('Elementor Integration', 'maxtdesign-lean-consent'); ?></a></li>
+                        <li><a href="https://maxtdesign.com/cookie-consent/docs" target="_blank"><?php esc_html_e('Getting Started Guide', 'maxtdesign-cookie-consent'); ?></a></li>
+                        <li><a href="https://maxtdesign.com/cookie-consent/google-consent-mode" target="_blank"><?php esc_html_e('Google Consent Mode v2', 'maxtdesign-cookie-consent'); ?></a></li>
+                        <li><a href="https://maxtdesign.com/cookie-consent/elementor-integration" target="_blank"><?php esc_html_e('Elementor Integration', 'maxtdesign-cookie-consent'); ?></a></li>
                     </ul>
                 </div>
             </div>
@@ -412,28 +412,28 @@ class MDLC_Admin_Settings {
      * Render appearance section description
      */
     public function render_section_appearance() {
-        echo '<p>' . esc_html__('Customize the visual appearance of the consent popup.', 'maxtdesign-lean-consent') . '</p>';
+        echo '<p>' . esc_html__('Customize the visual appearance of the consent popup.', 'maxtdesign-cookie-consent') . '</p>';
     }
 
     /**
      * Render content section description
      */
     public function render_section_content() {
-        echo '<p>' . esc_html__('Configure the text content displayed in the popup.', 'maxtdesign-lean-consent') . '</p>';
+        echo '<p>' . esc_html__('Configure the text content displayed in the popup.', 'maxtdesign-cookie-consent') . '</p>';
     }
 
     /**
      * Render behavior section description
      */
     public function render_section_behavior() {
-        echo '<p>' . esc_html__('Control popup behavior and timing.', 'maxtdesign-lean-consent') . '</p>';
+        echo '<p>' . esc_html__('Control popup behavior and timing.', 'maxtdesign-cookie-consent') . '</p>';
     }
 
     /**
      * Render Elementor section description
      */
     public function render_section_elementor() {
-        echo '<p>' . esc_html__('If you prefer to use a custom Elementor popup instead of the built-in popup, enter your Elementor Popup ID here. Leave blank to use the built-in popup.', 'maxtdesign-lean-consent') . '</p>';
+        echo '<p>' . esc_html__('If you prefer to use a custom Elementor popup instead of the built-in popup, enter your Elementor Popup ID here. Leave blank to use the built-in popup.', 'maxtdesign-cookie-consent') . '</p>';
     }
 
     /* ========================================================================
@@ -444,17 +444,17 @@ class MDLC_Admin_Settings {
      * Render popup enabled field
      */
     public function render_field_popup_enabled() {
-        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
         ?>
         <label>
             <input type="checkbox"
                    name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_enabled]"
                    value="1"
                    <?php checked(!empty($settings['popup_enabled']), true); ?> />
-            <?php esc_html_e('Display the consent popup to visitors', 'maxtdesign-lean-consent'); ?>
+            <?php esc_html_e('Display the consent popup to visitors', 'maxtdesign-cookie-consent'); ?>
         </label>
         <p class="description">
-            <?php esc_html_e('Uncheck to temporarily disable the popup without losing your settings.', 'maxtdesign-lean-consent'); ?>
+            <?php esc_html_e('Uncheck to temporarily disable the popup without losing your settings.', 'maxtdesign-cookie-consent'); ?>
         </p>
         <?php
     }
@@ -463,22 +463,22 @@ class MDLC_Admin_Settings {
      * Render popup style field
      */
     public function render_field_popup_style() {
-        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
         $current = $settings['popup_style'];
         ?>
-        <select name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_style]" id="mdlc-popup-style">
+        <select name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_style]" id="mdcc-popup-style">
             <option value="minimal" <?php selected($current, 'minimal'); ?>>
-                <?php esc_html_e('Minimal', 'maxtdesign-lean-consent'); ?>
+                <?php esc_html_e('Minimal', 'maxtdesign-cookie-consent'); ?>
             </option>
             <option value="modern" <?php selected($current, 'modern'); ?>>
-                <?php esc_html_e('Modern', 'maxtdesign-lean-consent'); ?>
+                <?php esc_html_e('Modern', 'maxtdesign-cookie-consent'); ?>
             </option>
             <option value="bold" <?php selected($current, 'bold'); ?>>
-                <?php esc_html_e('Bold', 'maxtdesign-lean-consent'); ?>
+                <?php esc_html_e('Bold', 'maxtdesign-cookie-consent'); ?>
             </option>
         </select>
         <p class="description">
-            <?php esc_html_e('Choose a visual style preset. Minimal: Clean and subtle. Modern: Rounded and polished. Bold: Strong and prominent.', 'maxtdesign-lean-consent'); ?>
+            <?php esc_html_e('Choose a visual style preset. Minimal: Clean and subtle. Modern: Rounded and polished. Bold: Strong and prominent.', 'maxtdesign-cookie-consent'); ?>
         </p>
         <?php
     }
@@ -487,22 +487,22 @@ class MDLC_Admin_Settings {
      * Render popup position field
      */
     public function render_field_popup_position() {
-        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
         $current = $settings['popup_position'];
         ?>
-        <select name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_position]" id="mdlc-popup-position">
+        <select name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_position]" id="mdcc-popup-position">
             <option value="top" <?php selected($current, 'top'); ?>>
-                <?php esc_html_e('Top Banner', 'maxtdesign-lean-consent'); ?>
+                <?php esc_html_e('Top Banner', 'maxtdesign-cookie-consent'); ?>
             </option>
             <option value="bottom" <?php selected($current, 'bottom'); ?>>
-                <?php esc_html_e('Bottom Banner', 'maxtdesign-lean-consent'); ?>
+                <?php esc_html_e('Bottom Banner', 'maxtdesign-cookie-consent'); ?>
             </option>
             <option value="center" <?php selected($current, 'center'); ?>>
-                <?php esc_html_e('Center Modal', 'maxtdesign-lean-consent'); ?>
+                <?php esc_html_e('Center Modal', 'maxtdesign-cookie-consent'); ?>
             </option>
         </select>
         <p class="description">
-            <?php esc_html_e('Where the popup appears on the screen.', 'maxtdesign-lean-consent'); ?>
+            <?php esc_html_e('Where the popup appears on the screen.', 'maxtdesign-cookie-consent'); ?>
         </p>
         <?php
     }
@@ -511,16 +511,16 @@ class MDLC_Admin_Settings {
      * Render primary color field
      */
     public function render_field_popup_primary_color() {
-        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
         $current = $settings['popup_primary_color'];
         ?>
         <input type="text"
                name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_primary_color]"
                value="<?php echo esc_attr($current); ?>"
-               class="mdlc-color-picker"
+               class="mdcc-color-picker"
                data-default-color="#0073aa" />
         <p class="description">
-            <?php esc_html_e('Color for primary buttons. Click to choose a color.', 'maxtdesign-lean-consent'); ?>
+            <?php esc_html_e('Color for primary buttons. Click to choose a color.', 'maxtdesign-cookie-consent'); ?>
         </p>
         <?php
     }
@@ -529,22 +529,22 @@ class MDLC_Admin_Settings {
      * Render animation field
      */
     public function render_field_popup_animation() {
-        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
         $current = $settings['popup_animation'];
         ?>
-        <select name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_animation]" id="mdlc-popup-animation">
+        <select name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_animation]" id="mdcc-popup-animation">
             <option value="slide" <?php selected($current, 'slide'); ?>>
-                <?php esc_html_e('Slide In', 'maxtdesign-lean-consent'); ?>
+                <?php esc_html_e('Slide In', 'maxtdesign-cookie-consent'); ?>
             </option>
             <option value="fade" <?php selected($current, 'fade'); ?>>
-                <?php esc_html_e('Fade In', 'maxtdesign-lean-consent'); ?>
+                <?php esc_html_e('Fade In', 'maxtdesign-cookie-consent'); ?>
             </option>
             <option value="none" <?php selected($current, 'none'); ?>>
-                <?php esc_html_e('No Animation', 'maxtdesign-lean-consent'); ?>
+                <?php esc_html_e('No Animation', 'maxtdesign-cookie-consent'); ?>
             </option>
         </select>
         <p class="description">
-            <?php esc_html_e('Animation when popup appears.', 'maxtdesign-lean-consent'); ?>
+            <?php esc_html_e('Animation when popup appears.', 'maxtdesign-cookie-consent'); ?>
         </p>
         <?php
     }
@@ -553,7 +553,7 @@ class MDLC_Admin_Settings {
      * Render popup title field
      */
     public function render_field_popup_title() {
-        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
         $current = $settings['popup_title'];
         ?>
         <input type="text"
@@ -561,7 +561,7 @@ class MDLC_Admin_Settings {
                value="<?php echo esc_attr($current); ?>"
                class="regular-text" />
         <p class="description">
-            <?php esc_html_e('Headline text displayed in the popup.', 'maxtdesign-lean-consent'); ?>
+            <?php esc_html_e('Headline text displayed in the popup.', 'maxtdesign-cookie-consent'); ?>
         </p>
         <?php
     }
@@ -570,14 +570,14 @@ class MDLC_Admin_Settings {
      * Render popup message field
      */
     public function render_field_popup_message() {
-        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
         $current = $settings['popup_message'];
         ?>
         <textarea name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_message]"
                   rows="3"
                   class="large-text"><?php echo esc_textarea($current); ?></textarea>
         <p class="description">
-            <?php esc_html_e('Description text explaining cookie usage.', 'maxtdesign-lean-consent'); ?>
+            <?php esc_html_e('Description text explaining cookie usage.', 'maxtdesign-cookie-consent'); ?>
         </p>
         <?php
     }
@@ -586,7 +586,7 @@ class MDLC_Admin_Settings {
      * Render cookie duration field
      */
     public function render_field_popup_shown_duration() {
-        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
         $current = $settings['popup_shown_duration'];
         ?>
         <input type="number"
@@ -596,9 +596,9 @@ class MDLC_Admin_Settings {
                max="365"
                step="1"
                class="small-text" />
-        <?php esc_html_e('days', 'maxtdesign-lean-consent'); ?>
+        <?php esc_html_e('days', 'maxtdesign-cookie-consent'); ?>
         <p class="description">
-            <?php esc_html_e('How many days after closing the popup before showing it again (1-365 days).', 'maxtdesign-lean-consent'); ?>
+            <?php esc_html_e('How many days after closing the popup before showing it again (1-365 days).', 'maxtdesign-cookie-consent'); ?>
         </p>
         <?php
     }
@@ -607,17 +607,17 @@ class MDLC_Admin_Settings {
      * Render re-prompt on decline field
      */
     public function render_field_reprompt_on_decline() {
-        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
         ?>
         <label>
             <input type="checkbox"
                    name="<?php echo esc_attr(self::OPTION_NAME); ?>[reprompt_on_decline]"
                    value="1"
                    <?php checked(!empty($settings['reprompt_on_decline']), true); ?> />
-            <?php esc_html_e('Show popup again once per session if user declines all cookies', 'maxtdesign-lean-consent'); ?>
+            <?php esc_html_e('Show popup again once per session if user declines all cookies', 'maxtdesign-cookie-consent'); ?>
         </label>
         <p class="description">
-            <?php esc_html_e('If enabled, the popup will re-appear once per browsing session when a user declines tracking.', 'maxtdesign-lean-consent'); ?>
+            <?php esc_html_e('If enabled, the popup will re-appear once per browsing session when a user declines tracking.', 'maxtdesign-cookie-consent'); ?>
         </p>
         <?php
     }
@@ -626,7 +626,7 @@ class MDLC_Admin_Settings {
      * Render Elementor popup ID field
      */
     public function render_field_elementor_popup_id() {
-        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
         $current = $settings['elementor_popup_id'];
         ?>
         <input type="number"
@@ -635,13 +635,13 @@ class MDLC_Admin_Settings {
                min="1"
                step="1"
                class="regular-text"
-               placeholder="<?php esc_attr_e('Leave blank to use built-in popup', 'maxtdesign-lean-consent'); ?>" />
+               placeholder="<?php esc_attr_e('Leave blank to use built-in popup', 'maxtdesign-cookie-consent'); ?>" />
         <p class="description">
             <?php
             printf(
                 /* translators: %s: Link to documentation */
-                esc_html__('Enter your Elementor Popup ID to use a custom popup instead of the built-in one. %s', 'maxtdesign-lean-consent'),
-                '<a href="https://maxtdesign.com/lean-consent/elementor-integration" target="_blank">' . esc_html__('Learn how to find your popup ID', 'maxtdesign-lean-consent') . '</a>'
+                esc_html__('Enter your Elementor Popup ID to use a custom popup instead of the built-in one. %s', 'maxtdesign-cookie-consent'),
+                '<a href="https://maxtdesign.com/cookie-consent/elementor-integration" target="_blank">' . esc_html__('Learn how to find your popup ID', 'maxtdesign-cookie-consent') . '</a>'
             );
             ?>
         </p>

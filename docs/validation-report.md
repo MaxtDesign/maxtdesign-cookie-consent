@@ -46,7 +46,7 @@ Matrix and checklist prepared (see user story). Execute on clean test site after
 ## Version Consistency
 
 - Main plugin header: 1.6.0 — OK
-- MDLC_VERSION constant: 1.6.0 — OK
+- MDCC_VERSION constant: 1.6.0 — OK
 - readme.txt stable tag: 1.6.0 — OK
 - POT: 1.6.0 — OK
 

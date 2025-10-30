@@ -13,11 +13,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MDLC_Popup_System {
+class MDCC_Popup_System {
     /**
      * Single instance
      *
-     * @var MDLC_Popup_System
+     * @var MDCC_Popup_System
      */
     private static $instance = null;
 
@@ -26,12 +26,12 @@ class MDLC_Popup_System {
      *
      * @var string
      */
-    const SHOWN_COOKIE = 'mdlc_popup_shown';
+    const SHOWN_COOKIE = 'mdcc_popup_shown';
 
     /**
      * Get instance
      *
-     * @return MDLC_Popup_System
+     * @return MDCC_Popup_System
      */
     public static function get_instance() {
         if (null === self::$instance) {
@@ -77,7 +77,7 @@ class MDLC_Popup_System {
         }
 
         // Get settings
-        $settings = get_option('mdlc_settings', mdlc_default_settings());
+        $settings = get_option('mdcc_settings', mdcc_default_settings());
 
         // Don't show if popup disabled in settings
         if (empty($settings['popup_enabled'])) {
@@ -111,41 +111,41 @@ class MDLC_Popup_System {
 
         // Enqueue popup styles
         wp_enqueue_style(
-            'mdlc-popup',
-            MDLC_PLUGIN_URL . 'assets/css/popup.css',
+            'mdcc-popup',
+            MDCC_PLUGIN_URL . 'assets/css/popup.css',
             array(),
-            MDLC_VERSION,
+            MDCC_VERSION,
             'all'
         );
 
         // Get settings for dynamic CSS
-        $settings = get_option('mdlc_settings', mdlc_default_settings());
+        $settings = get_option('mdcc_settings', mdcc_default_settings());
 
         // Add inline CSS for primary color customization
         $primary_color = !empty($settings['popup_primary_color']) ? sanitize_hex_color($settings['popup_primary_color']) : '#0073aa';
 
         $custom_css = "
-            .mdlc-popup__button--primary {
+            .mdcc-popup__button--primary {
                 background-color: {$primary_color};
                 border-color: {$primary_color};
             }
-            .mdlc-popup__button--primary:hover,
-            .mdlc-popup__button--primary:focus {
+            .mdcc-popup__button--primary:hover,
+            .mdcc-popup__button--primary:focus {
                 background-color: {$primary_color}dd;
                 border-color: {$primary_color}dd;
             }
         ";
 
-        wp_add_inline_style('mdlc-popup', $custom_css);
+        wp_add_inline_style('mdcc-popup', $custom_css);
 
         // Enqueue popup behavior script (inline for minimal size)
-        wp_register_script('mdlc-popup-behavior', false, array('mdlc-consent-runtime'), MDLC_VERSION, true);
-        wp_enqueue_script('mdlc-popup-behavior');
+        wp_register_script('mdcc-popup-behavior', false, array('mdcc-consent-runtime'), MDCC_VERSION, true);
+        wp_enqueue_script('mdcc-popup-behavior');
 
         // Pass settings to JavaScript
         wp_localize_script(
-            'mdlc-popup-behavior',
-            'mdlcPopupConfig',
+            'mdcc-popup-behavior',
+            'mdccPopupConfig',
             array(
                 'cookieName'      => self::SHOWN_COOKIE,
                 'cookieDuration'  => absint($settings['popup_shown_duration']), // Days
@@ -155,7 +155,7 @@ class MDLC_Popup_System {
 
         // Add inline popup behavior script
         $popup_js = $this->get_popup_javascript();
-        wp_add_inline_script('mdlc-popup-behavior', $popup_js);
+        wp_add_inline_script('mdcc-popup-behavior', $popup_js);
     }
 
     /**
@@ -173,7 +173,7 @@ class MDLC_Popup_System {
 (function(window, document) {
     'use strict';
     
-    var config = window.mdlcPopupConfig || {};
+    var config = window.mdccPopupConfig || {};
     var popup = null;
     var closeBtn = null;
     var firstFocusable = null;
@@ -196,12 +196,12 @@ class MDLC_Popup_System {
     function closePopup() {
         if (!popup) return;
         
-        popup.classList.add('mdlc-popup--closing');
+        popup.classList.add('mdcc-popup--closing');
         
         setTimeout(function() {
             popup.style.display = 'none';
-            popup.classList.remove('mdlc-popup--closing');
-            document.body.classList.remove('mdlc-popup-open');
+            popup.classList.remove('mdcc-popup--closing');
+            document.body.classList.remove('mdcc-popup-open');
         }, 300); // Match animation duration
         
         // Set cookie so popup doesn't show again
@@ -212,17 +212,17 @@ class MDLC_Popup_System {
      * Handle consent button clicks
      */
     function handleConsentAction(action) {
-        if (!window.mdlcConsent) return;
+        if (!window.mdccConsent) return;
         
         switch(action) {
             case 'accept-all':
-                mdlcConsent.acceptAll();
+                mdccConsent.acceptAll();
                 break;
             case 'analytics-only':
-                mdlcConsent.acceptAnalyticsOnly();
+                mdccConsent.acceptAnalyticsOnly();
                 break;
             case 'decline-all':
-                mdlcConsent.declineAll();
+                mdccConsent.declineAll();
                 break;
         }
         
@@ -287,17 +287,17 @@ class MDLC_Popup_System {
      * Initialize popup behavior
      */
     function init() {
-        popup = document.querySelector('.mdlc-popup');
+        popup = document.querySelector('.mdcc-popup');
         if (!popup) return;
         
-        closeBtn = popup.querySelector('.mdlc-popup__close');
+        closeBtn = popup.querySelector('.mdcc-popup__close');
         
         // Show popup with animation
         setTimeout(function() {
             popup.style.display = 'block';
-            document.body.classList.add('mdlc-popup-open');
+            document.body.classList.add('mdcc-popup-open');
             setTimeout(function() {
-                popup.classList.add('mdlc-popup--visible');
+                popup.classList.add('mdcc-popup--visible');
                 setupFocusTrap();
             }, 10);
         }, 500); // Delay initial appearance
@@ -312,10 +312,10 @@ class MDLC_Popup_System {
         
         // Consent button clicks (event delegation)
         popup.addEventListener('click', function(e) {
-            var btn = e.target.closest('[data-mdlc-action]');
+            var btn = e.target.closest('[data-mdcc-action]');
             if (btn) {
                 e.preventDefault();
-                var action = btn.getAttribute('data-mdlc-action');
+                var action = btn.getAttribute('data-mdcc-action');
                 handleConsentAction(action);
             }
         });
@@ -325,16 +325,16 @@ class MDLC_Popup_System {
         
         // Re-prompt on decline (if enabled)
         if (config.repromptDecline) {
-            document.addEventListener('mdlc:changed', function(e) {
+            document.addEventListener('mdcc:changed', function(e) {
                 var state = e.detail;
                 if (!state.analytics && !state.ads) {
                     // User declined - show popup again once per session
-                    var repromptKey = 'mdlc_reprompted_session';
+                    var repromptKey = 'mdcc_reprompted_session';
                     if (!sessionStorage.getItem(repromptKey)) {
                         sessionStorage.setItem(repromptKey, '1');
                         setTimeout(function() {
                             popup.style.display = 'block';
-                            popup.classList.add('mdlc-popup--visible');
+                            popup.classList.add('mdcc-popup--visible');
                             setupFocusTrap();
                         }, 2000); // Wait 2 seconds before re-showing
                     }
@@ -368,70 +368,70 @@ class MDLC_Popup_System {
             return;
         }
         
-        $settings = get_option('mdlc_settings', mdlc_default_settings());
+        $settings = get_option('mdcc_settings', mdcc_default_settings());
         
         // Get settings values with defaults
         $style     = sanitize_text_field($settings['popup_style'] ?? 'minimal');
         $position  = sanitize_text_field($settings['popup_position'] ?? 'bottom');
         $animation = sanitize_text_field($settings['popup_animation'] ?? 'slide');
-        $title     = !empty($settings['popup_title']) ? $settings['popup_title'] : __('Cookie Consent', 'maxtdesign-lean-consent');
-        $message   = !empty($settings['popup_message']) ? $settings['popup_message'] : __('We use cookies to enhance your browsing experience and analyze our traffic.', 'maxtdesign-lean-consent');
+        $title     = !empty($settings['popup_title']) ? $settings['popup_title'] : __('Cookie Consent', 'maxtdesign-cookie-consent');
+        $message   = !empty($settings['popup_message']) ? $settings['popup_message'] : __('We use cookies to enhance your browsing experience and analyze our traffic.', 'maxtdesign-cookie-consent');
         
         // Build CSS classes
         $classes = array(
-            'mdlc-popup',
-            'mdlc-popup--style-' . $style,
-            'mdlc-popup--position-' . $position,
-            'mdlc-popup--animation-' . $animation,
+            'mdcc-popup',
+            'mdcc-popup--style-' . $style,
+            'mdcc-popup--position-' . $position,
+            'mdcc-popup--animation-' . $animation,
         );
         
         ?>
         <div class="<?php echo esc_attr(implode(' ', $classes)); ?>" 
              role="dialog" 
              aria-modal="true" 
-             aria-labelledby="mdlc-popup-title"
-             aria-describedby="mdlc-popup-message"
+             aria-labelledby="mdcc-popup-title"
+             aria-describedby="mdcc-popup-message"
              style="display: none;">
             
-            <div class="mdlc-popup__overlay" aria-hidden="true"></div>
+            <div class="mdcc-popup__overlay" aria-hidden="true"></div>
             
-            <div class="mdlc-popup__container">
-                <div class="mdlc-popup__content">
+            <div class="mdcc-popup__container">
+                <div class="mdcc-popup__content">
                     
                     <button type="button" 
-                            class="mdlc-popup__close" 
-                            aria-label="<?php esc_attr_e('Close consent popup', 'maxtdesign-lean-consent'); ?>">
+                            class="mdcc-popup__close" 
+                            aria-label="<?php esc_attr_e('Close consent popup', 'maxtdesign-cookie-consent'); ?>">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     
-                    <h2 id="mdlc-popup-title" class="mdlc-popup__title">
+                    <h2 id="mdcc-popup-title" class="mdcc-popup__title">
                         <?php echo esc_html($title); ?>
                     </h2>
                     
-                    <p id="mdlc-popup-message" class="mdlc-popup__message">
+                    <p id="mdcc-popup-message" class="mdcc-popup__message">
                         <?php echo esc_html($message); ?>
                     </p>
                     
-                    <div class="mdlc-popup__actions">
+                    <div class="mdcc-popup__actions">
                         <button type="button" 
-                                class="mdlc-popup__button mdlc-popup__button--primary" 
-                                data-mdlc-action="accept-all"
-                                aria-label="<?php esc_attr_e('Accept all cookies', 'maxtdesign-lean-consent'); ?>">
-                            <?php esc_html_e('Accept All', 'maxtdesign-lean-consent'); ?>
+                                class="mdcc-popup__button mdcc-popup__button--primary" 
+                                data-mdcc-action="accept-all"
+                                aria-label="<?php esc_attr_e('Accept all cookies', 'maxtdesign-cookie-consent'); ?>">
+                            <?php esc_html_e('Accept All', 'maxtdesign-cookie-consent'); ?>
                         </button>
                         
                         <button type="button" 
-                                class="mdlc-popup__button mdlc-popup__button--secondary" 
-                                data-mdlc-action="analytics-only"
-                                aria-label="<?php esc_attr_e('Accept analytics cookies only', 'maxtdesign-lean-consent'); ?>">
-                            <?php esc_html_e('Analytics Only', 'maxtdesign-lean-consent'); ?>
+                                class="mdcc-popup__button mdcc-popup__button--secondary" 
+                                data-mdcc-action="analytics-only"
+                                aria-label="<?php esc_attr_e('Accept analytics cookies only', 'maxtdesign-cookie-consent'); ?>">
+                            <?php esc_html_e('Analytics Only', 'maxtdesign-cookie-consent'); ?>
                         </button>
                         
                         <button type="button" 
-                                class="mdlc-popup__button mdlc-popup__button--tertiary" 
-                                data-mdlc-action="decline-all"
-                                aria-label="<?php esc_attr_e('Decline all cookies', 'maxtdesign-lean-consent'); ?>">
-                            <?php esc_html_e('Decline All', 'maxtdesign-lean-consent'); ?>
+                                class="mdcc-popup__button mdcc-popup__button--tertiary" 
+                                data-mdcc-action="decline-all"
+                                aria-label="<?php esc_attr_e('Decline all cookies', 'maxtdesign-cookie-consent'); ?>">
+                            <?php esc_html_e('Decline All', 'maxtdesign-cookie-consent'); ?>
                         </button>
                     </div>
                     

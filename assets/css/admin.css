@@ -1,14 +1,14 @@
 /**
- * MaxtDesign Lean Consent - Admin Styles
+ * MaxtDesign Cookie Consent - Admin Styles
  * 
  * Clean, minimal styling for settings page
  * 
- * @package MaxtDesign_Lean_Consent
+ * @package MaxtDesign_Cookie_Consent
  * @since 1.6.0
  */
 
 /* Admin header */
-.mdlc-admin-header {
+.mdcc-admin-header {
     background: #fff;
     border: 1px solid #c3c4c7;
     border-radius: 4px;
@@ -16,7 +16,7 @@
     margin: 20px 0;
 }
 
-.mdlc-admin-header p.description {
+.mdcc-admin-header p.description {
     margin: 0;
     font-size: 14px;
 }
@@ -27,12 +27,12 @@
 }
 
 /* Color picker */
-.mdlc-color-picker {
+.mdcc-color-picker {
     max-width: 100px;
 }
 
 /* Info boxes (sidebar) */
-.mdlc-info-box {
+.mdcc-info-box {
     background: #fff;
     border: 1px solid #c3c4c7;
     border-radius: 4px;
@@ -40,25 +40,25 @@
     margin-bottom: 16px;
 }
 
-.mdlc-info-box h3 {
+.mdcc-info-box h3 {
     margin-top: 0;
     font-size: 14px;
     font-weight: 600;
 }
 
-.mdlc-info-box code {
+.mdcc-info-box code {
     background: #f0f0f1;
     padding: 2px 6px;
     border-radius: 3px;
     font-size: 13px;
 }
 
-.mdlc-info-box ul {
+.mdcc-info-box ul {
     margin: 10px 0 0 0;
     padding-left: 20px;
 }
 
-.mdlc-info-box li {
+.mdcc-info-box li {
     margin-bottom: 8px;
 }
 
@@ -74,7 +74,7 @@
         grid-column: 1 / -1;
     }
     
-    .mdlc-admin-header {
+    .mdcc-admin-header {
         grid-column: 1 / -1;
     }
     
@@ -82,7 +82,7 @@
         grid-column: 1;
     }
     
-    .mdlc-admin-sidebar {
+    .mdcc-admin-sidebar {
         grid-column: 2;
     }
 }

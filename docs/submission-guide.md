@@ -18,7 +18,7 @@
 
 **Step 2: Submit Plugin**
 1. Go to https://wordpress.org/plugins/developers/add/
-2. Upload: `maxtdesign-lean-consent-1.6.0.zip`
+2. Upload: `maxtdesign-cookie-consent-1.6.0.zip`
 3. Fill in description (copy from `readme.txt`)
 4. Submit for review
 
@@ -35,7 +35,7 @@ If changes requested:
 
 **Step 5: SVN Setup (upon approval)**
 ```bash
-svn co https://plugins.svn.wordpress.org/maxtdesign-lean-consent
+svn co https://plugins.svn.wordpress.org/maxtdesign-cookie-consent
 # structure: /trunk, /tags, /assets
 ```
 
@@ -64,7 +64,7 @@ svn ci -m "Add plugin assets"
 ```
 
 **Step 9: Verify Plugin Page**
-1. Visit https://wordpress.org/plugins/maxtdesign-lean-consent
+1. Visit https://wordpress.org/plugins/maxtdesign-cookie-consent
 2. Verify details and downloads
 
 **Step 10: Initial Monitoring**

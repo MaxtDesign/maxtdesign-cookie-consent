@@ -74,7 +74,7 @@ mdlcConsent.declineAll();
 ```
 
 ## Troubleshooting
-- Popup not showing: ensure `popup_enabled` is true, `elementor_popup_id` is empty, and clear the `mdlc_popup_shown` cookie.
+- Popup not showing: ensure `popup_enabled` is true, `elementor_popup_id` is empty, and clear the `mdcc_popup_shown` cookie.
 - Styling: `popup_primary_color` controls the primary button color; ensure a valid hex color.
 - Accessibility: Confirm ESC closes and focus stays trapped within the popup.
 

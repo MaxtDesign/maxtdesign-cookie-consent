@@ -3,8 +3,8 @@
  * Shortcodes
  *
  * Registers and renders consent management shortcodes:
- * - [mdlc_consent_status] - Display current consent status chips
- * - [mdlc_manage_consent] - Full consent management interface
+ * - [mdcc_consent_status] - Display current consent status chips
+ * - [mdcc_manage_consent] - Full consent management interface
  *
  * @package MaxtDesign_Lean_Consent
  * @since 1.6.0
@@ -14,11 +14,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class MDLC_Shortcodes {
+class MDCC_Shortcodes {
     /**
      * Single instance
      *
-     * @var MDLC_Shortcodes
+     * @var MDCC_Shortcodes
      */
     private static $instance = null;
 
@@ -32,7 +32,7 @@ class MDLC_Shortcodes {
     /**
      * Get instance
      *
-     * @return MDLC_Shortcodes
+     * @return MDCC_Shortcodes
      */
     public static function get_instance() {
         if (null === self::$instance) {
@@ -53,8 +53,8 @@ class MDLC_Shortcodes {
      */
     private function init_hooks() {
         // Register shortcodes
-        add_shortcode('mdlc_consent_status', array($this, 'render_consent_status'));
-        add_shortcode('mdlc_manage_consent', array($this, 'render_manage_consent'));
+        add_shortcode('mdcc_consent_status', array($this, 'render_consent_status'));
+        add_shortcode('mdcc_manage_consent', array($this, 'render_manage_consent'));
 
         // Enqueue assets in footer (after shortcode content renders)
         add_action('wp_footer', array($this, 'enqueue_shortcode_assets'));
@@ -74,30 +74,30 @@ class MDLC_Shortcodes {
         }
 
         // Inline CSS for shortcodes
-        wp_register_style('mdlc-shortcodes', false, array(), MDLC_VERSION);
-        wp_enqueue_style('mdlc-shortcodes');
+        wp_register_style('mdcc-shortcodes', false, array(), MDCC_VERSION);
+        wp_enqueue_style('mdcc-shortcodes');
 
         $css = $this->get_shortcode_css();
-        wp_add_inline_style('mdlc-shortcodes', $css);
+        wp_add_inline_style('mdcc-shortcodes', $css);
 
         // Inline JavaScript for real-time updates
         // Depends on consent-runtime.js (already enqueued by consent manager)
-        wp_register_script('mdlc-shortcodes', false, array('mdlc-consent-runtime'), MDLC_VERSION, true);
-        wp_enqueue_script('mdlc-shortcodes');
+        wp_register_script('mdcc-shortcodes', false, array('mdcc-consent-runtime'), MDCC_VERSION, true);
+        wp_enqueue_script('mdcc-shortcodes');
 
         // Localize user-facing strings used in shortcode JavaScript
         wp_localize_script(
-            'mdlc-shortcodes',
-            'mdlcShortcodeI18n',
+            'mdcc-shortcodes',
+            'mdccShortcodeI18n',
             array(
-                'confirmReset' => __('Are you sure you want to reset your consent preferences?', 'maxtdesign-lean-consent'),
-                'onLabel'      => __('On', 'maxtdesign-lean-consent'),
-                'offLabel'     => __('Off', 'maxtdesign-lean-consent'),
+                'confirmReset' => __('Are you sure you want to reset your consent preferences?', 'maxtdesign-cookie-consent'),
+                'onLabel'      => __('On', 'maxtdesign-cookie-consent'),
+                'offLabel'     => __('Off', 'maxtdesign-cookie-consent'),
             )
         );
 
         $js = $this->get_shortcode_javascript();
-        wp_add_inline_script('mdlc-shortcodes', $js);
+        wp_add_inline_script('mdcc-shortcodes', $js);
     }
 
     /**
@@ -112,11 +112,11 @@ class MDLC_Shortcodes {
     private function get_shortcode_css() {
         ob_start();
         ?>
-/* MaxtDesign Lean Consent - Shortcode Styles */
+/* MaxtDesign Cookie Consent - Shortcode Styles */
 
 /* Ensure shortcode blocks are centered within viewport when theme containers are absent */
-.mdlc-status,
-.mdlc-manage {
+.mdcc-status,
+.mdcc-manage {
     box-sizing: border-box;
     width: min(100%, 1200px);
     margin-left: auto;
@@ -124,14 +124,14 @@ class MDLC_Shortcodes {
 }
 
 /* Consent Status Chips */
-.mdlc-status {
+.mdcc-status {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     align-items: center;
 }
 
-.mdlc-status__chip {
+.mdcc-status__chip {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -146,28 +146,28 @@ class MDLC_Shortcodes {
     transition: all 0.2s ease;
 }
 
-.mdlc-status__chip--on {
+.mdcc-status__chip--on {
     color: #22543d;
     border-color: #9ae6b4;
     background: #c6f6d5;
 }
 
-.mdlc-status__chip--off {
+.mdcc-status__chip--off {
     color: #742a2a;
     border-color: #feb2b2;
     background: #fed7d7;
 }
 
-.mdlc-status__label {
+.mdcc-status__label {
     font-weight: 400;
 }
 
-.mdlc-status__value {
+.mdcc-status__value {
     font-weight: 600;
 }
 
 /* Manage Consent Interface */
-.mdlc-manage {
+.mdcc-manage {
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     padding: 20px;
@@ -175,28 +175,28 @@ class MDLC_Shortcodes {
     max-width: 600px;
 }
 
-.mdlc-manage__title {
+.mdcc-manage__title {
     margin: 0 0 8px 0;
     font-size: 20px;
     font-weight: 600;
     color: #1a202c;
 }
 
-.mdlc-manage__description {
+.mdcc-manage__description {
     margin: 0 0 16px 0;
     font-size: 15px;
     line-height: 1.5;
     color: #4a5568;
 }
 
-.mdlc-manage__actions {
+.mdcc-manage__actions {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 16px;
 }
 
-.mdlc-manage__button {
+.mdcc-manage__button {
     padding: 10px 20px;
     border: 2px solid;
     border-radius: 6px;
@@ -211,38 +211,38 @@ class MDLC_Shortcodes {
     min-width: 120px;
 }
 
-.mdlc-manage__button:focus {
+.mdcc-manage__button:focus {
     outline: 2px solid #4299e1;
     outline-offset: 2px;
 }
 
-.mdlc-manage__button--primary {
+.mdcc-manage__button--primary {
     background-color: #3182ce;
     border-color: #3182ce;
     color: #ffffff;
 }
 
-.mdlc-manage__button--primary:hover,
-.mdlc-manage__button--primary:focus {
+.mdcc-manage__button--primary:hover,
+.mdcc-manage__button--primary:focus {
     background-color: #2c5282;
     border-color: #2c5282;
     color: #ffffff;
 }
 
-.mdlc-manage__button--secondary {
+.mdcc-manage__button--secondary {
     background-color: #ffffff;
     border-color: #cbd5e0;
     color: #2d3748;
 }
 
-.mdlc-manage__button--secondary:hover,
-.mdlc-manage__button--secondary:focus {
+.mdcc-manage__button--secondary:hover,
+.mdcc-manage__button--secondary:focus {
     background-color: #f7fafc;
     border-color: #a0aec0;
     color: #1a202c;
 }
 
-.mdlc-manage__button--tertiary {
+.mdcc-manage__button--tertiary {
     background-color: transparent;
     border-color: transparent;
     color: #718096;
@@ -250,18 +250,18 @@ class MDLC_Shortcodes {
     min-width: auto;
 }
 
-.mdlc-manage__button--tertiary:hover,
-.mdlc-manage__button--tertiary:focus {
+.mdcc-manage__button--tertiary:hover,
+.mdcc-manage__button--tertiary:focus {
     color: #2d3748;
     background-color: transparent;
 }
 
-.mdlc-manage__current {
+.mdcc-manage__current {
     padding-top: 16px;
     border-top: 1px solid #e2e8f0;
 }
 
-.mdlc-manage__current-label {
+.mdcc-manage__current-label {
     display: block;
     margin-bottom: 8px;
     font-size: 13px;
@@ -273,23 +273,23 @@ class MDLC_Shortcodes {
 
 /* Responsive */
 @media (max-width: 640px) {
-    .mdlc-manage {
+    .mdcc-manage {
         padding: 16px;
     }
     
-    .mdlc-manage__title {
+    .mdcc-manage__title {
         font-size: 18px;
     }
     
-    .mdlc-manage__description {
+    .mdcc-manage__description {
         font-size: 14px;
     }
     
-    .mdlc-manage__actions {
+    .mdcc-manage__actions {
         flex-direction: column;
     }
     
-    .mdlc-manage__button {
+    .mdcc-manage__button {
         width: 100%;
         min-width: 0;
     }
@@ -297,8 +297,8 @@ class MDLC_Shortcodes {
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
-    .mdlc-status__chip,
-    .mdlc-manage__button {
+    .mdcc-status__chip,
+    .mdcc-manage__button {
         transition: none;
     }
 }
@@ -325,38 +325,38 @@ class MDLC_Shortcodes {
      * Update consent status chips
      */
     function updateStatusChips() {
-        if (!window.mdlcConsent || !window.mdlcConsent.current) {
+        if (!window.mdccConsent || !window.mdccConsent.current) {
             return;
         }
         
-        var state = mdlcConsent.current();
+        var state = mdccConsent.current();
         
         // Update all status chips on the page
-        var chips = document.querySelectorAll('.mdlc-status__chip');
+        var chips = document.querySelectorAll('.mdcc-status__chip');
         
         chips.forEach(function(chip) {
-            var type = chip.getAttribute('data-mdlc-type');
+            var type = chip.getAttribute('data-mdcc-type');
             
             if (type === 'analytics') {
                 var isOn = state.analytics;
-                chip.classList.remove('mdlc-status__chip--on', 'mdlc-status__chip--off');
-                chip.classList.add(isOn ? 'mdlc-status__chip--on' : 'mdlc-status__chip--off');
+                chip.classList.remove('mdcc-status__chip--on', 'mdcc-status__chip--off');
+                chip.classList.add(isOn ? 'mdcc-status__chip--on' : 'mdcc-status__chip--off');
                 
-                var valueEl = chip.querySelector('.mdlc-status__value');
+                var valueEl = chip.querySelector('.mdcc-status__value');
                 if (valueEl) {
-                    var onLabel = (window.mdlcShortcodeI18n && window.mdlcShortcodeI18n.onLabel) ? window.mdlcShortcodeI18n.onLabel : 'On';
-                    var offLabel = (window.mdlcShortcodeI18n && window.mdlcShortcodeI18n.offLabel) ? window.mdlcShortcodeI18n.offLabel : 'Off';
+                    var onLabel = (window.mdccShortcodeI18n && window.mdccShortcodeI18n.onLabel) ? window.mdccShortcodeI18n.onLabel : 'On';
+                    var offLabel = (window.mdccShortcodeI18n && window.mdccShortcodeI18n.offLabel) ? window.mdccShortcodeI18n.offLabel : 'Off';
                     valueEl.textContent = isOn ? onLabel : offLabel;
                 }
             } else if (type === 'ads') {
                 var isOn = state.ads;
-                chip.classList.remove('mdlc-status__chip--on', 'mdlc-status__chip--off');
-                chip.classList.add(isOn ? 'mdlc-status__chip--on' : 'mdlc-status__chip--off');
+                chip.classList.remove('mdcc-status__chip--on', 'mdcc-status__chip--off');
+                chip.classList.add(isOn ? 'mdcc-status__chip--on' : 'mdcc-status__chip--off');
                 
-                var valueEl = chip.querySelector('.mdlc-status__value');
+                var valueEl = chip.querySelector('.mdcc-status__value');
                 if (valueEl) {
-                    var onLabel = (window.mdlcShortcodeI18n && window.mdlcShortcodeI18n.onLabel) ? window.mdlcShortcodeI18n.onLabel : 'On';
-                    var offLabel = (window.mdlcShortcodeI18n && window.mdlcShortcodeI18n.offLabel) ? window.mdlcShortcodeI18n.offLabel : 'Off';
+                    var onLabel = (window.mdccShortcodeI18n && window.mdccShortcodeI18n.onLabel) ? window.mdccShortcodeI18n.onLabel : 'On';
+                    var offLabel = (window.mdccShortcodeI18n && window.mdccShortcodeI18n.offLabel) ? window.mdccShortcodeI18n.offLabel : 'Off';
                     valueEl.textContent = isOn ? onLabel : offLabel;
                 }
             }
@@ -367,35 +367,35 @@ class MDLC_Shortcodes {
      * Handle consent action button clicks
      */
     function handleButtonClick(e) {
-        var button = e.target.closest('[data-mdlc-action]');
+        var button = e.target.closest('[data-mdcc-action]');
         if (!button) {
             return;
         }
         
         e.preventDefault();
         
-        var action = button.getAttribute('data-mdlc-action');
+        var action = button.getAttribute('data-mdcc-action');
         
-        if (!window.mdlcConsent) {
+        if (!window.mdccConsent) {
             return;
         }
         
         switch (action) {
             case 'accept-all':
-                mdlcConsent.acceptAll();
+                mdccConsent.acceptAll();
                 break;
             case 'analytics-only':
-                mdlcConsent.acceptAnalyticsOnly();
+                mdccConsent.acceptAnalyticsOnly();
                 break;
             case 'decline-all':
-                mdlcConsent.declineAll();
+                mdccConsent.declineAll();
                 break;
             case 'reset':
-                var confirmMsg = (window.mdlcShortcodeI18n && window.mdlcShortcodeI18n.confirmReset)
-                    ? window.mdlcShortcodeI18n.confirmReset
+                var confirmMsg = (window.mdccShortcodeI18n && window.mdccShortcodeI18n.confirmReset)
+                    ? window.mdccShortcodeI18n.confirmReset
                     : 'Are you sure you want to reset your consent preferences?';
                 if (confirm(confirmMsg)) {
-                    mdlcConsent.reset();
+                    mdccConsent.reset();
                 }
                 break;
         }
@@ -409,7 +409,7 @@ class MDLC_Shortcodes {
         updateStatusChips();
         
         // Listen for consent changes
-        document.addEventListener('mdlc:changed', updateStatusChips);
+        document.addEventListener('mdcc:changed', updateStatusChips);
         
         // Handle button clicks (event delegation)
         document.addEventListener('click', handleButtonClick);
@@ -448,7 +448,7 @@ class MDLC_Shortcodes {
                 'show_ads'       => 'yes',
             ),
             $atts,
-            'mdlc_consent_status'
+            'mdcc_consent_status'
         );
         
         $show_analytics = (sanitize_text_field($atts['show_analytics']) === 'yes');
@@ -456,29 +456,29 @@ class MDLC_Shortcodes {
         
         ob_start();
         ?>
-        <div class="mdlc-status" role="status" aria-live="polite">
+        <div class="mdcc-status" role="status" aria-live="polite">
             <?php if ($show_analytics) : ?>
-                <span class="mdlc-status__chip mdlc-status__chip--off" 
-                      data-mdlc-type="analytics"
-                      aria-label="<?php esc_attr_e('Analytics consent status', 'maxtdesign-lean-consent'); ?>">
-                    <span class="mdlc-status__label">
-                        <?php esc_html_e('Analytics:', 'maxtdesign-lean-consent'); ?>
+                <span class="mdcc-status__chip mdcc-status__chip--off" 
+                      data-mdcc-type="analytics"
+                      aria-label="<?php esc_attr_e('Analytics consent status', 'maxtdesign-cookie-consent'); ?>">
+                    <span class="mdcc-status__label">
+                        <?php esc_html_e('Analytics:', 'maxtdesign-cookie-consent'); ?>
                     </span>
-                    <strong class="mdlc-status__value">
-                        <?php esc_html_e('Off', 'maxtdesign-lean-consent'); ?>
+                    <strong class="mdcc-status__value">
+                        <?php esc_html_e('Off', 'maxtdesign-cookie-consent'); ?>
                     </strong>
                 </span>
             <?php endif; ?>
             
             <?php if ($show_ads) : ?>
-                <span class="mdlc-status__chip mdlc-status__chip--off" 
-                      data-mdlc-type="ads"
-                      aria-label="<?php esc_attr_e('Advertising consent status', 'maxtdesign-lean-consent'); ?>">
-                    <span class="mdlc-status__label">
-                        <?php esc_html_e('Ads:', 'maxtdesign-lean-consent'); ?>
+                <span class="mdcc-status__chip mdcc-status__chip--off" 
+                      data-mdcc-type="ads"
+                      aria-label="<?php esc_attr_e('Advertising consent status', 'maxtdesign-cookie-consent'); ?>">
+                    <span class="mdcc-status__label">
+                        <?php esc_html_e('Ads:', 'maxtdesign-cookie-consent'); ?>
                     </span>
-                    <strong class="mdlc-status__value">
-                        <?php esc_html_e('Off', 'maxtdesign-lean-consent'); ?>
+                    <strong class="mdcc-status__value">
+                        <?php esc_html_e('Off', 'maxtdesign-cookie-consent'); ?>
                     </strong>
                 </span>
             <?php endif; ?>
@@ -504,12 +504,12 @@ class MDLC_Shortcodes {
         // Parse shortcode attributes
         $atts = shortcode_atts(
             array(
-                'title'       => __('Your Privacy Choices', 'maxtdesign-lean-consent'),
-                'description' => __('Choose how we use cookies and similar technologies.', 'maxtdesign-lean-consent'),
+                'title'       => __('Your Privacy Choices', 'maxtdesign-cookie-consent'),
+                'description' => __('Choose how we use cookies and similar technologies.', 'maxtdesign-cookie-consent'),
                 'show_status' => 'yes',
             ),
             $atts,
-            'mdlc_manage_consent'
+            'mdcc_manage_consent'
         );
         
         $title = sanitize_text_field($atts['title']);
@@ -518,71 +518,71 @@ class MDLC_Shortcodes {
         
         ob_start();
         ?>
-        <div class="mdlc-manage">
-            <h3 class="mdlc-manage__title">
+        <div class="mdcc-manage">
+            <h3 class="mdcc-manage__title">
                 <?php echo esc_html($title); ?>
             </h3>
             
-            <p class="mdlc-manage__description">
+            <p class="mdcc-manage__description">
                 <?php echo esc_html($description); ?>
             </p>
             
-            <div class="mdlc-manage__actions">
+            <div class="mdcc-manage__actions">
                 <button type="button" 
-                        class="mdlc-manage__button mdlc-manage__button--primary" 
-                        data-mdlc-action="accept-all"
-                        aria-label="<?php esc_attr_e('Accept all cookies', 'maxtdesign-lean-consent'); ?>">
-                    <?php esc_html_e('Accept All', 'maxtdesign-lean-consent'); ?>
+                        class="mdcc-manage__button mdcc-manage__button--primary" 
+                        data-mdcc-action="accept-all"
+                        aria-label="<?php esc_attr_e('Accept all cookies', 'maxtdesign-cookie-consent'); ?>">
+                    <?php esc_html_e('Accept All', 'maxtdesign-cookie-consent'); ?>
                 </button>
                 
                 <button type="button" 
-                        class="mdlc-manage__button mdlc-manage__button--secondary" 
-                        data-mdlc-action="analytics-only"
-                        aria-label="<?php esc_attr_e('Accept analytics cookies only', 'maxtdesign-lean-consent'); ?>">
-                    <?php esc_html_e('Analytics Only', 'maxtdesign-lean-consent'); ?>
+                        class="mdcc-manage__button mdcc-manage__button--secondary" 
+                        data-mdcc-action="analytics-only"
+                        aria-label="<?php esc_attr_e('Accept analytics cookies only', 'maxtdesign-cookie-consent'); ?>">
+                    <?php esc_html_e('Analytics Only', 'maxtdesign-cookie-consent'); ?>
                 </button>
                 
                 <button type="button" 
-                        class="mdlc-manage__button mdlc-manage__button--secondary" 
-                        data-mdlc-action="decline-all"
-                        aria-label="<?php esc_attr_e('Decline all cookies', 'maxtdesign-lean-consent'); ?>">
-                    <?php esc_html_e('Decline All', 'maxtdesign-lean-consent'); ?>
+                        class="mdcc-manage__button mdcc-manage__button--secondary" 
+                        data-mdcc-action="decline-all"
+                        aria-label="<?php esc_attr_e('Decline all cookies', 'maxtdesign-cookie-consent'); ?>">
+                    <?php esc_html_e('Decline All', 'maxtdesign-cookie-consent'); ?>
                 </button>
                 
                 <button type="button" 
-                        class="mdlc-manage__button mdlc-manage__button--tertiary" 
-                        data-mdlc-action="reset"
-                        aria-label="<?php esc_attr_e('Reset your consent preferences', 'maxtdesign-lean-consent'); ?>">
-                    <?php esc_html_e('Reset Preferences', 'maxtdesign-lean-consent'); ?>
+                        class="mdcc-manage__button mdcc-manage__button--tertiary" 
+                        data-mdcc-action="reset"
+                        aria-label="<?php esc_attr_e('Reset your consent preferences', 'maxtdesign-cookie-consent'); ?>">
+                    <?php esc_html_e('Reset Preferences', 'maxtdesign-cookie-consent'); ?>
                 </button>
             </div>
             
             <?php if ($show_status) : ?>
-                <div class="mdlc-manage__current">
-                    <span class="mdlc-manage__current-label">
-                        <?php esc_html_e('Current Settings:', 'maxtdesign-lean-consent'); ?>
+                <div class="mdcc-manage__current">
+                    <span class="mdcc-manage__current-label">
+                        <?php esc_html_e('Current Settings:', 'maxtdesign-cookie-consent'); ?>
                     </span>
                     
-                    <div class="mdlc-status" role="status" aria-live="polite">
-                        <span class="mdlc-status__chip mdlc-status__chip--off" 
-                              data-mdlc-type="analytics"
-                              aria-label="<?php esc_attr_e('Analytics consent status', 'maxtdesign-lean-consent'); ?>">
-                            <span class="mdlc-status__label">
-                                <?php esc_html_e('Analytics:', 'maxtdesign-lean-consent'); ?>
+                    <div class="mdcc-status" role="status" aria-live="polite">
+                        <span class="mdcc-status__chip mdcc-status__chip--off" 
+                              data-mdcc-type="analytics"
+                              aria-label="<?php esc_attr_e('Analytics consent status', 'maxtdesign-cookie-consent'); ?>">
+                            <span class="mdcc-status__label">
+                                <?php esc_html_e('Analytics:', 'maxtdesign-cookie-consent'); ?>
                             </span>
-                            <strong class="mdlc-status__value">
-                                <?php esc_html_e('Off', 'maxtdesign-lean-consent'); ?>
+                            <strong class="mdcc-status__value">
+                                <?php esc_html_e('Off', 'maxtdesign-cookie-consent'); ?>
                             </strong>
                         </span>
                         
-                        <span class="mdlc-status__chip mdlc-status__chip--off" 
-                              data-mdlc-type="ads"
-                              aria-label="<?php esc_attr_e('Advertising consent status', 'maxtdesign-lean-consent'); ?>">
-                            <span class="mdlc-status__label">
-                                <?php esc_html_e('Ads:', 'maxtdesign-lean-consent'); ?>
+                        <span class="mdcc-status__chip mdcc-status__chip--off" 
+                              data-mdcc-type="ads"
+                              aria-label="<?php esc_attr_e('Advertising consent status', 'maxtdesign-cookie-consent'); ?>">
+                            <span class="mdcc-status__label">
+                                <?php esc_html_e('Ads:', 'maxtdesign-cookie-consent'); ?>
                             </span>
-                            <strong class="mdlc-status__value">
-                                <?php esc_html_e('Off', 'maxtdesign-lean-consent'); ?>
+                            <strong class="mdcc-status__value">
+                                <?php esc_html_e('Off', 'maxtdesign-cookie-consent'); ?>
                             </strong>
                         </span>
                     </div>

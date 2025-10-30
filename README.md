@@ -1,1 +1,1 @@
-# maxtdesign-lean-consent
+# maxtdesign-cookie-consent
