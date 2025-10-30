@@ -1,6 +1,9 @@
 <?php
 /**
- * Admin settings page (placeholder)
+ * Admin Settings
+ *
+ * Handles the WordPress admin settings page for configuring popup appearance,
+ * behavior, and Elementor integration. Uses Settings API for proper sanitization.
  *
  * @package MaxtDesign_Lean_Consent
  * @since 1.6.0
@@ -12,11 +15,32 @@ if (!defined('ABSPATH')) {
 
 class MDLC_Admin_Settings {
     /**
-     * Single instance of the class
+     * Single instance
      *
-     * @var MDLC_Admin_Settings|null
+     * @var MDLC_Admin_Settings
      */
     private static $instance = null;
+
+    /**
+     * Settings option name
+     *
+     * @var string
+     */
+    const OPTION_NAME = 'mdlc_settings';
+
+    /**
+     * Settings option group
+     *
+     * @var string
+     */
+    const OPTION_GROUP = 'mdlc_settings_group';
+
+    /**
+     * Settings page slug
+     *
+     * @var string
+     */
+    const PAGE_SLUG = 'mdlc-settings';
 
     /**
      * Get instance
@@ -41,8 +65,591 @@ class MDLC_Admin_Settings {
      * Initialize WordPress hooks
      */
     private function init_hooks() {
-        // Hooks will be added in subsequent phases
+        // Register settings
+        add_action('admin_init', array($this, 'register_settings'));
+
+        // Add settings page to menu
+        add_action('admin_menu', array($this, 'add_settings_page'));
+
+        // Add settings link on plugins page
+        add_filter('plugin_action_links_' . MDLC_PLUGIN_BASENAME, array($this, 'add_settings_link'));
+
+        // Enqueue admin assets
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
+    }
+
+    /**
+     * Register settings with WordPress Settings API
+     *
+     * @since 1.6.0
+     */
+    public function register_settings() {
+        // Register the settings option
+        register_setting(
+            self::OPTION_GROUP,
+            self::OPTION_NAME,
+            array(
+                'type'              => 'array',
+                'sanitize_callback' => array($this, 'sanitize_settings'),
+                'default'           => mdlc_default_settings(),
+            )
+        );
+
+        // Section: Popup Appearance
+        add_settings_section(
+            'mdlc_section_appearance',
+            __('Popup Appearance', 'maxtdesign-lean-consent'),
+            array($this, 'render_section_appearance'),
+            self::PAGE_SLUG
+        );
+
+        add_settings_field(
+            'popup_enabled',
+            __('Enable Popup', 'maxtdesign-lean-consent'),
+            array($this, 'render_field_popup_enabled'),
+            self::PAGE_SLUG,
+            'mdlc_section_appearance'
+        );
+
+        add_settings_field(
+            'popup_style',
+            __('Style Preset', 'maxtdesign-lean-consent'),
+            array($this, 'render_field_popup_style'),
+            self::PAGE_SLUG,
+            'mdlc_section_appearance'
+        );
+
+        add_settings_field(
+            'popup_position',
+            __('Position', 'maxtdesign-lean-consent'),
+            array($this, 'render_field_popup_position'),
+            self::PAGE_SLUG,
+            'mdlc_section_appearance'
+        );
+
+        add_settings_field(
+            'popup_primary_color',
+            __('Primary Color', 'maxtdesign-lean-consent'),
+            array($this, 'render_field_popup_primary_color'),
+            self::PAGE_SLUG,
+            'mdlc_section_appearance'
+        );
+
+        add_settings_field(
+            'popup_animation',
+            __('Animation', 'maxtdesign-lean-consent'),
+            array($this, 'render_field_popup_animation'),
+            self::PAGE_SLUG,
+            'mdlc_section_appearance'
+        );
+
+        // Section: Popup Content
+        add_settings_section(
+            'mdlc_section_content',
+            __('Popup Content', 'maxtdesign-lean-consent'),
+            array($this, 'render_section_content'),
+            self::PAGE_SLUG
+        );
+
+        add_settings_field(
+            'popup_title',
+            __('Popup Title', 'maxtdesign-lean-consent'),
+            array($this, 'render_field_popup_title'),
+            self::PAGE_SLUG,
+            'mdlc_section_content'
+        );
+
+        add_settings_field(
+            'popup_message',
+            __('Popup Message', 'maxtdesign-lean-consent'),
+            array($this, 'render_field_popup_message'),
+            self::PAGE_SLUG,
+            'mdlc_section_content'
+        );
+
+        // Section: Behavior Settings
+        add_settings_section(
+            'mdlc_section_behavior',
+            __('Behavior Settings', 'maxtdesign-lean-consent'),
+            array($this, 'render_section_behavior'),
+            self::PAGE_SLUG
+        );
+
+        add_settings_field(
+            'popup_shown_duration',
+            __('Cookie Duration', 'maxtdesign-lean-consent'),
+            array($this, 'render_field_popup_shown_duration'),
+            self::PAGE_SLUG,
+            'mdlc_section_behavior'
+        );
+
+        add_settings_field(
+            'reprompt_on_decline',
+            __('Re-prompt on Decline', 'maxtdesign-lean-consent'),
+            array($this, 'render_field_reprompt_on_decline'),
+            self::PAGE_SLUG,
+            'mdlc_section_behavior'
+        );
+
+        // Section: Elementor Integration
+        add_settings_section(
+            'mdlc_section_elementor',
+            __('Elementor Integration (Optional)', 'maxtdesign-lean-consent'),
+            array($this, 'render_section_elementor'),
+            self::PAGE_SLUG
+        );
+
+        add_settings_field(
+            'elementor_popup_id',
+            __('Elementor Popup ID', 'maxtdesign-lean-consent'),
+            array($this, 'render_field_elementor_popup_id'),
+            self::PAGE_SLUG,
+            'mdlc_section_elementor'
+        );
+    }
+
+    /**
+     * Sanitize settings before saving
+     *
+     * @since 1.6.0
+     * @param array $input Raw input from form
+     * @return array Sanitized settings
+     */
+    public function sanitize_settings($input) {
+        $sanitized = array();
+        $defaults = mdlc_default_settings();
+
+        // Popup enabled (boolean)
+        $sanitized['popup_enabled'] = !empty($input['popup_enabled']);
+
+        // Popup style (whitelist)
+        $allowed_styles = array('minimal', 'modern', 'bold');
+        $sanitized['popup_style'] = in_array($input['popup_style'], $allowed_styles, true)
+            ? $input['popup_style']
+            : $defaults['popup_style'];
+
+        // Popup position (whitelist)
+        $allowed_positions = array('top', 'bottom', 'center');
+        $sanitized['popup_position'] = in_array($input['popup_position'], $allowed_positions, true)
+            ? $input['popup_position']
+            : $defaults['popup_position'];
+
+        // Primary color (hex color)
+        $sanitized['popup_primary_color'] = !empty($input['popup_primary_color'])
+            ? sanitize_hex_color($input['popup_primary_color'])
+            : $defaults['popup_primary_color'];
+
+        // Popup animation (whitelist)
+        $allowed_animations = array('slide', 'fade', 'none');
+        $sanitized['popup_animation'] = in_array($input['popup_animation'], $allowed_animations, true)
+            ? $input['popup_animation']
+            : $defaults['popup_animation'];
+
+        // Popup title (text)
+        $sanitized['popup_title'] = !empty($input['popup_title'])
+            ? sanitize_text_field($input['popup_title'])
+            : $defaults['popup_title'];
+
+        // Popup message (textarea)
+        $sanitized['popup_message'] = !empty($input['popup_message'])
+            ? sanitize_textarea_field($input['popup_message'])
+            : $defaults['popup_message'];
+
+        // Cookie duration (positive integer, 1-365 days)
+        $duration = isset($input['popup_shown_duration']) ? absint($input['popup_shown_duration']) : 0;
+        $sanitized['popup_shown_duration'] = ($duration >= 1 && $duration <= 365)
+            ? $duration
+            : $defaults['popup_shown_duration'];
+
+        // Re-prompt on decline (boolean)
+        $sanitized['reprompt_on_decline'] = !empty($input['reprompt_on_decline']);
+
+        // Elementor popup ID (positive integer or empty)
+        $sanitized['elementor_popup_id'] = !empty($input['elementor_popup_id'])
+            ? absint($input['elementor_popup_id'])
+            : '';
+
+        return $sanitized;
+    }
+
+    /**
+     * Add settings page to WordPress admin menu
+     *
+     * @since 1.6.0
+     */
+    public function add_settings_page() {
+        add_options_page(
+            __('Lean Consent Settings', 'maxtdesign-lean-consent'),
+            __('Lean Consent', 'maxtdesign-lean-consent'),
+            'manage_options',
+            self::PAGE_SLUG,
+            array($this, 'render_settings_page')
+        );
+    }
+
+    /**
+     * Add settings link on plugins page
+     *
+     * @since 1.6.0
+     * @param array $links Existing plugin action links
+     * @return array Modified links
+     */
+    public function add_settings_link($links) {
+        $settings_link = sprintf(
+            '<a href="%s">%s</a>',
+            esc_url(admin_url('options-general.php?page=' . self::PAGE_SLUG)),
+            esc_html__('Settings', 'maxtdesign-lean-consent')
+        );
+
+        array_unshift($links, $settings_link);
+        return $links;
+    }
+
+    /**
+     * Enqueue admin assets
+     *
+     * @since 1.6.0
+     * @param string $hook Current admin page hook
+     */
+    public function enqueue_admin_assets($hook) {
+        // Only load on our settings page
+        if ('settings_page_' . self::PAGE_SLUG !== $hook) {
+            return;
+        }
+
+        // Enqueue WordPress color picker
+        wp_enqueue_style('wp-color-picker');
+        wp_enqueue_script('wp-color-picker');
+
+        // Enqueue admin CSS
+        wp_enqueue_style(
+            'mdlc-admin',
+            MDLC_PLUGIN_URL . 'assets/css/admin.css',
+            array(),
+            MDLC_VERSION
+        );
+
+        // Enqueue admin JS
+        wp_enqueue_script(
+            'mdlc-admin',
+            MDLC_PLUGIN_URL . 'assets/js/admin.js',
+            array('jquery', 'wp-color-picker'),
+            MDLC_VERSION,
+            true
+        );
+    }
+
+    /**
+     * Render settings page
+     *
+     * @since 1.6.0
+     */
+    public function render_settings_page() {
+        // Check user capabilities
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        // Display success message if settings saved
+        if (isset($_GET['settings-updated'])) {
+            add_settings_error(
+                'mdlc_messages',
+                'mdlc_message',
+                __('Settings saved successfully.', 'maxtdesign-lean-consent'),
+                'success'
+            );
+        }
+
+        settings_errors('mdlc_messages');
+        ?>
+        <div class="wrap">
+            <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+
+            <div class="mdlc-admin-header">
+                <p class="description">
+                    <?php esc_html_e('Configure your consent popup appearance, content, and behavior. Lightweight consent management with proper Google Consent Mode v2 implementation.', 'maxtdesign-lean-consent'); ?>
+                </p>
+            </div>
+
+            <form method="post" action="options.php">
+                <?php
+                settings_fields(self::OPTION_GROUP);
+                do_settings_sections(self::PAGE_SLUG);
+                submit_button(__('Save Settings', 'maxtdesign-lean-consent'));
+                ?>
+            </form>
+
+            <div class="mdlc-admin-sidebar">
+                <div class="mdlc-info-box">
+                    <h3><?php esc_html_e('Shortcodes Available', 'maxtdesign-lean-consent'); ?></h3>
+                    <p><code>[mdlc_consent_status]</code></p>
+                    <p class="description">
+                        <?php esc_html_e('Displays current consent status chips (Analytics: On/Off, Ads: On/Off)', 'maxtdesign-lean-consent'); ?>
+                    </p>
+
+                    <p><code>[mdlc_manage_consent]</code></p>
+                    <p class="description">
+                        <?php esc_html_e('Displays consent management interface with Accept/Analytics/Decline buttons', 'maxtdesign-lean-consent'); ?>
+                    </p>
+                </div>
+
+                <div class="mdlc-info-box">
+                    <h3><?php esc_html_e('Documentation', 'maxtdesign-lean-consent'); ?></h3>
+                    <ul>
+                        <li><a href="https://maxtdesign.com/lean-consent/docs" target="_blank"><?php esc_html_e('Getting Started Guide', 'maxtdesign-lean-consent'); ?></a></li>
+                        <li><a href="https://maxtdesign.com/lean-consent/google-consent-mode" target="_blank"><?php esc_html_e('Google Consent Mode v2', 'maxtdesign-lean-consent'); ?></a></li>
+                        <li><a href="https://maxtdesign.com/lean-consent/elementor-integration" target="_blank"><?php esc_html_e('Elementor Integration', 'maxtdesign-lean-consent'); ?></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
+    /* ========================================================================
+       SECTION CALLBACKS
+       ======================================================================== */
+
+    /**
+     * Render appearance section description
+     */
+    public function render_section_appearance() {
+        echo '<p>' . esc_html__('Customize the visual appearance of the consent popup.', 'maxtdesign-lean-consent') . '</p>';
+    }
+
+    /**
+     * Render content section description
+     */
+    public function render_section_content() {
+        echo '<p>' . esc_html__('Configure the text content displayed in the popup.', 'maxtdesign-lean-consent') . '</p>';
+    }
+
+    /**
+     * Render behavior section description
+     */
+    public function render_section_behavior() {
+        echo '<p>' . esc_html__('Control popup behavior and timing.', 'maxtdesign-lean-consent') . '</p>';
+    }
+
+    /**
+     * Render Elementor section description
+     */
+    public function render_section_elementor() {
+        echo '<p>' . esc_html__('If you prefer to use a custom Elementor popup instead of the built-in popup, enter your Elementor Popup ID here. Leave blank to use the built-in popup.', 'maxtdesign-lean-consent') . '</p>';
+    }
+
+    /* ========================================================================
+       FIELD CALLBACKS
+       ======================================================================== */
+
+    /**
+     * Render popup enabled field
+     */
+    public function render_field_popup_enabled() {
+        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $checked = !empty($settings['popup_enabled']) ? 'checked' : '';
+        ?>
+        <label>
+            <input type="checkbox"
+                   name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_enabled]"
+                   value="1"
+                   <?php echo $checked; ?> />
+            <?php esc_html_e('Display the consent popup to visitors', 'maxtdesign-lean-consent'); ?>
+        </label>
+        <p class="description">
+            <?php esc_html_e('Uncheck to temporarily disable the popup without losing your settings.', 'maxtdesign-lean-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render popup style field
+     */
+    public function render_field_popup_style() {
+        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $current = $settings['popup_style'];
+        ?>
+        <select name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_style]" id="mdlc-popup-style">
+            <option value="minimal" <?php selected($current, 'minimal'); ?>>
+                <?php esc_html_e('Minimal', 'maxtdesign-lean-consent'); ?>
+            </option>
+            <option value="modern" <?php selected($current, 'modern'); ?>>
+                <?php esc_html_e('Modern', 'maxtdesign-lean-consent'); ?>
+            </option>
+            <option value="bold" <?php selected($current, 'bold'); ?>>
+                <?php esc_html_e('Bold', 'maxtdesign-lean-consent'); ?>
+            </option>
+        </select>
+        <p class="description">
+            <?php esc_html_e('Choose a visual style preset. Minimal: Clean and subtle. Modern: Rounded and polished. Bold: Strong and prominent.', 'maxtdesign-lean-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render popup position field
+     */
+    public function render_field_popup_position() {
+        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $current = $settings['popup_position'];
+        ?>
+        <select name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_position]" id="mdlc-popup-position">
+            <option value="top" <?php selected($current, 'top'); ?>>
+                <?php esc_html_e('Top Banner', 'maxtdesign-lean-consent'); ?>
+            </option>
+            <option value="bottom" <?php selected($current, 'bottom'); ?>>
+                <?php esc_html_e('Bottom Banner', 'maxtdesign-lean-consent'); ?>
+            </option>
+            <option value="center" <?php selected($current, 'center'); ?>>
+                <?php esc_html_e('Center Modal', 'maxtdesign-lean-consent'); ?>
+            </option>
+        </select>
+        <p class="description">
+            <?php esc_html_e('Where the popup appears on the screen.', 'maxtdesign-lean-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render primary color field
+     */
+    public function render_field_popup_primary_color() {
+        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $current = $settings['popup_primary_color'];
+        ?>
+        <input type="text"
+               name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_primary_color]"
+               value="<?php echo esc_attr($current); ?>"
+               class="mdlc-color-picker"
+               data-default-color="#0073aa" />
+        <p class="description">
+            <?php esc_html_e('Color for primary buttons. Click to choose a color.', 'maxtdesign-lean-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render animation field
+     */
+    public function render_field_popup_animation() {
+        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $current = $settings['popup_animation'];
+        ?>
+        <select name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_animation]" id="mdlc-popup-animation">
+            <option value="slide" <?php selected($current, 'slide'); ?>>
+                <?php esc_html_e('Slide In', 'maxtdesign-lean-consent'); ?>
+            </option>
+            <option value="fade" <?php selected($current, 'fade'); ?>>
+                <?php esc_html_e('Fade In', 'maxtdesign-lean-consent'); ?>
+            </option>
+            <option value="none" <?php selected($current, 'none'); ?>>
+                <?php esc_html_e('No Animation', 'maxtdesign-lean-consent'); ?>
+            </option>
+        </select>
+        <p class="description">
+            <?php esc_html_e('Animation when popup appears.', 'maxtdesign-lean-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render popup title field
+     */
+    public function render_field_popup_title() {
+        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $current = $settings['popup_title'];
+        ?>
+        <input type="text"
+               name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_title]"
+               value="<?php echo esc_attr($current); ?>"
+               class="regular-text" />
+        <p class="description">
+            <?php esc_html_e('Headline text displayed in the popup.', 'maxtdesign-lean-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render popup message field
+     */
+    public function render_field_popup_message() {
+        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $current = $settings['popup_message'];
+        ?>
+        <textarea name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_message]"
+                  rows="3"
+                  class="large-text"><?php echo esc_textarea($current); ?></textarea>
+        <p class="description">
+            <?php esc_html_e('Description text explaining cookie usage.', 'maxtdesign-lean-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render cookie duration field
+     */
+    public function render_field_popup_shown_duration() {
+        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $current = $settings['popup_shown_duration'];
+        ?>
+        <input type="number"
+               name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_shown_duration]"
+               value="<?php echo esc_attr($current); ?>"
+               min="1"
+               max="365"
+               step="1"
+               class="small-text" />
+        <?php esc_html_e('days', 'maxtdesign-lean-consent'); ?>
+        <p class="description">
+            <?php esc_html_e('How many days after closing the popup before showing it again (1-365 days).', 'maxtdesign-lean-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render re-prompt on decline field
+     */
+    public function render_field_reprompt_on_decline() {
+        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $checked = !empty($settings['reprompt_on_decline']) ? 'checked' : '';
+        ?>
+        <label>
+            <input type="checkbox"
+                   name="<?php echo esc_attr(self::OPTION_NAME); ?>[reprompt_on_decline]"
+                   value="1"
+                   <?php echo $checked; ?> />
+            <?php esc_html_e('Show popup again once per session if user declines all cookies', 'maxtdesign-lean-consent'); ?>
+        </label>
+        <p class="description">
+            <?php esc_html_e('If enabled, the popup will re-appear once per browsing session when a user declines tracking.', 'maxtdesign-lean-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render Elementor popup ID field
+     */
+    public function render_field_elementor_popup_id() {
+        $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
+        $current = $settings['elementor_popup_id'];
+        ?>
+        <input type="number"
+               name="<?php echo esc_attr(self::OPTION_NAME); ?>[elementor_popup_id]"
+               value="<?php echo esc_attr($current); ?>"
+               min="1"
+               step="1"
+               class="regular-text"
+               placeholder="<?php esc_attr_e('Leave blank to use built-in popup', 'maxtdesign-lean-consent'); ?>" />
+        <p class="description">
+            <?php
+            printf(
+                /* translators: %s: Link to documentation */
+                esc_html__('Enter your Elementor Popup ID to use a custom popup instead of the built-in one. %s', 'maxtdesign-lean-consent'),
+                '<a href="https://maxtdesign.com/lean-consent/elementor-integration" target="_blank">' . esc_html__('Learn how to find your popup ID', 'maxtdesign-lean-consent') . '</a>'
+            );
+            ?>
+        </p>
+        <?php
     }
 }
-
 
