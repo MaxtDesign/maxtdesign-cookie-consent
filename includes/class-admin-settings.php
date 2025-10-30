@@ -350,17 +350,7 @@ class MDLC_Admin_Settings {
             return;
         }
 
-        // Display success message if settings saved
-        if (isset($_GET['settings-updated'])) {
-            add_settings_error(
-                'mdlc_messages',
-                'mdlc_message',
-                __('Settings saved successfully.', 'maxtdesign-lean-consent'),
-                'success'
-            );
-        }
-
-        settings_errors('mdlc_messages');
+        // Rely on WordPress core to display the settings-updated notice globally.
         ?>
         <div class="wrap">
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
@@ -447,13 +437,12 @@ class MDLC_Admin_Settings {
      */
     public function render_field_popup_enabled() {
         $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
-        $checked = !empty($settings['popup_enabled']) ? 'checked' : '';
         ?>
         <label>
             <input type="checkbox"
                    name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_enabled]"
                    value="1"
-                   <?php echo $checked; ?> />
+                   <?php checked(!empty($settings['popup_enabled']), true); ?> />
             <?php esc_html_e('Display the consent popup to visitors', 'maxtdesign-lean-consent'); ?>
         </label>
         <p class="description">
@@ -611,13 +600,12 @@ class MDLC_Admin_Settings {
      */
     public function render_field_reprompt_on_decline() {
         $settings = get_option(self::OPTION_NAME, mdlc_default_settings());
-        $checked = !empty($settings['reprompt_on_decline']) ? 'checked' : '';
         ?>
         <label>
             <input type="checkbox"
                    name="<?php echo esc_attr(self::OPTION_NAME); ?>[reprompt_on_decline]"
                    value="1"
-                   <?php echo $checked; ?> />
+                   <?php checked(!empty($settings['reprompt_on_decline']), true); ?> />
             <?php esc_html_e('Show popup again once per session if user declines all cookies', 'maxtdesign-lean-consent'); ?>
         </label>
         <p class="description">

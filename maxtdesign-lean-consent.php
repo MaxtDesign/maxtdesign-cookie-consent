@@ -50,11 +50,11 @@ spl_autoload_register(function ($class) {
 register_activation_hook(__FILE__, 'mdlc_activate_plugin');
 function mdlc_activate_plugin() {
     if (version_compare(get_bloginfo('version'), '5.8', '<')) {
-        wp_die(__('MaxtDesign Lean Consent requires WordPress 5.8 or higher.', 'maxtdesign-lean-consent'));
+        wp_die(esc_html__('MaxtDesign Lean Consent requires WordPress 5.8 or higher.', 'maxtdesign-lean-consent'));
     }
 
     if (version_compare(PHP_VERSION, '7.4', '<')) {
-        wp_die(__('MaxtDesign Lean Consent requires PHP 7.4 or higher.', 'maxtdesign-lean-consent'));
+        wp_die(esc_html__('MaxtDesign Lean Consent requires PHP 7.4 or higher.', 'maxtdesign-lean-consent'));
     }
 
     if (!get_option('mdlc_settings')) {
@@ -92,12 +92,6 @@ function mdlc_default_settings() {
 // -----------------------------------------------------------------------------
 add_action('plugins_loaded', 'mdlc_init_plugin');
 function mdlc_init_plugin() {
-    load_plugin_textdomain(
-        'maxtdesign-lean-consent',
-        false,
-        dirname(MDLC_PLUGIN_BASENAME) . '/languages'
-    );
-
     if (class_exists('MDLC_Consent_Manager')) {
         MDLC_Consent_Manager::get_instance();
     }

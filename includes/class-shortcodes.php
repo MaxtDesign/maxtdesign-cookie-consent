@@ -74,7 +74,7 @@ class MDLC_Shortcodes {
         }
 
         // Inline CSS for shortcodes
-        wp_register_style('mdlc-shortcodes', false);
+        wp_register_style('mdlc-shortcodes', false, array(), MDLC_VERSION);
         wp_enqueue_style('mdlc-shortcodes');
 
         $css = $this->get_shortcode_css();
@@ -114,9 +114,18 @@ class MDLC_Shortcodes {
         ?>
 /* MaxtDesign Lean Consent - Shortcode Styles */
 
+/* Ensure shortcode blocks are centered within viewport when theme containers are absent */
+.mdlc-status,
+.mdlc-manage {
+    box-sizing: border-box;
+    width: min(100%, 1200px);
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* Consent Status Chips */
 .mdlc-status {
-    display: inline-flex;
+    display: flex;
     flex-wrap: wrap;
     gap: 8px;
     align-items: center;

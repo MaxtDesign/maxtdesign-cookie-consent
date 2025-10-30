@@ -374,8 +374,8 @@ class MDLC_Popup_System {
         $style     = sanitize_text_field($settings['popup_style'] ?? 'minimal');
         $position  = sanitize_text_field($settings['popup_position'] ?? 'bottom');
         $animation = sanitize_text_field($settings['popup_animation'] ?? 'slide');
-        $title     = !empty($settings['popup_title']) ? esc_html($settings['popup_title']) : __('Cookie Consent', 'maxtdesign-lean-consent');
-        $message   = !empty($settings['popup_message']) ? esc_html($settings['popup_message']) : __('We use cookies to enhance your browsing experience and analyze our traffic.', 'maxtdesign-lean-consent');
+        $title     = !empty($settings['popup_title']) ? $settings['popup_title'] : __('Cookie Consent', 'maxtdesign-lean-consent');
+        $message   = !empty($settings['popup_message']) ? $settings['popup_message'] : __('We use cookies to enhance your browsing experience and analyze our traffic.', 'maxtdesign-lean-consent');
         
         // Build CSS classes
         $classes = array(
@@ -405,11 +405,11 @@ class MDLC_Popup_System {
                     </button>
                     
                     <h2 id="mdlc-popup-title" class="mdlc-popup__title">
-                        <?php echo $title; ?>
+                        <?php echo esc_html($title); ?>
                     </h2>
                     
                     <p id="mdlc-popup-message" class="mdlc-popup__message">
-                        <?php echo $message; ?>
+                        <?php echo esc_html($message); ?>
                     </p>
                     
                     <div class="mdlc-popup__actions">
