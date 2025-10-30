@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MaxtDesign Lean Consent
  * Plugin URI: https://maxtdesign.com/lean-consent
- * Description: Lightweight consent management (<10KB) with proper Google Consent Mode v2. CCPA/GDPR compliance without slowing your site.
+ * Description: Lightweight consent management (<10KB gzipped) with proper Google Consent Mode v2. CCPA/GDPR compliance without slowing your site.
  * Version: 1.6.0
  * Requires at least: 5.8
  * Requires PHP: 7.4
