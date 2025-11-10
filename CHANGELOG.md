@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+### Fixed
+- Fixed popup re-appearing after decline when "Re-prompt on Decline" is enabled
+  - Added visibility check to ensure popup re-appears only after user has closed it
+  - Prevents unintended popup display on initial page load with denied consent
 ### Changed
 - Renamed plugin display name to "MaxtDesign Cookie Consent - Google Consent Mode v2"
 - Updated slug and text domain to `maxtdesign-cookie-consent`
@@ -16,12 +20,9 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Updated asset handles to `mdcc-*`
 - Rewrote readme.txt for SEO with new branding and messaging
 - Renamed POT to `maxtdesign-cookie-consent.pot` and updated languages README
-### Changed
 - Flattened plugin structure to repository root (removed nested folder)
 - Refined .gitignore to include docs in repo; confirmed .svnignore for WP.org
 - Readme: Updated Contributors to WordPress.org username `slaacr`
-### Fixed
-- Updated all remaining references from old name/prefix to ensure zero breakage
 
 ## [1.6.0] - 2025-10-30
 ### Added
