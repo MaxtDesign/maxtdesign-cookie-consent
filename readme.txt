@@ -1,4 +1,4 @@
-=== Cookie Consent - Google Consent Mode v2 ===
+=== MaxtDesign Cookie Consent - Google Consent Mode v2 ===
 
 Contributors: slaacr
 Donate link: https://maxtdesign.com/cookie-consent
@@ -15,9 +15,9 @@ Free cookie consent that actually controls Google Analytics & Ads (not just a ba
 
 == Description ==
 
-= The Lean Consent Manager That Actually Works =
+= The MaxtDesign Cookie Consent Manager That Actually Works =
 
-Most WordPress consent plugins either don't actually control tracking (they just show a form) or they're so bloated they slow down your site significantly. **MaxtDesign Lean Consent is different**: proper Google Consent Mode v2 implementation in under 10KB.
+Most WordPress consent plugins either don't actually control tracking (they just show a form) or they're so bloated they slow down your site significantly. **MaxtDesign Cookie Consent is different**: proper Google Consent Mode v2 implementation in under 10KB.
 
 = Why This Plugin? =
 
@@ -154,10 +154,10 @@ For comprehensive cookie auditing and multi-platform tracking control, consider 
 
 1. Log in to your WordPress admin panel
 2. Go to **Plugins > Add New**
-3. Search for "MaxtDesign Lean Consent"
+3. Search for "MaxtDesign Cookie Consent"
 4. Click **Install Now** on this plugin
 5. Click **Activate**
-6. Go to **Settings > Lean Consent** to configure
+6. Go to **Settings > Cookie Consent** to configure
 
 = Manual Installation =
 
@@ -167,13 +167,13 @@ For comprehensive cookie auditing and multi-platform tracking control, consider 
 4. Click **Choose File** and select the ZIP file
 5. Click **Install Now**
 6. Click **Activate Plugin**
-7. Go to **Settings > Lean Consent** to configure
+7. Go to **Settings > Cookie Consent** to configure
 
 = Configuration =
 
 After activation:
 
-1. **Go to Settings > Lean Consent**
+1. **Go to Settings > Cookie Consent**
 2. **Choose a style preset** (Minimal, Modern, or Bold)
 3. **Select position** (Top, Bottom, or Center)
 4. **Customize primary color** to match your brand
@@ -204,7 +204,7 @@ Place `[mdcc_manage_consent]` in your privacy policy page or footer to let users
 
 1. Create a custom Elementor popup with your consent buttons
 2. Add the appropriate button actions (see documentation)
-3. Go to **Settings > Lean Consent**
+3. Go to **Settings > Cookie Consent**
 4. Enter your Elementor Popup ID in the **Elementor Integration** section
 5. Save settings
 
@@ -365,7 +365,7 @@ Initial public release. Lightweight consent management with proper Google Consen
 
 == Privacy Policy ==
 
-MaxtDesign Lean Consent does not collect, store, or transmit any user data. All consent preferences are stored locally in the user's browser using localStorage. No information is sent to external servers.
+MaxtDesign Cookie Consent does not collect, store, or transmit any user data. All consent preferences are stored locally in the user's browser using localStorage. No information is sent to external servers.
 
 However, this plugin manages consent for third-party services (Google Analytics, Google Ads). Those services have their own privacy policies:
 

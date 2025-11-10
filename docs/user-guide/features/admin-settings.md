@@ -5,14 +5,14 @@ keywords: [settings, admin, color picker, elementor]
 category: user-guide
 audience: user
 difficulty: beginner
-last_updated: 2025-10-30
+last_updated: 2025-11-10
 version: 1.6.0
 ---
 
 # Admin Settings
 
 ## Overview
-Configure the consent popup using a clean settings page at Settings > Lean Consent. Options cover appearance, content, behavior, and Elementor integration.
+Configure the consent popup using a clean settings page at Settings > Cookie Consent. Options cover appearance, content, behavior, and Elementor integration.
 
 ## Sections
 - **Popup Appearance**: Enable, style preset, position, primary color, animation
@@ -21,7 +21,7 @@ Configure the consent popup using a clean settings page at Settings > Lean Conse
 - **Elementor Integration**: Optional popup ID to use an Elementor popup instead of the built-in one
 
 ## Basic Usage
-1. Go to Settings > Lean Consent.
+1. Go to Settings > Cookie Consent.
 2. Adjust appearance (style, position, color, animation).
 3. Set title and message.
 4. Choose cookie duration (1–365 days) and re-prompt behavior.

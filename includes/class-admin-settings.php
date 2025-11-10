@@ -5,7 +5,7 @@
  * Handles the WordPress admin settings page for configuring popup appearance,
  * behavior, and Elementor integration. Uses Settings API for proper sanitization.
  *
- * @package MaxtDesign_Lean_Consent
+ * @package MaxtDesign_Cookie_Consent
  * @since 1.6.0
  */
 

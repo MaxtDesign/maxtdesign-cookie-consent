@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Cookie Consent - Google Consent Mode v2
+ * Plugin Name: MaxtDesign Cookie Consent - Google Consent Mode v2
  * Plugin URI: https://maxtdesign.com/cookie-consent
  * Description: Actually controls Google Analytics & Ads tracking (not just a banner). Free alternative to $50/month solutions. Works with existing GA4. Won't slow your site.
  * Version: 1.6.0
@@ -50,11 +50,11 @@ spl_autoload_register(function ($class) {
 register_activation_hook(__FILE__, 'mdcc_activate_plugin');
 function mdcc_activate_plugin() {
     if (version_compare(get_bloginfo('version'), '5.8', '<')) {
-        wp_die(esc_html__('Cookie Consent - Google Consent Mode v2 requires WordPress 5.8 or higher.', 'maxtdesign-cookie-consent'));
+        wp_die(esc_html__('MaxtDesign Cookie Consent - Google Consent Mode v2 requires WordPress 5.8 or higher.', 'maxtdesign-cookie-consent'));
     }
 
     if (version_compare(PHP_VERSION, '7.4', '<')) {
-        wp_die(esc_html__('Cookie Consent - Google Consent Mode v2 requires PHP 7.4 or higher.', 'maxtdesign-cookie-consent'));
+        wp_die(esc_html__('MaxtDesign Cookie Consent - Google Consent Mode v2 requires PHP 7.4 or higher.', 'maxtdesign-cookie-consent'));
     }
 
     if (!get_option('mdcc_settings')) {

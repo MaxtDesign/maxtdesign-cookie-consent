@@ -5,7 +5,7 @@
  * Renders and manages the standalone consent popup with multiple style presets,
  * position options, and full accessibility support. Cookie-based "shown" tracking.
  *
- * @package MaxtDesign_Lean_Consent
+ * @package MaxtDesign_Cookie_Consent
  * @since 1.6.0
  */
 

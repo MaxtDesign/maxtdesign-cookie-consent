@@ -6,7 +6,7 @@
  * - [mdcc_consent_status] - Display current consent status chips
  * - [mdcc_manage_consent] - Full consent management interface
  *
- * @package MaxtDesign_Lean_Consent
+ * @package MaxtDesign_Cookie_Consent
  * @since 1.6.0
  */
 

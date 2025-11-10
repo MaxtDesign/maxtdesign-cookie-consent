@@ -1,8 +1,8 @@
-# Cookie Consent - Google Consent Mode v2 - Translations
+# MaxtDesign Cookie Consent - Google Consent Mode v2 - Translations
 
 ## For Translators
 
-Thank you for helping translate Cookie Consent - Google Consent Mode v2!
+Thank you for helping translate MaxtDesign Cookie Consent - Google Consent Mode v2!
 
 ### Translation Process
 

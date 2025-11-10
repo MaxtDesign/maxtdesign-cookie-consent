@@ -6,8 +6,9 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 ### Changed
-- Renamed plugin to "Cookie Consent - Google Consent Mode v2"
+- Renamed plugin display name to "MaxtDesign Cookie Consent - Google Consent Mode v2"
 - Updated slug and text domain to `maxtdesign-cookie-consent`
+- Updated documentation, licensing, and translation assets to reflect new name
 - Refactored all prefixes: `MDLC_/mdlc_/mdlc-` → `MDCC_/mdcc_/mdcc-`
 - Updated all option/transient names to `mdcc_*`
 - Updated shortcode names to `[mdcc_consent_status]` and `[mdcc_manage_consent]`
