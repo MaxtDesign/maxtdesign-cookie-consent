@@ -136,7 +136,7 @@ class MDCC_Popup_System {
             }
         ";
 
-        wp_add_inline_style('mdcc-popup', $custom_css);
+        wp_add_inline_style('mdcc-popup', wp_strip_all_tags($custom_css));
 
         // Enqueue popup behavior script (inline for minimal size)
         wp_register_script('mdcc-popup-behavior', false, array('mdcc-consent-runtime'), MDCC_VERSION, true);
@@ -155,7 +155,7 @@ class MDCC_Popup_System {
 
         // Add inline popup behavior script
         $popup_js = $this->get_popup_javascript();
-        wp_add_inline_script('mdcc-popup-behavior', $popup_js);
+        wp_add_inline_script('mdcc-popup-behavior', wp_strip_all_tags($popup_js));
     }
 
     /**

@@ -1,7 +1,6 @@
 === MaxtDesign Cookie Consent - Google Consent Mode v2 ===
 
 Contributors: slaacr
-Donate link: https://maxtdesign.com/cookie-consent
 Tags: cookie-consent, gdpr, google-consent-mode, ccpa, analytics
 Requires at least: 5.8
 Tested up to: 6.8
