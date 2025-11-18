@@ -1,7 +1,7 @@
 # Validation Report (Pre-Submission)
 
-Plugin: MaxtDesign Lean Consent v1.6.0
-Date: 2025-10-30
+Plugin: MaxtDesign Cookie Consent - Google Consent Mode v2 v1.6.0
+Date: 2025-11-10
 
 ## Automated Tools
 

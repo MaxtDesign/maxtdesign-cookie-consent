@@ -6,7 +6,7 @@
  * - [mdcc_consent_status] - Display current consent status chips
  * - [mdcc_manage_consent] - Full consent management interface
  *
- * @package MaxtDesign_Lean_Consent
+ * @package MaxtDesign_Cookie_Consent
  * @since 1.6.0
  */
 
@@ -78,7 +78,7 @@ class MDCC_Shortcodes {
         wp_enqueue_style('mdcc-shortcodes');
 
         $css = $this->get_shortcode_css();
-        wp_add_inline_style('mdcc-shortcodes', $css);
+        wp_add_inline_style('mdcc-shortcodes', wp_strip_all_tags($css));
 
         // Inline JavaScript for real-time updates
         // Depends on consent-runtime.js (already enqueued by consent manager)
@@ -97,7 +97,7 @@ class MDCC_Shortcodes {
         );
 
         $js = $this->get_shortcode_javascript();
-        wp_add_inline_script('mdcc-shortcodes', $js);
+        wp_add_inline_script('mdcc-shortcodes', wp_strip_all_tags($js));
     }
 
     /**

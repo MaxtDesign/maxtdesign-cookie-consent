@@ -1,17 +1,17 @@
 ---
-title: Cookie Consent - Google Consent Mode v2 Docs
-description: Documentation entry point for Cookie Consent - Google Consent Mode v2 plugin
+title: MaxtDesign Cookie Consent - Google Consent Mode v2 Docs
+description: Documentation entry point for the MaxtDesign Cookie Consent - Google Consent Mode v2 plugin
 keywords: [consent, gdpr, ccpa, wordpress, gcm]
 category: user-guide
 audience: user
 difficulty: beginner
-last_updated: 2025-10-30
+last_updated: 2025-11-10
 version: 1.6.0
 ---
 
 ## Overview
 
-Initial documentation scaffolding for Cookie Consent - Google Consent Mode v2. Details will be expanded in subsequent phases.
+Initial documentation scaffolding for MaxtDesign Cookie Consent - Google Consent Mode v2. Details will be expanded in subsequent phases.
 
 
 ## Uninstall and Data Removal

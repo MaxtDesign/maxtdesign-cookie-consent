@@ -1,6 +1,6 @@
 # Post-Launch Monitoring Plan
 
-## MaxtDesign Lean Consent
+## MaxtDesign Cookie Consent - Google Consent Mode v2
 
 ### Week 1: Intensive Monitoring
 
@@ -47,8 +47,8 @@ Common Issue: Popup Not Appearing
 ```
 Hi [name],
 
-Thanks for using MaxtDesign Lean Consent! Please try:
-1) Settings > Lean Consent > Ensure "Enable Popup" is checked
+Thanks for using MaxtDesign Cookie Consent! Please try:
+1) Settings > Cookie Consent > Ensure "Enable Popup" is checked
 2) Clear consent cookie/localStorage
 3) Test in incognito/private window
 4) Temporarily switch to a default theme

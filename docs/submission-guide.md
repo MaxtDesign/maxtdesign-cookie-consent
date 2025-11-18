@@ -1,6 +1,6 @@
 # WordPress.org Submission Guide
 
-## MaxtDesign Lean Consent v1.6.0
+## MaxtDesign Cookie Consent - Google Consent Mode v2 v1.6.0
 
 ### Pre-Submission Checklist
 - [x] Plugin fully developed and tested

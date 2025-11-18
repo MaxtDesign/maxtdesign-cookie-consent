@@ -5,7 +5,7 @@
  * Handles Google Consent Mode v2 implementation, consent state management,
  * and frontend JavaScript enqueuing. Zero database queries, localStorage-based.
  *
- * @package MaxtDesign_Lean_Consent
+ * @package MaxtDesign_Cookie_Consent
  * @since 1.6.0
  */
 

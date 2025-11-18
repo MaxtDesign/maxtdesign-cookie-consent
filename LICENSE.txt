@@ -1,4 +1,4 @@
-MaxtDesign Lean Consent - Lightweight GDPR/CCPA Consent Manager
+MaxtDesign Cookie Consent - Google Consent Mode v2 - Lightweight GDPR/CCPA Consent Manager
 
 Copyright (C) 2025 MaxtDesign
 
