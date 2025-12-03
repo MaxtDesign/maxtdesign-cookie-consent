@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: MaxtDesign Cookie Consent - Google Consent Mode v2
- * Plugin URI: https://maxtdesign.com/cookie-consent
+ * Plugin URI: https://maxtdesign.com/
  * Description: Actually controls Google Analytics & Ads tracking (not just a banner). Free alternative to $50/month solutions. Works with existing GA4. Won't slow your site.
  * Version: 1.6.0
  * Requires at least: 5.8
