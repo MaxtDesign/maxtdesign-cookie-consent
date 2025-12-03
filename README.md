@@ -36,3 +36,22 @@ Reinstalling the plugin starts with default settings.
 - Screenshots Plan: `docs/assets/screenshots.md`
 
 
+## Website & Documentation To-Do
+
+The following website pages and documentation links need to be created before they can be added back to the plugin readme.txt:
+
+- [ ] **Elementor Integration Documentation:** `https://maxtdesign.com/lean-consent/elementor-integration`
+  - Documentation page explaining how to integrate custom Elementor popups with the plugin
+  - Should include step-by-step instructions, button action setup, and examples
+
+- [ ] **Main Documentation Hub:** `https://maxtdesign.com/lean-consent/docs`
+  - Central documentation page for the plugin
+  - Should include user guides, developer documentation, FAQ, and links to other resources
+
+- [ ] **Pro Version Waitlist:** `https://maxtdesign.com/lean-consent/pro`
+  - Landing page for the Pro version waitlist
+  - Should highlight Pro features, pricing (when available), and signup form
+
+**Note:** These links have been temporarily removed from `readme.txt` until the pages are created. Once completed, they should be added back to the appropriate sections in the readme.
+
+

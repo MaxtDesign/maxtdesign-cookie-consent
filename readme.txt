@@ -209,8 +209,6 @@ Place `[mdcc_manage_consent]` in your privacy policy page or footer to let users
 
 Your custom popup will now be used instead of the built-in popup.
 
-[Documentation: https://maxtdesign.com/lean-consent/elementor-integration](https://maxtdesign.com/lean-consent/elementor-integration)
-
 
 == Frequently Asked Questions ==
 
@@ -298,15 +296,12 @@ Yes! The plugin is fully translation-ready. Contribute translations at: [https:/
 
 = Where can I get support? =
 
-* **Documentation:** [https://maxtdesign.com/lean-consent/docs](https://maxtdesign.com/lean-consent/docs)
 * **Support Forum:** [https://wordpress.org/support/plugin/maxtdesign-cookie-consent](https://wordpress.org/support/plugin/maxtdesign-cookie-consent)
 * **Email:** support@maxtdesign.com (for Pro customers)
 
 = Is there a Pro version? =
 
-Coming in 2025! Pro will include multi-platform tracking control (Facebook, Hotjar, LinkedIn, TikTok), consent analytics, geolocation-based prompts, and white-label mode for agencies.
-
-[Join waitlist: https://maxtdesign.com/lean-consent/pro](https://maxtdesign.com/lean-consent/pro)
+Coming in 2026! Pro will include multi-platform tracking control (Facebook, Hotjar, LinkedIn, TikTok), consent analytics, geolocation-based prompts, and white-label mode for agencies.
 
 
 == Screenshots ==
@@ -377,8 +372,6 @@ It is your responsibility to include appropriate disclosures in your site's priv
 == Support ==
 
 For support, please use the [WordPress.org support forum](https://wordpress.org/support/plugin/maxtdesign-cookie-consent).
-
-For documentation, visit: [https://maxtdesign.com/lean-consent/docs](https://maxtdesign.com/lean-consent/docs)
 
 
 == Credits ==
