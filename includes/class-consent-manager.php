@@ -60,7 +60,7 @@ class MDCC_Consent_Manager {
      * Enqueue frontend consent runtime JavaScript
      *
      * Loads the core consent logic with GCM v2 implementation.
-     * Passes configuration data via wp_localize_script for security.
+     * Loads minified version by default, source version when SCRIPT_DEBUG is enabled.
      *
      * @since 1.6.0
      * @return void
@@ -71,13 +71,14 @@ class MDCC_Consent_Manager {
             return;
         }
 
-        // Enqueue the consent runtime script
+        $suffix = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
+
         wp_enqueue_script(
             'mdcc-consent-runtime',
-            MDCC_PLUGIN_URL . 'assets/js/consent-runtime.js',
-            array(), // No dependencies (vanilla JS)
+            MDCC_PLUGIN_URL . 'assets/js/consent-runtime' . $suffix . '.js',
+            array(),
             MDCC_VERSION,
-            true // Load in footer
+            true
         );
 
         // Pass configuration to JavaScript

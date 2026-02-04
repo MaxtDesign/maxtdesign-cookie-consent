@@ -316,31 +316,31 @@ class MDCC_Admin_Settings {
     /**
      * Enqueue admin assets
      *
+     * Loads minified version by default, source version when SCRIPT_DEBUG is enabled.
+     *
      * @since 1.6.0
      * @param string $hook Current admin page hook
      */
     public function enqueue_admin_assets($hook) {
-        // Only load on our settings page
         if ('settings_page_' . self::PAGE_SLUG !== $hook) {
             return;
         }
 
-        // Enqueue WordPress color picker
         wp_enqueue_style('wp-color-picker');
         wp_enqueue_script('wp-color-picker');
 
-        // Enqueue admin CSS
+        $suffix = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
+
         wp_enqueue_style(
             'mdcc-admin',
-            MDCC_PLUGIN_URL . 'assets/css/admin.css',
+            MDCC_PLUGIN_URL . 'assets/css/admin' . $suffix . '.css',
             array(),
             MDCC_VERSION
         );
 
-        // Enqueue admin JS
         wp_enqueue_script(
             'mdcc-admin',
-            MDCC_PLUGIN_URL . 'assets/js/admin.js',
+            MDCC_PLUGIN_URL . 'assets/js/admin' . $suffix . '.js',
             array('jquery', 'wp-color-picker'),
             MDCC_VERSION,
             true

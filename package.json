@@ -1,0 +1,22 @@
+{
+  "name": "maxtdesign-cookie-consent",
+  "version": "1.6.0",
+  "description": "Build tools for MaxtDesign Cookie Consent",
+  "private": true,
+  "scripts": {
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "postcss assets/css/popup.css -o assets/css/popup.min.css --no-map",
+    "build:js": "terser assets/js/consent-runtime.js -o assets/js/consent-runtime.min.js --compress --mangle --comments false",
+    "build:admin-css": "postcss assets/css/admin.css -o assets/css/admin.min.css --no-map",
+    "build:admin-js": "terser assets/js/admin.js -o assets/js/admin.min.js --compress --mangle --comments false",
+    "validate": "node tools/validate-size.js",
+    "watch:css": "postcss assets/css/popup.css -o assets/css/popup.min.css --no-map --watch",
+    "watch:js": "terser assets/js/consent-runtime.js -o assets/js/consent-runtime.min.js --compress --mangle --comments false --watch"
+  },
+  "devDependencies": {
+    "postcss": "^8.4.32",
+    "postcss-cli": "^11.0.0",
+    "cssnano": "^6.0.2",
+    "terser": "^5.26.0"
+  }
+}
