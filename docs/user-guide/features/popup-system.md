@@ -6,7 +6,7 @@ category: user-guide
 audience: user
 difficulty: beginner
 last_updated: 2025-10-30
-version: 1.6.0
+version: 1.7.0
 ---
 
 # Standalone Popup System
@@ -21,7 +21,7 @@ Built-in, dependency-free consent popup with Minimal, Modern, and Bold styles; t
 
 ## Requirements
 - WordPress 5.8+, PHP 7.4+
-- Plugin version 1.6.0
+- Plugin version 1.7.0
 
 ## Basic Usage
 

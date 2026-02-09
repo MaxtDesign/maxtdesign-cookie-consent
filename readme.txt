@@ -4,7 +4,7 @@ Contributors: slaacr
 Tags: cookie-consent, gdpr, google-consent-mode, ccpa, analytics
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 1.6.0
+Stable tag: 1.7.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -183,11 +183,24 @@ That's it! The consent popup will now appear to visitors.
 
 = Adding Google Analytics or Google Ads =
 
-This plugin manages consent, but you still need to add your GA4 or Google Ads tracking code. The plugin ensures that tracking respects user consent choices.
+This plugin manages consent and ensures Google tracking respects user choices. You still need to add your GA4 or Google Ads tracking code.
 
-**Recommended: Use a plugin like Site Kit by Google or insert tracking code in your theme's header.**
+**Recommended Setup (Google Tag Manager):**
 
-The consent signals will automatically apply to any Google tracking on your site.
+1. Install your GTM container snippet in your theme's `<head>` section (as Google instructs)
+2. Configure your GA4/Ads tags in GTM (most tags respect consent by default)
+3. Our plugin automatically implements Google Consent Mode v2
+4. Your tags will only fire after user grants consent
+
+**Alternative (Direct GA4 or Site Kit by Google):**
+
+You can also use Site Kit by Google plugin or add GA4 tracking code directly. The consent signals work with any Google tracking implementation.
+
+**Important:** The plugin provides the consent framework. It does NOT automatically add Google Analytics or Ads tracking to your site. You must add tracking separately using one of the methods above.
+
+**Troubleshooting:**
+
+If tracking still fires before consent, check **Settings > Cookie Consent > Advanced Settings** and ensure "Inject Default Consent State" is enabled (it should be by default). If it's disabled, tracking may fire before consent is granted.
 
 = Using Shortcodes =
 
@@ -231,6 +244,61 @@ User consent choices are stored in their browser's localStorage. Nothing is stor
 = Does this work with Google Tag Manager? =
 
 Yes! The plugin updates Google Consent Mode signals that GTM respects. Your GA4 and Google Ads tags in GTM will automatically respect user consent choices.
+
+= Does this plugin actually block Google Analytics and Ads tracking? =
+
+Yes! As of version 1.7.1, the plugin properly implements Google Consent Mode v2 with correct timing.
+
+**How it works:**
+
+1. **Before any tracking loads:** The plugin injects `gtag('consent', 'default', {...})` in your page `<head>` with all consent set to 'denied'
+2. **GTM/GA4 loads:** These scripts respect the 'denied' consent state and don't track
+3. **User makes choice:** When user clicks "Accept All", "Analytics Only", or "Decline All"
+4. **Consent updates:** Plugin calls `gtag('consent', 'update', {...})` with the user's choice
+5. **Tracking fires:** Only if user granted consent
+
+**For Google Tag Manager users:**
+
+Simply install your GTM snippet as normal (in `<head>` as Google instructs). Our plugin handles the consent signaling automatically. Your GTM tags will respect the consent state.
+
+**Admin Control:**
+
+The default consent injection is enabled by default but can be disabled in **Settings > Cookie Consent > Advanced Settings** if you need to manually control consent defaults or if you experience conflicts.
+
+**Verification:**
+
+Open your browser's developer console and look for `[MDCC]` debug messages (if `WP_DEBUG` is enabled) showing consent state changes. You can also use Google Tag Manager's Preview mode to verify tags only fire after consent is granted.
+
+= How can I verify the plugin is blocking tracking correctly? =
+
+**Using Google Tag Manager Preview Mode:**
+
+1. Open your site in a private browsing window
+2. Enable GTM Preview mode for your container
+3. Before clicking any consent button, check the Preview panel
+4. Tags should show "Not Fired" or "Consent Denied" status
+5. Click "Accept All" - tags should fire immediately
+6. Click "Decline All" on another test - tags should remain blocked
+
+**Using Google Analytics Realtime:**
+
+1. Open GA4 Realtime report in a separate browser window
+2. Visit your site in a private browsing window
+3. Click "Decline All" when the popup appears
+4. Your visit should NOT appear in Realtime
+5. Open a new private window and click "Accept All"
+6. Your visit should now appear in Realtime within seconds
+
+**Using Browser Console:**
+
+If you have `WP_DEBUG` enabled in wp-config.php, open the browser console (F12) and look for `[MDCC]` log messages showing consent state initialization and changes.
+
+**Using Page Source:**
+
+1. Right-click page and select "View Page Source"
+2. Search for "gtag('consent', 'default'"
+3. You should see this appear BEFORE your GTM snippet
+4. This confirms the plugin is setting default consent before tracking loads
 
 = Does this work with WooCommerce? =
 
@@ -316,6 +384,42 @@ Coming in 2026! Pro will include multi-platform tracking control (Facebook, Hotj
 
 == Changelog ==
 
+= 1.7.1 - 2026-02-09 =
+**Critical bug fix for Google Consent Mode v2 timing**
+
+**Fixed:**
+* Google Consent Mode v2 timing issue - GTM and GA4 scripts now properly blocked until user grants consent
+* Added gtag('consent', 'default', {...}) injection in <head> before tracking scripts load
+* Ensures compliance with GDPR/CCPA by preventing tracking before explicit user consent
+
+**Added:**
+* Admin setting to enable/disable GCM default injection (Advanced Settings section)
+* Setting enabled by default for proper compliance
+* Option to disable if conflicts occur with custom implementations
+
+**Technical:**
+* New method MDCC_Consent_Manager::inject_gcm_default() injects consent default state
+* New admin setting 'gcm_inject_default' with checkbox control
+* Runs on wp_head priority 1 to execute before all tracking scripts
+* wait_for_update parameter (500ms) allows consent-runtime.js to load
+* Zero functional changes to existing consent API or shortcodes
+
+= 1.7.0 - 2025-02-04 =
+**Build system, testing suite, bug fix, and optimizations**
+
+**Added:**
+* Minification build (PostCSS + Terser); WordPress loads .min assets by default, source when SCRIPT_DEBUG is true
+* Phase 4 testing suite: performance validation, functional tests, manual testing checklist, visual regression guide
+* SVN upload file list and workflow documentation
+
+**Fixed:**
+* Popup no longer re-appears on initial load when "Re-prompt on Decline" is enabled (visibility check)
+
+**Changed:**
+* consent-runtime.js optimized (~40% size reduction), full parity maintained
+* Plugin display name set to "MaxtDesign Cookie Consent - Google Consent Mode v2"; slug/text domain maxtdesign-cookie-consent
+* All prefixes refactored to MDCC_/mdcc_/mdcc-; shortcodes [mdcc_consent_status] and [mdcc_manage_consent]
+
 = 1.6.0 - 2025-10-30 =
 **Initial public release on WordPress.org**
 
@@ -352,6 +456,12 @@ Coming in 2026! Pro will include multi-platform tracking control (Facebook, Hotj
 
 
 == Upgrade Notice ==
+
+= 1.7.1 =
+Critical fix for Google Consent Mode v2 timing - GTM/GA4 now properly blocked until consent granted. Adds admin toggle for advanced users. Highly recommended update for GDPR/CCPA compliance.
+
+= 1.7.0 =
+Build system with minified assets, testing suite, popup re-prompt fix, and consent-runtime optimization. Upgrade from 1.6.0 for best performance.
 
 = 1.6.0 =
 Initial public release. Lightweight consent management with proper Google Consent Mode v2 implementation.

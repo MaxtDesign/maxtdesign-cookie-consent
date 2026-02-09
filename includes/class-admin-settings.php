@@ -206,6 +206,22 @@ class MDCC_Admin_Settings {
             self::PAGE_SLUG,
             'mdcc_section_elementor'
         );
+
+        // Section: Advanced Settings
+        add_settings_section(
+            'mdcc_advanced_section',
+            __('Advanced Settings', 'maxtdesign-cookie-consent'),
+            array($this, 'render_advanced_section'),
+            self::PAGE_SLUG
+        );
+
+        add_settings_field(
+            'gcm_inject_default',
+            __('Inject Default Consent State', 'maxtdesign-cookie-consent'),
+            array($this, 'render_gcm_inject_default_field'),
+            self::PAGE_SLUG,
+            'mdcc_advanced_section'
+        );
     }
 
     /**
@@ -276,6 +292,9 @@ class MDCC_Admin_Settings {
         $sanitized['elementor_popup_id'] = !empty($input['elementor_popup_id'])
             ? absint($input['elementor_popup_id'])
             : '';
+
+        // GCM inject default (boolean)
+        $sanitized['gcm_inject_default'] = !empty($input['gcm_inject_default']);
 
         return $sanitized;
     }
@@ -434,6 +453,15 @@ class MDCC_Admin_Settings {
      */
     public function render_section_elementor() {
         echo '<p>' . esc_html__('If you prefer to use a custom Elementor popup instead of the built-in popup, enter your Elementor Popup ID here. Leave blank to use the built-in popup.', 'maxtdesign-cookie-consent') . '</p>';
+    }
+
+    /**
+     * Render advanced settings section description
+     *
+     * @since 1.7.1
+     */
+    public function render_advanced_section() {
+        echo '<p>' . esc_html__('Advanced Google Consent Mode configuration.', 'maxtdesign-cookie-consent') . '</p>';
     }
 
     /* ========================================================================
@@ -642,6 +670,33 @@ class MDCC_Admin_Settings {
                 /* translators: %s: Link to documentation */
                 esc_html__('Enter your Elementor Popup ID to use a custom popup instead of the built-in one. %s', 'maxtdesign-cookie-consent'),
                 '<a href="https://maxtdesign.com/cookie-consent/elementor-integration" target="_blank">' . esc_html__('Learn how to find your popup ID', 'maxtdesign-cookie-consent') . '</a>'
+            );
+            ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render GCM inject default checkbox field
+     *
+     * @since 1.7.1
+     */
+    public function render_gcm_inject_default_field() {
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
+        $value = isset($settings['gcm_inject_default']) ? $settings['gcm_inject_default'] : true;
+        ?>
+        <label>
+            <input type="checkbox"
+                   name="<?php echo esc_attr(self::OPTION_NAME); ?>[gcm_inject_default]"
+                   value="1"
+                   <?php checked($value, true); ?> />
+            <?php esc_html_e('Inject default consent in page head before tracking scripts', 'maxtdesign-cookie-consent'); ?>
+        </label>
+        <p class="description">
+            <?php
+            esc_html_e(
+                'Injects gtag("consent", "default", {...}) in page head before tracking scripts load. Required for proper GDPR/CCPA compliance with Google Tag Manager. Only disable if you are manually handling consent defaults or experiencing conflicts.',
+                'maxtdesign-cookie-consent'
             );
             ?>
         </p>

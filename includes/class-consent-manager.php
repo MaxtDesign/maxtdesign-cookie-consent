@@ -52,8 +52,54 @@ class MDCC_Consent_Manager {
      * Initialize WordPress hooks
      */
     private function init_hooks() {
+        // Inject GCM default consent BEFORE all scripts (priority 1)
+        add_action('wp_head', array($this, 'inject_gcm_default'), 1);
+
         // Enqueue frontend scripts
         add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_assets'));
+    }
+
+    /**
+     * Inject Google Consent Mode v2 default state in <head>
+     *
+     * Sets initial consent to 'denied' for all consent types BEFORE any tracking
+     * scripts load. This ensures GTM, GA4, and Google Ads respect user consent
+     * from the very first pageview.
+     *
+     * Only injects if the 'gcm_inject_default' setting is enabled (default: true).
+     * Priority 1 on wp_head ensures this runs before tracking scripts.
+     * wait_for_update gives consent-runtime.js 500ms to load and call 'update'.
+     *
+     * @since 1.7.1
+     * @return void
+     */
+    public function inject_gcm_default() {
+        // Don't inject in admin
+        if (is_admin()) {
+            return;
+        }
+
+        // Check if setting is enabled
+        $settings = get_option('mdcc_settings', mdcc_default_settings());
+        $inject_enabled = isset($settings['gcm_inject_default']) ? $settings['gcm_inject_default'] : true;
+
+        if (!$inject_enabled) {
+            return;
+        }
+
+        ?>
+    <script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {
+    'analytics_storage': 'denied',
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'wait_for_update': 500
+});
+    </script>
+        <?php
     }
 
     /**

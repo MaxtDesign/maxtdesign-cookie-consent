@@ -384,4 +384,5 @@ The consent manager initializes automatically when the script loads:
 
 ## Version History
 
+- **1.7.0** - Build system, minified assets, consent-runtime optimization; API unchanged
 - **1.6.0** - Initial release with GCM v2 support

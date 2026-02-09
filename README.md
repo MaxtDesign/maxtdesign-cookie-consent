@@ -6,12 +6,28 @@ category: user-guide
 audience: user
 difficulty: beginner
 last_updated: 2025-11-10
-version: 1.6.0
+version: 1.7.1
 ---
 
 ## Overview
 
-Initial documentation scaffolding for MaxtDesign Cookie Consent - Google Consent Mode v2. Details will be expanded in subsequent phases.
+Lightweight consent management with proper Google Consent Mode v2 implementation.
+
+## Recent Critical Fix (v1.7.1)
+
+**Fixed:** Google Consent Mode v2 timing issue where GTM/GA4 scripts could execute before consent state was set, resulting in tracking even when users declined consent.
+
+**How it works now:**
+1. Plugin injects `gtag('consent', 'default', {...})` in `<head>` with all consent denied (before GTM loads)
+2. GTM/GA4 loads but respects the denied state
+3. User makes consent choice
+4. Plugin updates consent state via `gtag('consent', 'update', {...})`
+5. Tracking only fires after explicit consent
+
+**Admin Control:**
+The default consent injection can be disabled in Settings > Cookie Consent > Advanced Settings if it conflicts with your setup. However, disabling it may cause tracking to fire before user grants consent.
+
+**For users upgrading from 1.7.0 or earlier:** No action required. The fix automatically applies to all GTM/GA4 installations and is enabled by default.
 
 
 ## Uninstall and Data Removal

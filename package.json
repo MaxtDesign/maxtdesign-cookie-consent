@@ -1,6 +1,6 @@
 {
   "name": "maxtdesign-cookie-consent",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Build tools for MaxtDesign Cookie Consent",
   "private": true,
   "scripts": {
@@ -10,6 +10,10 @@
     "build:admin-css": "postcss assets/css/admin.css -o assets/css/admin.min.css --no-map",
     "build:admin-js": "terser assets/js/admin.js -o assets/js/admin.min.js --compress --mangle --comments false",
     "validate": "node tools/validate-size.js",
+    "test": "php tests/performance-validation.php && php tests/functional-tests.php",
+    "test:performance": "php tests/performance-validation.php",
+    "test:functional": "php tests/functional-tests.php",
+    "prepare-svn": "node -e \"require('child_process').execSync(process.platform==='win32'?'powershell -NoProfile -File tools/prepare-svn.ps1':'bash tools/prepare-svn.sh',{stdio:'inherit'})\"",
     "watch:css": "postcss assets/css/popup.css -o assets/css/popup.min.css --no-map --watch",
     "watch:js": "terser assets/js/consent-runtime.js -o assets/js/consent-runtime.min.js --compress --mangle --comments false --watch"
   },

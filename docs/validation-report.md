@@ -1,6 +1,6 @@
 # Validation Report (Pre-Submission)
 
-Plugin: MaxtDesign Cookie Consent - Google Consent Mode v2 v1.6.0
+Plugin: MaxtDesign Cookie Consent - Google Consent Mode v2 v1.7.0
 Date: 2025-11-10
 
 ## Automated Tools
@@ -45,10 +45,10 @@ Matrix and checklist prepared (see user story). Execute on clean test site after
 
 ## Version Consistency
 
-- Main plugin header: 1.6.0 — OK
-- MDCC_VERSION constant: 1.6.0 — OK
-- readme.txt stable tag: 1.6.0 — OK
-- POT: 1.6.0 — OK
+- Main plugin header: 1.7.0 — OK
+- MDCC_VERSION constant: 1.7.0 — OK
+- readme.txt stable tag: 1.7.0 — OK
+- POT: 1.7.0 — OK
 
 ## Packaging
 

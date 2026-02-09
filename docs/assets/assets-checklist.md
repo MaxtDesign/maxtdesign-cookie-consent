@@ -6,7 +6,7 @@ category: admin-guide
 audience: admin
 difficulty: beginner
 last_updated: 2025-10-30
-version: 1.6.0
+version: 1.7.0
 ---
 
 ## Plugin Icon
