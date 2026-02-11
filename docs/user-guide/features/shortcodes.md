@@ -6,7 +6,7 @@ category: user-guide
 audience: user
 difficulty: beginner
 last_updated: 2025-10-30
-version: 1.6.0
+version: 1.7.0
 ---
 
 ## Overview
@@ -20,7 +20,7 @@ Both shortcodes update instantly when consent changes (`mdlc:changed` event) and
 
 ## Requirements
 
-- Plugin active (v1.6.0)
+- Plugin active (v1.7.0)
 - Frontend runtime enqueued automatically (`assets/js/consent-runtime.js`)
 
 ## Shortcodes

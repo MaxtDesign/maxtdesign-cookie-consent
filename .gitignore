@@ -9,6 +9,9 @@ wp-content/wp-cache-config.php
 wp-content/cache/
 wp-content/cache/supercache/
 
+# PowerShell scripts (development only)
+*.ps1
+
 # Plugin development ignores
 .cursor/
 .DS_Store
@@ -17,7 +20,8 @@ Thumbs.db
 *.tmp
 *.temp
 node_modules/
-npm-debug.log
+package-lock.json
+npm-debug.log*
 yarn-error.log
 
 # IDE and editor files
