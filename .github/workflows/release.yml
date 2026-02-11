@@ -1,0 +1,66 @@
+# Release: build plugin zip on tag push, upload artifact and create GitHub Release
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Validate asset sizes
+        run: npm run validate
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Prepare plugin zip (SVN trunk files only)
+        run: |
+          PLUGIN_SLUG="maxtdesign-cookie-consent"
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          OUT_DIR="${PLUGIN_SLUG}"
+          mkdir -p "$OUT_DIR"
+          cp maxtdesign-cookie-consent.php readme.txt LICENSE.txt uninstall.php "$OUT_DIR/"
+          mkdir -p "$OUT_DIR/includes"
+          cp includes/class-admin-settings.php includes/class-consent-manager.php includes/class-popup-system.php includes/class-shortcodes.php "$OUT_DIR/includes/"
+          mkdir -p "$OUT_DIR/assets/css" "$OUT_DIR/assets/js"
+          cp assets/css/admin.css assets/css/admin.min.css assets/css/popup.css assets/css/popup.min.css "$OUT_DIR/assets/css/"
+          cp assets/js/admin.js assets/js/admin.min.js assets/js/consent-runtime.js assets/js/consent-runtime.min.js "$OUT_DIR/assets/js/"
+          mkdir -p "$OUT_DIR/languages"
+          cp languages/maxtdesign-cookie-consent.pot languages/README.md "$OUT_DIR/languages/"
+          zip -r "${PLUGIN_SLUG}-${VERSION}.zip" "$OUT_DIR"
+
+      - name: Upload plugin zip artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-zip
+          path: maxtdesign-cookie-consent-${{ steps.version.outputs.VERSION }}.zip
+
+      - name: Create GitHub Release and upload zip
+        uses: softprops/action-gh-release@v2
+        with:
+          files: maxtdesign-cookie-consent-${{ steps.version.outputs.VERSION }}.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

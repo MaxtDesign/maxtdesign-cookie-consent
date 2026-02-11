@@ -1,29 +1,14 @@
-/**
- * MaxtDesign Cookie Consent - Popup Styles
- * 
- * Three style presets: Minimal, Modern, Bold
- * Position options: top, bottom, center
- * Animations: slide, fade, none
- * Mobile-first responsive design
- * 
- * @package MaxtDesign_Cookie_Consent
- * @since 1.6.0
- */
-
-/* ========================================================================
-   BASE POPUP STRUCTURE
-   ======================================================================== */
-
+/* 1. BASE POPUP CONTAINER */
 .mdcc-popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
     height: 100%;
-    z-index: 999999;
+    left: 0;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    position: fixed;
+    top: 0;
+    transition: opacity .3s ease;
+    width: 100%;
+    z-index: 999999;
 }
 
 .mdcc-popup--visible {
@@ -35,71 +20,68 @@
     opacity: 0;
 }
 
-/* Overlay (only for center modal) */
 .mdcc-popup__overlay {
+    background: rgba(0, 0, 0, 0);
+    height: 100%;
+    left: 0;
     position: absolute;
     top: 0;
-    left: 0;
+    transition: background .3s ease;
     width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0);
-    transition: background 0.3s ease;
 }
 
 .mdcc-popup--position-center .mdcc-popup__overlay {
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, .5);
 }
 
-/* Container positioning */
 .mdcc-popup__container {
     position: relative;
     z-index: 2;
 }
 
 .mdcc-popup--position-top .mdcc-popup__container {
-    position: fixed;
-    top: 0;
     left: 0;
+    position: fixed;
     right: 0;
+    top: 0;
 }
 
 .mdcc-popup--position-bottom .mdcc-popup__container {
-    position: fixed;
     bottom: 0;
     left: 0;
+    position: fixed;
     right: 0;
 }
 
 .mdcc-popup--position-center .mdcc-popup__container {
+    left: 50%;
+    max-width: 600px;
     position: fixed;
     top: 50%;
-    left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 600px;
     width: 90%;
 }
 
-/* Content box */
+/* 2. POPUP CONTENT */
 .mdcc-popup__content {
-    padding: 20px;
     background: #fff;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .15);
+    padding: 20px;
     position: relative;
 }
 
-/* Close button */
 .mdcc-popup__close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
     background: transparent;
     border: none;
-    font-size: 28px;
-    line-height: 1;
     color: #666;
     cursor: pointer;
+    font-size: 28px;
+    line-height: 1;
     padding: 5px 10px;
-    transition: color 0.2s ease;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    transition: color .2s ease;
     z-index: 10;
 }
 
@@ -110,40 +92,38 @@
     outline-offset: 2px;
 }
 
-/* Typography */
 .mdcc-popup__title {
-    margin: 0 0 10px 0;
+    color: #1a1a1a;
     font-size: 20px;
     font-weight: 600;
     line-height: 1.3;
-    color: #1a1a1a;
+    margin: 0 0 10px 0;
 }
 
 .mdcc-popup__message {
-    margin: 0 0 20px 0;
+    color: #4a4a4a;
     font-size: 15px;
     line-height: 1.5;
-    color: #4a4a4a;
+    margin: 0 0 20px 0;
 }
 
-/* Actions container */
 .mdcc-popup__actions {
     display: flex;
-    gap: 10px;
     flex-wrap: wrap;
+    gap: 10px;
 }
 
-/* Buttons base styles */
+/* 3. BUTTON STYLES */
 .mdcc-popup__button {
-    padding: 10px 20px;
     border: 2px solid transparent;
     border-radius: 4px;
+    cursor: pointer;
+    flex: 1 1 auto;
     font-size: 14px;
     font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    flex: 1 1 auto;
     min-width: 120px;
+    padding: 10px 20px;
+    transition: all .2s ease;
 }
 
 .mdcc-popup__button:focus {
@@ -151,7 +131,6 @@
     outline-offset: 2px;
 }
 
-/* Primary button (dynamically colored via inline CSS) */
 .mdcc-popup__button--primary {
     background-color: #0073aa;
     border-color: #0073aa;
@@ -164,7 +143,6 @@
     border-color: #005a87;
 }
 
-/* Secondary button */
 .mdcc-popup__button--secondary {
     background-color: #fff;
     border-color: #ddd;
@@ -177,13 +155,12 @@
     border-color: #ccc;
 }
 
-/* Tertiary button */
 .mdcc-popup__button--tertiary {
     background-color: transparent;
     border-color: transparent;
     color: #666;
-    text-decoration: underline;
     min-width: auto;
+    text-decoration: underline;
 }
 
 .mdcc-popup__button--tertiary:hover,
@@ -191,57 +168,11 @@
     color: #333;
 }
 
-/* ========================================================================
-   ANIMATIONS
-   ======================================================================== */
-
-/* Slide animation */
-.mdcc-popup--animation-slide.mdcc-popup--position-top .mdcc-popup__container {
-    transform: translateY(-100%);
-    transition: transform 0.3s ease;
-}
-
-.mdcc-popup--animation-slide.mdcc-popup--position-top.mdcc-popup--visible .mdcc-popup__container {
-    transform: translateY(0);
-}
-
-.mdcc-popup--animation-slide.mdcc-popup--position-bottom .mdcc-popup__container {
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-}
-
-.mdcc-popup--animation-slide.mdcc-popup--position-bottom.mdcc-popup--visible .mdcc-popup__container {
-    transform: translateY(0);
-}
-
-.mdcc-popup--animation-slide.mdcc-popup--position-center .mdcc-popup__container {
-    transform: translate(-50%, -50%) scale(0.9);
-    transition: transform 0.3s ease;
-}
-
-.mdcc-popup--animation-slide.mdcc-popup--position-center.mdcc-popup--visible .mdcc-popup__container {
-    transform: translate(-50%, -50%) scale(1);
-}
-
-/* Fade animation (default opacity transition handles this) */
-
-/* No animation */
-.mdcc-popup--animation-none {
-    transition: none;
-}
-
-.mdcc-popup--animation-none .mdcc-popup__container {
-    transition: none;
-}
-
-/* ========================================================================
-   STYLE PRESET: MINIMAL
-   ======================================================================== */
-
+/* 4. PRESET OVERRIDES - MINIMAL */
 .mdcc-popup--style-minimal .mdcc-popup__content {
     border: 1px solid #e5e5e5;
     border-radius: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
 }
 
 .mdcc-popup--style-minimal .mdcc-popup__title {
@@ -258,13 +189,10 @@
     font-weight: 500;
 }
 
-/* ========================================================================
-   STYLE PRESET: MODERN
-   ======================================================================== */
-
+/* 5. PRESET OVERRIDES - MODERN */
 .mdcc-popup--style-modern .mdcc-popup__content {
     border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, .12);
 }
 
 .mdcc-popup--style-modern .mdcc-popup__title {
@@ -279,34 +207,31 @@
 }
 
 .mdcc-popup--style-modern .mdcc-popup__close {
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    display: flex;
     align-items: center;
+    border-radius: 50%;
+    display: flex;
+    height: 36px;
     justify-content: center;
+    padding: 0;
+    width: 36px;
 }
 
 .mdcc-popup--style-modern .mdcc-popup__close:hover {
     background: #f5f5f5;
 }
 
-/* ========================================================================
-   STYLE PRESET: BOLD
-   ======================================================================== */
-
+/* 6. PRESET OVERRIDES - BOLD */
 .mdcc-popup--style-bold .mdcc-popup__content {
-    border-radius: 0;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     border-left: 6px solid #0073aa;
+    border-radius: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .25);
 }
 
 .mdcc-popup--style-bold .mdcc-popup__title {
     font-size: 24px;
     font-weight: 800;
+    letter-spacing: .5px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
 .mdcc-popup--style-bold .mdcc-popup__message {
@@ -316,101 +241,126 @@
 
 .mdcc-popup--style-bold .mdcc-popup__button {
     border-radius: 0;
+    border-width: 3px;
     font-weight: 700;
-    text-transform: uppercase;
     letter-spacing: 1px;
     padding: 14px 28px;
-    border-width: 3px;
+    text-transform: uppercase;
 }
 
 .mdcc-popup--style-bold .mdcc-popup__close {
-    font-weight: 700;
     font-size: 32px;
+    font-weight: 700;
 }
 
-/* ========================================================================
-   RESPONSIVE
-   ======================================================================== */
+/* 7. ANIMATIONS */
+.mdcc-popup--animation-slide.mdcc-popup--position-top .mdcc-popup__container {
+    transform: translateY(-100%);
+    transition: transform .3s ease;
+}
 
-@media (max-width: 768px) {
+.mdcc-popup--animation-slide.mdcc-popup--position-top.mdcc-popup--visible .mdcc-popup__container {
+    transform: translateY(0);
+}
+
+.mdcc-popup--animation-slide.mdcc-popup--position-bottom .mdcc-popup__container {
+    transform: translateY(100%);
+    transition: transform .3s ease;
+}
+
+.mdcc-popup--animation-slide.mdcc-popup--position-bottom.mdcc-popup--visible .mdcc-popup__container {
+    transform: translateY(0);
+}
+
+.mdcc-popup--animation-slide.mdcc-popup--position-center .mdcc-popup__container {
+    transform: translate(-50%, -50%) scale(.9);
+    transition: transform .3s ease;
+}
+
+.mdcc-popup--animation-slide.mdcc-popup--position-center.mdcc-popup--visible .mdcc-popup__container {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.mdcc-popup--animation-none {
+    transition: none;
+}
+
+.mdcc-popup--animation-none .mdcc-popup__container {
+    transition: none;
+}
+
+/* 8. RESPONSIVE */
+@media (max-width:768px) {
     .mdcc-popup__content {
         padding: 16px;
     }
-    
+
     .mdcc-popup__title {
         font-size: 18px;
     }
-    
+
     .mdcc-popup__message {
         font-size: 14px;
     }
-    
+
     .mdcc-popup__actions {
         flex-direction: column;
     }
-    
+
     .mdcc-popup__button {
-        width: 100%;
         min-width: 0;
+        width: 100%;
     }
-    
-    /* Center modal responsive */
+
     .mdcc-popup--position-center .mdcc-popup__container {
-        width: 95%;
         max-width: none;
+        width: 95%;
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width:480px) {
     .mdcc-popup__content {
         padding: 12px;
     }
-    
+
     .mdcc-popup__title {
         font-size: 16px;
         margin-bottom: 8px;
     }
-    
+
     .mdcc-popup__message {
         font-size: 13px;
         margin-bottom: 16px;
     }
-    
+
     .mdcc-popup__button {
-        padding: 10px 16px;
         font-size: 13px;
+        padding: 10px 16px;
     }
-    
+
     .mdcc-popup--style-bold .mdcc-popup__title {
         font-size: 18px;
     }
-    
+
     .mdcc-popup--style-modern .mdcc-popup__button {
         padding: 10px 20px;
     }
 }
 
-/* ========================================================================
-   ACCESSIBILITY
-   ======================================================================== */
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
+/* 9. ACCESSIBILITY */
+@media (prefers-contrast:high) {
     .mdcc-popup__content {
         border: 2px solid #000;
     }
-    
-    .mdcc-popup__button--primary {
-        border: 2px solid #000;
-    }
-    
+
+    .mdcc-popup__button--primary,
     .mdcc-popup__button--secondary {
         border: 2px solid #000;
     }
 }
 
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion:reduce) {
+
     .mdcc-popup,
     .mdcc-popup__container,
     .mdcc-popup__overlay {
@@ -418,23 +368,20 @@
     }
 }
 
-/* Focus visible for keyboard navigation */
 .mdcc-popup__button:focus-visible,
 .mdcc-popup__close:focus-visible {
     outline: 3px solid #0073aa;
     outline-offset: 3px;
 }
 
-/* Screen reader only text */
 .mdcc-sr-only {
-    position: absolute;
-    width: 1px;
+    border-width: 0;
+    clip: rect(0, 0, 0, 0);
     height: 1px;
-    padding: 0;
     margin: -1px;
     overflow: hidden;
-    clip: rect(0, 0, 0, 0);
+    padding: 0;
+    position: absolute;
     white-space: nowrap;
-    border-width: 0;
+    width: 1px;
 }
-

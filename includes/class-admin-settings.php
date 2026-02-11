@@ -206,6 +206,22 @@ class MDCC_Admin_Settings {
             self::PAGE_SLUG,
             'mdcc_section_elementor'
         );
+
+        // Section: Advanced Settings
+        add_settings_section(
+            'mdcc_advanced_section',
+            __('Advanced Settings', 'maxtdesign-cookie-consent'),
+            array($this, 'render_advanced_section'),
+            self::PAGE_SLUG
+        );
+
+        add_settings_field(
+            'gcm_inject_default',
+            __('Inject Default Consent State', 'maxtdesign-cookie-consent'),
+            array($this, 'render_gcm_inject_default_field'),
+            self::PAGE_SLUG,
+            'mdcc_advanced_section'
+        );
     }
 
     /**
@@ -277,6 +293,9 @@ class MDCC_Admin_Settings {
             ? absint($input['elementor_popup_id'])
             : '';
 
+        // GCM inject default (boolean)
+        $sanitized['gcm_inject_default'] = !empty($input['gcm_inject_default']);
+
         return $sanitized;
     }
 
@@ -316,31 +335,31 @@ class MDCC_Admin_Settings {
     /**
      * Enqueue admin assets
      *
+     * Loads minified version by default, source version when SCRIPT_DEBUG is enabled.
+     *
      * @since 1.6.0
      * @param string $hook Current admin page hook
      */
     public function enqueue_admin_assets($hook) {
-        // Only load on our settings page
         if ('settings_page_' . self::PAGE_SLUG !== $hook) {
             return;
         }
 
-        // Enqueue WordPress color picker
         wp_enqueue_style('wp-color-picker');
         wp_enqueue_script('wp-color-picker');
 
-        // Enqueue admin CSS
+        $suffix = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
+
         wp_enqueue_style(
             'mdcc-admin',
-            MDCC_PLUGIN_URL . 'assets/css/admin.css',
+            MDCC_PLUGIN_URL . 'assets/css/admin' . $suffix . '.css',
             array(),
             MDCC_VERSION
         );
 
-        // Enqueue admin JS
         wp_enqueue_script(
             'mdcc-admin',
-            MDCC_PLUGIN_URL . 'assets/js/admin.js',
+            MDCC_PLUGIN_URL . 'assets/js/admin' . $suffix . '.js',
             array('jquery', 'wp-color-picker'),
             MDCC_VERSION,
             true
@@ -392,11 +411,12 @@ class MDCC_Admin_Settings {
                 </div>
 
                 <div class="mdcc-info-box">
-                    <h3><?php esc_html_e('Documentation', 'maxtdesign-cookie-consent'); ?></h3>
+                    <h3><?php esc_html_e('Documentation & Support', 'maxtdesign-cookie-consent'); ?></h3>
                     <ul>
-                        <li><a href="https://maxtdesign.com/cookie-consent/docs" target="_blank"><?php esc_html_e('Getting Started Guide', 'maxtdesign-cookie-consent'); ?></a></li>
-                        <li><a href="https://maxtdesign.com/cookie-consent/google-consent-mode" target="_blank"><?php esc_html_e('Google Consent Mode v2', 'maxtdesign-cookie-consent'); ?></a></li>
-                        <li><a href="https://maxtdesign.com/cookie-consent/elementor-integration" target="_blank"><?php esc_html_e('Elementor Integration', 'maxtdesign-cookie-consent'); ?></a></li>
+                        <li><a href="https://wordpress.org/plugins/maxtdesign-cookie-consent/#description" target="_blank"><?php esc_html_e('Plugin Documentation', 'maxtdesign-cookie-consent'); ?></a></li>
+                        <li><a href="https://wordpress.org/plugins/maxtdesign-cookie-consent/#faq" target="_blank"><?php esc_html_e('FAQ & Troubleshooting', 'maxtdesign-cookie-consent'); ?></a></li>
+                        <li><a href="https://wordpress.org/support/plugin/maxtdesign-cookie-consent/" target="_blank"><?php esc_html_e('Support Forum', 'maxtdesign-cookie-consent'); ?></a></li>
+                        <li><a href="https://github.com/sponsors/MaxtDesign" target="_blank" style="color: #d63638; font-weight: 600;"><?php esc_html_e('♥ Sponsor This Plugin', 'maxtdesign-cookie-consent'); ?></a></li>
                     </ul>
                 </div>
             </div>
@@ -434,6 +454,15 @@ class MDCC_Admin_Settings {
      */
     public function render_section_elementor() {
         echo '<p>' . esc_html__('If you prefer to use a custom Elementor popup instead of the built-in popup, enter your Elementor Popup ID here. Leave blank to use the built-in popup.', 'maxtdesign-cookie-consent') . '</p>';
+    }
+
+    /**
+     * Render advanced settings section description
+     *
+     * @since 1.7.1
+     */
+    public function render_advanced_section() {
+        echo '<p>' . esc_html__('Advanced Google Consent Mode configuration.', 'maxtdesign-cookie-consent') . '</p>';
     }
 
     /* ========================================================================
@@ -641,7 +670,34 @@ class MDCC_Admin_Settings {
             printf(
                 /* translators: %s: Link to documentation */
                 esc_html__('Enter your Elementor Popup ID to use a custom popup instead of the built-in one. %s', 'maxtdesign-cookie-consent'),
-                '<a href="https://maxtdesign.com/cookie-consent/elementor-integration" target="_blank">' . esc_html__('Learn how to find your popup ID', 'maxtdesign-cookie-consent') . '</a>'
+                '<a href="https://wordpress.org/plugins/maxtdesign-cookie-consent/#faq" target="_blank">' . esc_html__('Learn how to find your popup ID', 'maxtdesign-cookie-consent') . '</a>'
+            );
+            ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render GCM inject default checkbox field
+     *
+     * @since 1.7.1
+     */
+    public function render_gcm_inject_default_field() {
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
+        $value = isset($settings['gcm_inject_default']) ? $settings['gcm_inject_default'] : true;
+        ?>
+        <label>
+            <input type="checkbox"
+                   name="<?php echo esc_attr(self::OPTION_NAME); ?>[gcm_inject_default]"
+                   value="1"
+                   <?php checked($value, true); ?> />
+            <?php esc_html_e('Inject default consent in page head before tracking scripts', 'maxtdesign-cookie-consent'); ?>
+        </label>
+        <p class="description">
+            <?php
+            esc_html_e(
+                'Injects gtag("consent", "default", {...}) in page head before tracking scripts load. Required for proper GDPR/CCPA compliance with Google Tag Manager. Only disable if you are manually handling consent defaults or experiencing conflicts.',
+                'maxtdesign-cookie-consent'
             );
             ?>
         </p>

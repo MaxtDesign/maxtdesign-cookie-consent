@@ -1,6 +1,6 @@
 # WordPress.org Submission Guide
 
-## MaxtDesign Cookie Consent - Google Consent Mode v2 v1.6.0
+## MaxtDesign Cookie Consent - Google Consent Mode v2 v1.7.0
 
 ### Pre-Submission Checklist
 - [x] Plugin fully developed and tested
@@ -18,7 +18,7 @@
 
 **Step 2: Submit Plugin**
 1. Go to https://wordpress.org/plugins/developers/add/
-2. Upload: `maxtdesign-cookie-consent-1.6.0.zip`
+2. Upload: `maxtdesign-cookie-consent-1.7.0.zip`
 3. Fill in description (copy from `readme.txt`)
 4. Submit for review
 
@@ -44,13 +44,13 @@ svn co https://plugins.svn.wordpress.org/maxtdesign-cookie-consent
 # Copy plugin files to trunk
 cp -r /path/to/plugin/* trunk/
 svn add trunk/*
-svn ci -m "Initial commit of version 1.6.0"
+svn ci -m "Initial commit of version 1.7.0"
 ```
 
 **Step 7: Tag Release**
 ```bash
-svn cp trunk tags/1.6.0
-svn ci -m "Tagging version 1.6.0"
+svn cp trunk tags/1.7.0
+svn ci -m "Tagging version 1.7.0"
 ```
 
 **Step 8: Upload Assets (after approval)**

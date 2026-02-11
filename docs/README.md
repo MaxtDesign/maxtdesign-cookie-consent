@@ -6,7 +6,7 @@ category: user-guide
 audience: user
 difficulty: beginner
 last_updated: 2025-11-10
-version: 1.6.0
+version: 1.7.0
 ---
 
 ## Overview

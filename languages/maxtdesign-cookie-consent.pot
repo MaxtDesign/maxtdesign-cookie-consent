@@ -3,7 +3,7 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: MaxtDesign Cookie Consent - Google Consent Mode v2 1.6.0\n"
+"Project-Id-Version: MaxtDesign Cookie Consent - Google Consent Mode v2 1.7.0\n"
 "Report-Msgid-Bugs-To: https://maxtdesign.com/support\n"
 "POT-Creation-Date: 2025-11-10 12:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
