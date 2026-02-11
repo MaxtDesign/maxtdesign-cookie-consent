@@ -349,12 +349,10 @@ class MDCC_Popup_System {
         }
     }
     
-    // Initialize when DOM ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
+    // Initialize after full page load (ensures wp_footer has rendered popup HTML)
+    // Using 'load' instead of 'DOMContentLoaded' because popup is rendered via wp_footer
+    // which may execute after DOMContentLoaded, causing a race condition
+    window.addEventListener('load', init);
     
 })(window, document);
         <?php

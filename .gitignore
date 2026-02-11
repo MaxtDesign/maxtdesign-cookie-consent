@@ -9,6 +9,9 @@ wp-content/wp-cache-config.php
 wp-content/cache/
 wp-content/cache/supercache/
 
+# PowerShell scripts (development only)
+*.ps1
+
 # Plugin development ignores
 .cursor/
 .DS_Store

@@ -6,6 +6,27 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [1.7.2] - 2026-02-11
+
+### Fixed
+- **Popup race condition** where JavaScript initialized before popup HTML was rendered via wp_footer
+- Changed initialization from `DOMContentLoaded` to window `load` event
+- Ensures popup HTML exists in DOM before JavaScript attempts interaction
+- Resolves inconsistent popup display, particularly noticeable in Chrome browser
+
+### Technical Changes
+- Modified `MDCC_Popup_System::get_popup_javascript()` initialization code
+- Replaced `DOMContentLoaded` event listener with `window.addEventListener('load', init)`
+- Added inline code comment explaining why `load` event is required vs `DOMContentLoaded`
+- The `load` event fires after all content (including wp_footer) is rendered
+- Zero functional changes to popup behavior, appearance, or consent functionality
+
+### User Impact
+- Popup now appears consistently on all pages
+- Fixes intermittent "popup not showing" issue reported by users
+- Particularly improves reliability in Chrome (faster JavaScript execution)
+- No configuration changes required - fix applies automatically
+
 ## [1.7.1] - 2026-02-09
 
 ### Fixed
@@ -81,7 +102,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 - First public release scaffolding
 
-[Unreleased]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.1...HEAD
+[Unreleased]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.2...HEAD
+[1.7.2]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.1...v1.7.2
 [1.7.1]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/maxtdesign/maxtdesign-cookie-consent/releases/tag/v1.6.0

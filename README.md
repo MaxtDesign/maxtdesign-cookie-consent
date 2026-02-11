@@ -30,6 +30,15 @@ The default consent injection can be disabled in Settings > Cookie Consent > Adv
 **For users upgrading from 1.7.0 or earlier:** No action required. The fix automatically applies to all GTM/GA4 installations and is enabled by default.
 
 
+## Popup Display Fix (v1.7.2)
+
+**Fixed:** Race condition where popup JavaScript initialized before popup HTML was rendered, causing inconsistent display (particularly in Chrome).
+
+**Technical:** Changed initialization from `DOMContentLoaded` to window `load` event to ensure popup HTML exists before JavaScript interaction.
+
+**For users upgrading:** No action required. Popup will now display consistently on all pages.
+
+
 ## Uninstall and Data Removal
 
 When you delete the plugin from WordPress (Plugins > Delete), all plugin data is removed from the database for a clean uninstall.

@@ -1,10 +1,11 @@
 === MaxtDesign Cookie Consent - Google Consent Mode v2 ===
 
 Contributors: slaacr
+Donate link: https://github.com/sponsors/MaxtDesign
 Tags: cookie-consent, gdpr, google-consent-mode, ccpa, analytics
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 1.7.1
+Stable tag: 1.7.2
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -312,6 +313,25 @@ Yes! Choose from three style presets (Minimal, Modern, Bold), three positions (T
 
 Absolutely. Enter your Elementor Popup ID in settings and the plugin will use your custom popup while maintaining proper consent functionality.
 
+= How do I find my Elementor Popup ID? =
+
+To use a custom Elementor popup with this plugin:
+
+1. In WordPress admin, go to **Templates > Popups**
+2. Find your popup in the list
+3. Hover over the popup name - you'll see a URL in your browser's status bar
+4. The URL will look like: `post.php?post=123&action=elementor`
+5. The number after `post=` is your Popup ID (in this example: 123)
+6. Enter this number in **Settings > Cookie Consent > Elementor Integration**
+7. Your buttons in the Elementor popup must trigger the consent JavaScript functions:
+   - Accept All: `mdccConsent.acceptAll()`
+   - Analytics Only: `mdccConsent.acceptAnalyticsOnly()`
+   - Decline All: `mdccConsent.declineAll()`
+
+Alternatively, edit your popup in Elementor and check the browser URL - the popup ID appears there as well.
+
+For more details on setting up button actions, see our [support forum](https://wordpress.org/support/plugin/maxtdesign-cookie-consent/).
+
 = Does this slow down my site? =
 
 No. The entire plugin is under 10KB (CSS + JS combined). It makes zero database queries during page load and has no external dependencies.
@@ -383,6 +403,21 @@ Coming in 2026! Pro will include multi-platform tracking control (Facebook, Hotj
 
 
 == Changelog ==
+
+= 1.7.2 - 2026-02-11 =
+**Bug fix for popup display race condition**
+
+**Fixed:**
+* Popup race condition where JavaScript initialized before popup HTML was rendered via wp_footer
+* Changed initialization from DOMContentLoaded to window 'load' event
+* Ensures popup HTML exists in DOM before JavaScript attempts interaction
+* Resolves inconsistent popup display, particularly noticeable in Chrome
+
+**Technical:**
+* Modified MDCC_Popup_System::get_popup_javascript() initialization code
+* Replaced DOMContentLoaded detection with window.addEventListener('load', init)
+* Added inline code comment explaining timing requirement
+* Zero functional changes to popup behavior or appearance
 
 = 1.7.1 - 2026-02-09 =
 **Critical bug fix for Google Consent Mode v2 timing**
@@ -456,6 +491,9 @@ Coming in 2026! Pro will include multi-platform tracking control (Facebook, Hotj
 
 
 == Upgrade Notice ==
+
+= 1.7.2 =
+Fixes popup display race condition causing inconsistent appearance (particularly in Chrome). Recommended update for all users.
 
 = 1.7.1 =
 Critical fix for Google Consent Mode v2 timing - GTM/GA4 now properly blocked until consent granted. Adds admin toggle for advanced users. Highly recommended update for GDPR/CCPA compliance.
