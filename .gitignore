@@ -39,6 +39,7 @@ yarn-error.log
 # WordPress Plugin Directory upload files
 svn-upload/
 .svnignore
+.github/
 
 # Development notes (keep docs in repo)
 .notes/
