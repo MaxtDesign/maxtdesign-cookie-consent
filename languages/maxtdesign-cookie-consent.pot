@@ -1,24 +1,364 @@
 # MaxtDesign Cookie Consent - Google Consent Mode v2
-# Copyright (C) 2025 MaxtDesign
+# Copyright (C) 2025-2026 MaxtDesign
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: MaxtDesign Cookie Consent - Google Consent Mode v2 1.7.0\n"
-"Report-Msgid-Bugs-To: https://maxtdesign.com/support\n"
-"POT-Creation-Date: 2025-11-10 12:00+0000\n"
+"Project-Id-Version: MaxtDesign Cookie Consent - Google Consent Mode v2 1.7.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/maxtdesign-cookie-consent/\n"
+"POT-Creation-Date: 2026-02-28 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: en\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Manual stub (replace by WP-CLI)\n"
 "X-Domain: maxtdesign-cookie-consent\n"
 
-# NOTE: This template is a stub to satisfy repository completeness.
-# Generate a complete POT via WP-CLI:
-# wp i18n make-pot . languages/maxtdesign-cookie-consent.pot
+#: maxtdesign-cookie-consent.php:54
+msgid "MaxtDesign Cookie Consent - Google Consent Mode v2 requires WordPress 5.8 or higher."
+msgstr ""
 
+#: maxtdesign-cookie-consent.php:58
+msgid "MaxtDesign Cookie Consent - Google Consent Mode v2 requires PHP 7.4 or higher."
+msgstr ""
 
+#: maxtdesign-cookie-consent.php:83
+#: includes/class-admin-settings.php:310
+#: includes/class-popup-system.php:381
+msgid "Cookie Consent"
+msgstr ""
+
+#: maxtdesign-cookie-consent.php:84
+#: includes/class-popup-system.php:382
+msgid "We use cookies to enhance your browsing experience and analyze our traffic."
+msgstr ""
+
+#: includes/class-admin-settings.php:102
+msgid "Popup Appearance"
+msgstr ""
+
+#: includes/class-admin-settings.php:108
+msgid "Enable Popup"
+msgstr ""
+
+#: includes/class-admin-settings.php:116
+msgid "Style Preset"
+msgstr ""
+
+#: includes/class-admin-settings.php:124
+msgid "Position"
+msgstr ""
+
+#: includes/class-admin-settings.php:132
+msgid "Primary Color"
+msgstr ""
+
+#: includes/class-admin-settings.php:140
+msgid "Animation"
+msgstr ""
+
+#: includes/class-admin-settings.php:149
+msgid "Popup Content"
+msgstr ""
+
+#: includes/class-admin-settings.php:155
+msgid "Popup Title"
+msgstr ""
+
+#: includes/class-admin-settings.php:163
+msgid "Popup Message"
+msgstr ""
+
+#: includes/class-admin-settings.php:173
+msgid "Behavior Settings"
+msgstr ""
+
+#: includes/class-admin-settings.php:180
+msgid "Cookie Duration"
+msgstr ""
+
+#: includes/class-admin-settings.php:188
+msgid "Re-prompt on Decline"
+msgstr ""
+
+#: includes/class-admin-settings.php:197
+msgid "Elementor Integration (Optional)"
+msgstr ""
+
+#: includes/class-admin-settings.php:204
+msgid "Elementor Popup ID"
+msgstr ""
+
+#: includes/class-admin-settings.php:213
+msgid "Advanced Settings"
+msgstr ""
+
+#: includes/class-admin-settings.php:220
+msgid "Inject Default Consent State"
+msgstr ""
+
+#: includes/class-admin-settings.php:309
+msgid "Cookie Consent Settings"
+msgstr ""
+
+#: includes/class-admin-settings.php:328
+msgid "Settings"
+msgstr ""
+
+#: includes/class-admin-settings.php:387
+msgid "Configure your consent popup appearance, content, and behavior. Lightweight consent management with proper Google Consent Mode v2 implementation."
+msgstr ""
+
+#: includes/class-admin-settings.php:396
+msgid "Save Settings"
+msgstr ""
+
+#: includes/class-admin-settings.php:401
+msgid "Shortcodes Available"
+msgstr ""
+
+#: includes/class-admin-settings.php:404
+msgid "Displays current consent status chips (Analytics: On/Off, Ads: On/Off)"
+msgstr ""
+
+#: includes/class-admin-settings.php:409
+msgid "Displays consent management interface with Accept/Analytics/Decline buttons"
+msgstr ""
+
+#: includes/class-admin-settings.php:414
+msgid "Documentation & Support"
+msgstr ""
+
+#: includes/class-admin-settings.php:416
+msgid "Plugin Documentation"
+msgstr ""
+
+#: includes/class-admin-settings.php:417
+msgid "FAQ & Troubleshooting"
+msgstr ""
+
+#: includes/class-admin-settings.php:418
+msgid "Support Forum"
+msgstr ""
+
+#: includes/class-admin-settings.php:419
+msgid "♥ Sponsor This Plugin"
+msgstr ""
+
+#: includes/class-admin-settings.php:435
+msgid "Customize the visual appearance of the consent popup."
+msgstr ""
+
+#: includes/class-admin-settings.php:442
+msgid "Configure the text content displayed in the popup."
+msgstr ""
+
+#: includes/class-admin-settings.php:449
+msgid "Control popup behavior and timing."
+msgstr ""
+
+#: includes/class-admin-settings.php:456
+msgid "If you prefer to use a custom Elementor popup instead of the built-in popup, enter your Elementor Popup ID here. Leave blank to use the built-in popup."
+msgstr ""
+
+#: includes/class-admin-settings.php:465
+msgid "Advanced Google Consent Mode configuration."
+msgstr ""
+
+#: includes/class-admin-settings.php:483
+msgid "Display the consent popup to visitors"
+msgstr ""
+
+#: includes/class-admin-settings.php:486
+msgid "Uncheck to temporarily disable the popup without losing your settings."
+msgstr ""
+
+#: includes/class-admin-settings.php:503
+msgid "Minimal"
+msgstr ""
+
+#: includes/class-admin-settings.php:506
+msgid "Modern"
+msgstr ""
+
+#: includes/class-admin-settings.php:509
+msgid "Bold"
+msgstr ""
+
+#: includes/class-admin-settings.php:513
+msgid "Choose a visual style preset. Minimal: Clean and subtle. Modern: Rounded and polished. Bold: Strong and prominent."
+msgstr ""
+
+#: includes/class-admin-settings.php:527
+msgid "Top Banner"
+msgstr ""
+
+#: includes/class-admin-settings.php:530
+msgid "Bottom Banner"
+msgstr ""
+
+#: includes/class-admin-settings.php:533
+msgid "Center Modal"
+msgstr ""
+
+#: includes/class-admin-settings.php:537
+msgid "Where the popup appears on the screen."
+msgstr ""
+
+#: includes/class-admin-settings.php:552
+msgid "Color for primary buttons. Click to choose a color."
+msgstr ""
+
+#: includes/class-admin-settings.php:566
+msgid "Slide In"
+msgstr ""
+
+#: includes/class-admin-settings.php:569
+msgid "Fade In"
+msgstr ""
+
+#: includes/class-admin-settings.php:572
+msgid "No Animation"
+msgstr ""
+
+#: includes/class-admin-settings.php:576
+msgid "Animation when popup appears."
+msgstr ""
+
+#: includes/class-admin-settings.php:593
+msgid "Headline text displayed in the popup."
+msgstr ""
+
+#: includes/class-admin-settings.php:609
+msgid "Description text explaining cookie usage."
+msgstr ""
+
+#: includes/class-admin-settings.php:628
+msgid "days"
+msgstr ""
+
+#: includes/class-admin-settings.php:630
+msgid "How many days after closing the popup before showing it again (1-365 days)."
+msgstr ""
+
+#: includes/class-admin-settings.php:646
+msgid "Show popup again once per session if user declines all cookies"
+msgstr ""
+
+#: includes/class-admin-settings.php:649
+msgid "If enabled, the popup will re-appear once per browsing session when a user declines tracking."
+msgstr ""
+
+#: includes/class-admin-settings.php:667
+msgid "Leave blank to use built-in popup"
+msgstr ""
+
+#. translators: %s: Link to documentation
+#: includes/class-admin-settings.php:672
+#, php-format
+msgid "Enter your Elementor Popup ID to use a custom popup instead of the built-in one. %s"
+msgstr ""
+
+#: includes/class-admin-settings.php:673
+msgid "Learn how to find your popup ID"
+msgstr ""
+
+#: includes/class-admin-settings.php:694
+msgid "Inject default consent in page head before tracking scripts"
+msgstr ""
+
+#: includes/class-admin-settings.php:699
+msgid "Injects gtag(\"consent\", \"default\", {...}) in page head before tracking scripts load. Required for proper GDPR/CCPA compliance with Google Tag Manager. Only disable if you are manually handling consent defaults or experiencing conflicts."
+msgstr ""
+
+#: includes/class-popup-system.php:407
+msgid "Close consent popup"
+msgstr ""
+
+#: includes/class-popup-system.php:423
+#: includes/class-shortcodes.php:534
+msgid "Accept all cookies"
+msgstr ""
+
+#: includes/class-popup-system.php:424
+#: includes/class-shortcodes.php:535
+msgid "Accept All"
+msgstr ""
+
+#: includes/class-popup-system.php:430
+#: includes/class-shortcodes.php:541
+msgid "Accept analytics cookies only"
+msgstr ""
+
+#: includes/class-popup-system.php:431
+#: includes/class-shortcodes.php:542
+msgid "Analytics Only"
+msgstr ""
+
+#: includes/class-popup-system.php:437
+#: includes/class-shortcodes.php:548
+msgid "Decline all cookies"
+msgstr ""
+
+#: includes/class-popup-system.php:438
+#: includes/class-shortcodes.php:549
+msgid "Decline All"
+msgstr ""
+
+#: includes/class-shortcodes.php:93
+msgid "Are you sure you want to reset your consent preferences?"
+msgstr ""
+
+#: includes/class-shortcodes.php:94
+msgid "On"
+msgstr ""
+
+#: includes/class-shortcodes.php:95
+#: includes/class-shortcodes.php:468
+#: includes/class-shortcodes.php:481
+#: includes/class-shortcodes.php:574
+#: includes/class-shortcodes.php:585
+msgid "Off"
+msgstr ""
+
+#: includes/class-shortcodes.php:463
+#: includes/class-shortcodes.php:569
+msgid "Analytics consent status"
+msgstr ""
+
+#: includes/class-shortcodes.php:465
+#: includes/class-shortcodes.php:571
+msgid "Analytics:"
+msgstr ""
+
+#: includes/class-shortcodes.php:476
+#: includes/class-shortcodes.php:580
+msgid "Advertising consent status"
+msgstr ""
+
+#: includes/class-shortcodes.php:478
+#: includes/class-shortcodes.php:582
+msgid "Ads:"
+msgstr ""
+
+#: includes/class-shortcodes.php:507
+msgid "Your Privacy Choices"
+msgstr ""
+
+#: includes/class-shortcodes.php:508
+msgid "Choose how we use cookies and similar technologies."
+msgstr ""
+
+#: includes/class-shortcodes.php:555
+msgid "Reset your consent preferences"
+msgstr ""
+
+#: includes/class-shortcodes.php:556
+msgid "Reset Preferences"
+msgstr ""
+
+#: includes/class-shortcodes.php:563
+msgid "Current Settings:"
+msgstr ""
