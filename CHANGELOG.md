@@ -6,6 +6,14 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [1.7.3] - 2026-02-28
+
+### Added
+- Complete translation template (`.pot`) with all 61 translatable strings extracted from source
+- Enables community translation via translate.wordpress.org
+- Users can now create translations with Loco Translate or Poedit without any extra setup
+- Previous `.pot` was an empty stub — all strings were unreachable by translation tools
+
 ## [1.7.2] - 2026-02-11
 
 ### Fixed
@@ -102,7 +110,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 - First public release scaffolding
 
-[Unreleased]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.2...HEAD
+[Unreleased]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.3...HEAD
+[1.7.3]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.2...v1.7.3
 [1.7.2]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.1...v1.7.2
 [1.7.1]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.6.0...v1.7.0

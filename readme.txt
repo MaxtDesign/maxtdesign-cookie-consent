@@ -5,7 +5,7 @@ Donate link: https://github.com/sponsors/MaxtDesign
 Tags: cookie-consent, gdpr, google-consent-mode, ccpa, analytics
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -387,11 +387,6 @@ Yes! The plugin is fully translation-ready. Contribute translations at: [https:/
 * **Support Forum:** [https://wordpress.org/support/plugin/maxtdesign-cookie-consent](https://wordpress.org/support/plugin/maxtdesign-cookie-consent)
 * **Email:** support@maxtdesign.com (for Pro customers)
 
-= Is there a Pro version? =
-
-Coming in 2026! Pro will include multi-platform tracking control (Facebook, Hotjar, LinkedIn, TikTok), consent analytics, geolocation-based prompts, and white-label mode for agencies.
-
-
 == Screenshots ==
 
 1. Admin settings page - Configure popup appearance, content, and behavior with intuitive interface
@@ -404,20 +399,19 @@ Coming in 2026! Pro will include multi-platform tracking control (Facebook, Hotj
 
 == Changelog ==
 
+= 1.7.3 - 2026-02-28 =
+**Translation support**
+
+**Added:**
+* Complete translation template (.pot) with all 61 translatable strings
+* Enables community translation via translate.wordpress.org
+* Users can now translate with Loco Translate or Poedit without any extra setup
+
 = 1.7.2 - 2026-02-11 =
 **Bug fix for popup display race condition**
 
 **Fixed:**
 * Popup race condition where JavaScript initialized before popup HTML was rendered via wp_footer
-* Changed initialization from DOMContentLoaded to window 'load' event
-* Ensures popup HTML exists in DOM before JavaScript attempts interaction
-* Resolves inconsistent popup display, particularly noticeable in Chrome
-
-**Technical:**
-* Modified MDCC_Popup_System::get_popup_javascript() initialization code
-* Replaced DOMContentLoaded detection with window.addEventListener('load', init)
-* Added inline code comment explaining timing requirement
-* Zero functional changes to popup behavior or appearance
 
 = 1.7.1 - 2026-02-09 =
 **Critical bug fix for Google Consent Mode v2 timing**
@@ -491,6 +485,9 @@ Coming in 2026! Pro will include multi-platform tracking control (Facebook, Hotj
 
 
 == Upgrade Notice ==
+
+= 1.7.3 =
+Adds complete translation support. Update to translate button labels and all text into any language using Loco Translate or translate.wordpress.org.
 
 = 1.7.2 =
 Fixes popup display race condition causing inconsistent appearance (particularly in Chrome). Recommended update for all users.
