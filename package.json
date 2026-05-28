@@ -1,6 +1,6 @@
 {
   "name": "maxtdesign-cookie-consent",
-  "version": "1.7.0",
+  "version": "1.7.4",
   "description": "Build tools for MaxtDesign Cookie Consent",
   "private": true,
   "scripts": {
