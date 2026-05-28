@@ -87,19 +87,22 @@ class MDCC_Consent_Manager {
             return;
         }
 
-        ?>
-    <script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('consent', 'default', {
-    'analytics_storage': 'denied',
-    'ad_storage': 'denied',
-    'ad_user_data': 'denied',
-    'ad_personalization': 'denied',
-    'wait_for_update': 500
-});
-    </script>
-        <?php
+        $js = "window.dataLayer = window.dataLayer || [];\n"
+            . "function gtag(){dataLayer.push(arguments);}\n"
+            . "gtag('consent', 'default', {"
+            . "'analytics_storage':'denied',"
+            . "'ad_storage':'denied',"
+            . "'ad_user_data':'denied',"
+            . "'ad_personalization':'denied',"
+            . "'security_storage':'granted',"
+            . "'functionality_storage':'granted',"
+            . "'personalization_storage':'denied',"
+            . "'wait_for_update':500"
+            . "});";
+
+        // wp_print_inline_script_tag (WP 5.7+) composes with CSP nonce plugins
+        // via the wp_inline_script_attributes filter.
+        wp_print_inline_script_tag($js);
     }
 
     /**

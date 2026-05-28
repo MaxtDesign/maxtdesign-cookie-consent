@@ -6,6 +6,22 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [1.7.4] - 2026-05-28
+
+### Added
+- WordPress 7.0 "Armstrong" compatibility (Tested up to: 7.0)
+- Privacy Policy generator integration via `wp_add_privacy_policy_content()` — describes localStorage usage, the `mdcc_popup_shown` cookie, and the GCM v2 signalling behaviour
+- Admin notice when an Elementor popup ID is configured but Elementor is not active (previously the built-in popup would silently suppress, leaving the site with no consent UI)
+- GCM v2 default state now also declares `security_storage`, `functionality_storage`, and `personalization_storage` for completeness
+
+### Changed
+- `inject_gcm_default()` now uses `wp_print_inline_script_tag()` instead of a raw `<script>` echo. This composes with Content Security Policy nonce plugins (e.g. via `wp_inline_script_attributes`), preventing the consent default from being silently blocked on CSP-hardened sites.
+- Removed `wp_strip_all_tags()` wrappers around `wp_add_inline_script()` / `wp_add_inline_style()` calls. The inputs are internally authored and not user-controlled; strip-tags added no security value and risked silently mangling future JS string literals containing `<`.
+
+### Fixed
+- `mdccConsent.reset()` now clears the `mdcc_popup_shown` cookie in addition to the localStorage state. Previously, calling reset from the manage-consent shortcode cleared the stored choice but left the popup hidden, so the user could not be re-prompted.
+- First-time visitors no longer get a redundant `gtag('consent','update',{denied})` on page load. The runtime now only fires an `update` call when a stored consent choice exists; on first visit it leaves the inline default state (denied + `wait_for_update:500`) in place. This preserves GCM v2's wait window and keeps cookieless-pings behaviour intact in Advanced mode. Tracking remains fully blocked on first load because the inline default already denies all categories.
+
 ## [1.7.3] - 2026-02-28
 
 ### Added
@@ -110,7 +126,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 - First public release scaffolding
 
-[Unreleased]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.3...HEAD
+[Unreleased]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.4...HEAD
+[1.7.4]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.3...v1.7.4
 [1.7.3]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.2...v1.7.3
 [1.7.2]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.1...v1.7.2
 [1.7.1]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.0...v1.7.1

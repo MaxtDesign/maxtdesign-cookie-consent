@@ -16,7 +16,7 @@
         }
     }
 
-    function readState() {
+    function readStoredState() {
         try {
             var stored = localStorage.getItem(config.storageKey);
             if (stored) {
@@ -30,8 +30,11 @@
         } catch (e) {
             debug('Error reading consent state:', e);
         }
+        return null;
+    }
 
-        return { analytics: false, ads: false };
+    function readState() {
+        return readStoredState() || { analytics: false, ads: false };
     }
 
     function writeState(state) {
@@ -115,6 +118,10 @@
         reset: function () {
             try {
                 localStorage.removeItem(config.storageKey);
+                // Also clear the "popup shown" cookie so the popup can reappear
+                // after a user-initiated reset. Without this, reset is a no-op
+                // visually (state cleared, but popup stays hidden).
+                document.cookie = 'mdcc_popup_shown=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax';
                 debug('Consent state reset');
             } catch (e) {
                 debug('Error resetting consent:', e);
@@ -127,9 +134,18 @@
     };
 
     function init() {
-        var s = readState();
-        updateGCM(s);
-        debug('Consent manager initialized with state:', s);
+        // Only fire gtag('consent', 'update', ...) if the user has previously
+        // made a choice. On a first-time visit there is no stored state, so we
+        // leave the inline default state (denied + wait_for_update:500) in
+        // place — this preserves GCM v2's wait window and avoids emitting a
+        // redundant update:denied that short-circuits cookieless pings.
+        var stored = readStoredState();
+        if (stored) {
+            updateGCM(stored);
+            debug('Consent manager initialized with stored state:', stored);
+        } else {
+            debug('No stored consent — letting inline default state ride');
+        }
     }
 
     init();

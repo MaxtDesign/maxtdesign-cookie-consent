@@ -76,6 +76,48 @@ class MDCC_Admin_Settings {
 
         // Enqueue admin assets
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
+
+        // Warn if Elementor popup ID is set but Elementor is not active
+        add_action('admin_notices', array($this, 'maybe_render_elementor_missing_notice'));
+    }
+
+    /**
+     * Show an admin notice if the Elementor popup integration is configured
+     * but Elementor is not active. Without this, the built-in popup is
+     * suppressed and the site has no consent UI at all.
+     *
+     * @since 1.7.4
+     */
+    public function maybe_render_elementor_missing_notice() {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
+
+        if (empty($settings['elementor_popup_id'])) {
+            return;
+        }
+
+        if (did_action('elementor/loaded') || defined('ELEMENTOR_VERSION')) {
+            return;
+        }
+
+        $settings_url = admin_url('options-general.php?page=' . self::PAGE_SLUG);
+        ?>
+        <div class="notice notice-warning">
+            <p>
+                <strong><?php esc_html_e('MaxtDesign Cookie Consent:', 'maxtdesign-cookie-consent'); ?></strong>
+                <?php
+                printf(
+                    /* translators: %s: link to the plugin settings page */
+                    esc_html__('An Elementor popup ID is configured but Elementor is not active. The built-in consent popup is currently suppressed, so visitors will not see any consent UI. %s', 'maxtdesign-cookie-consent'),
+                    '<a href="' . esc_url($settings_url) . '">' . esc_html__('Review settings', 'maxtdesign-cookie-consent') . '</a>'
+                );
+                ?>
+            </p>
+        </div>
+        <?php
     }
 
     /**

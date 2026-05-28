@@ -4,8 +4,8 @@ Contributors: slaacr
 Donate link: https://github.com/sponsors/MaxtDesign
 Tags: cookie-consent, gdpr, google-consent-mode, ccpa, analytics
 Requires at least: 5.8
-Tested up to: 6.9
-Stable tag: 1.7.3
+Tested up to: 7.0
+Stable tag: 1.7.4
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -399,6 +399,23 @@ Yes! The plugin is fully translation-ready. Contribute translations at: [https:/
 
 == Changelog ==
 
+= 1.7.4 - 2026-05-28 =
+**WordPress 7.0 compatibility, CSP hardening, and reset() bug fix**
+
+**Added:**
+* WordPress 7.0 "Armstrong" compatibility (Tested up to: 7.0)
+* Privacy Policy generator integration — suggested paragraph auto-populates the WordPress privacy policy tool
+* Admin notice when an Elementor popup ID is configured but Elementor is not active (previously the built-in popup silently suppressed)
+* GCM v2 default state now also declares security_storage, functionality_storage, and personalization_storage
+
+**Changed:**
+* Default consent injection now uses wp_print_inline_script_tag() so it works under Content Security Policy nonce plugins
+* Removed unnecessary wp_strip_all_tags() wrappers from inline JS/CSS calls
+
+**Fixed:**
+* mdccConsent.reset() now also clears the mdcc_popup_shown cookie so the popup can reappear after a reset
+* First-time visitors no longer get a redundant update:denied call on page load — runtime now only fires gtag update when a stored choice exists, preserving GCM v2's wait_for_update window
+
 = 1.7.3 - 2026-02-28 =
 **Translation support**
 
@@ -485,6 +502,9 @@ Yes! The plugin is fully translation-ready. Contribute translations at: [https:/
 
 
 == Upgrade Notice ==
+
+= 1.7.4 =
+WordPress 7.0 compatible. Fixes the manage-consent reset button so the popup reappears after a reset. Hardens default-consent injection for CSP environments. Recommended update.
 
 = 1.7.3 =
 Adds complete translation support. Update to translate button labels and all text into any language using Loco Translate or translate.wordpress.org.

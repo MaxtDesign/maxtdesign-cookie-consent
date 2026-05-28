@@ -3,7 +3,7 @@
  * Plugin Name: MaxtDesign Cookie Consent - Google Consent Mode v2
  * Plugin URI: https://wordpress.org/plugins/maxtdesign-cookie-consent/
  * Description: Actually controls Google Analytics & Ads tracking (not just a banner). Free alternative to $50/month solutions. Works with existing GA4. Won't slow your site.
- * Version: 1.7.3
+ * Version: 1.7.4
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author: MaxtDesign
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 // -----------------------------------------------------------------------------
 // Constants
 // -----------------------------------------------------------------------------
-define('MDCC_VERSION', '1.7.3');
+define('MDCC_VERSION', '1.7.4');
 define('MDCC_PLUGIN_FILE', __FILE__);
 define('MDCC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('MDCC_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -109,6 +109,28 @@ function mdcc_init_plugin() {
     if (class_exists('MDCC_Shortcodes')) {
         MDCC_Shortcodes::get_instance();
     }
+}
+
+// -----------------------------------------------------------------------------
+// Privacy Policy generator content
+// -----------------------------------------------------------------------------
+add_action('admin_init', 'mdcc_register_privacy_policy_content');
+function mdcc_register_privacy_policy_content() {
+    if (!function_exists('wp_add_privacy_policy_content')) {
+        return;
+    }
+
+    $content = sprintf(
+        '<p>%s</p><p>%s</p><p>%s</p>',
+        esc_html__('This site uses MaxtDesign Cookie Consent to manage your tracking preferences for Google Analytics and Google Ads. When you make a choice in the consent popup, that choice is stored locally in your browser using localStorage (key: mdcc_consent). It is not transmitted to our servers.', 'maxtdesign-cookie-consent'),
+        esc_html__('A small cookie named mdcc_popup_shown is set when you dismiss the popup, so we do not show it again for the duration configured by the site administrator (default 7 days). This cookie contains only a flag value and no personal data.', 'maxtdesign-cookie-consent'),
+        esc_html__('This plugin implements Google Consent Mode v2. When you grant or deny consent, the choice is signalled to Google Analytics and Google Ads via their gtag API. Please refer to Google\'s own privacy policies for details on data they collect once consent is granted.', 'maxtdesign-cookie-consent')
+    );
+
+    wp_add_privacy_policy_content(
+        __('MaxtDesign Cookie Consent', 'maxtdesign-cookie-consent'),
+        wp_kses_post(wpautop($content, false))
+    );
 }
 
 
