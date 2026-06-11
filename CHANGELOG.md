@@ -6,6 +6,9 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+### Changed
+- In-plugin "Plugin Documentation" link now points to the dedicated docs page (`https://maxtdesign.com/plugins/cookie-consent/docs`) instead of the plugin landing page.
+
 ## [1.7.6] - 2026-06-11
 
 ### Changed
