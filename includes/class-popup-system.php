@@ -265,11 +265,39 @@ class MDCC_Popup_System {
     }
     
     /**
+     * Re-show the popup once per session after a decline (if enabled).
+     *
+     * Driven directly from the popup's own Decline All button rather than a
+     * global 'mdcc:changed' listener: that event also fires for reset() and the
+     * [mdcc_manage_consent] shortcode, which would consume the once-per-session
+     * one-shot without ever re-showing. We only arm here, and we only consume
+     * the session flag on a *successful* re-show. The delay outlasts closePopup's
+     * 300ms hide animation, and the display check confirms the visitor actually
+     * dismissed the popup before we bring it back.
+     */
+    function scheduleRepromptOnDecline() {
+        if (!config.repromptDecline) return;
+
+        var repromptKey = 'mdcc_reprompted_session';
+        if (sessionStorage.getItem(repromptKey)) return;
+
+        setTimeout(function() {
+            if (popup && popup.style.display === 'none') {
+                sessionStorage.setItem(repromptKey, '1');
+                popup.style.display = 'block';
+                popup.classList.add('mdcc-popup--visible');
+                document.body.classList.add('mdcc-popup-open');
+                setupFocusTrap();
+            }
+        }, 2000);
+    }
+
+    /**
      * Handle consent button clicks
      */
     function handleConsentAction(action) {
         if (!window.mdccConsent) return;
-        
+
         switch(action) {
             case 'accept-all':
                 mdccConsent.acceptAll();
@@ -281,8 +309,13 @@ class MDCC_Popup_System {
                 mdccConsent.declineAll();
                 break;
         }
-        
+
         closePopup();
+
+        // Re-prompt only when the visitor declined everything via the popup.
+        if (action === 'decline-all') {
+            scheduleRepromptOnDecline();
+        }
     }
     
     /**
@@ -387,28 +420,6 @@ class MDCC_Popup_System {
         // Keyboard navigation
         document.addEventListener('keydown', handleKeyboard);
         
-        // Re-prompt on decline (if enabled)
-        if (config.repromptDecline) {
-            document.addEventListener('mdcc:changed', function(e) {
-                var state = e.detail;
-                if (!state.analytics && !state.ads) {
-                    // User declined - show popup again once per session
-                    // But only if popup was actually shown and closed (not on initial load)
-                    var repromptKey = 'mdcc_reprompted_session';
-                    if (!sessionStorage.getItem(repromptKey)) {
-                        // Check if popup exists and was previously hidden (user closed it)
-                        if (popup && popup.style.display === 'none') {
-                            sessionStorage.setItem(repromptKey, '1');
-                            setTimeout(function() {
-                                popup.style.display = 'block';
-                                popup.classList.add('mdcc-popup--visible');
-                                setupFocusTrap();
-                            }, 2000); // Wait 2 seconds before re-showing
-                        }
-                    }
-                }
-            });
-        }
     }
     
     // Initialize after full page load (ensures wp_footer has rendered popup HTML)
