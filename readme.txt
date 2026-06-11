@@ -5,7 +5,7 @@ Donate link: https://github.com/sponsors/MaxtDesign
 Tags: cookie-consent, gdpr, google-consent-mode, ccpa, analytics
 Requires at least: 5.8
 Tested up to: 7.0
-Stable tag: 1.7.5
+Stable tag: 1.7.6
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -399,6 +399,13 @@ Yes! The plugin is fully translation-ready. Contribute translations at: [https:/
 
 == Changelog ==
 
+= 1.7.6 - 2026-06-11 =
+**Link corrections**
+
+**Changed:**
+* Plugin homepage and author links now point to the official plugin page at maxtdesign.com
+* In-plugin Documentation and FAQ links now point to the official plugin page
+
 = 1.7.5 - 2026-06-11 =
 **Popup display fixes**
 
@@ -509,6 +516,9 @@ Yes! The plugin is fully translation-ready. Contribute translations at: [https:/
 
 
 == Upgrade Notice ==
+
+= 1.7.6 =
+Minor maintenance: corrects the plugin homepage and in-plugin documentation links. No functional changes.
 
 = 1.7.5 =
 Fixes the consent popup reappearing on every page load after a choice was already made (notably on cached sites). Also fixes the optional "Re-prompt on Decline" setting. Recommended update.

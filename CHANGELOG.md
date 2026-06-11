@@ -6,6 +6,16 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [1.7.6] - 2026-06-11
+
+### Changed
+- `Plugin URI` now points to the plugin's own page (`https://maxtdesign.com/plugins/cookie-consent`) instead of the WordPress.org listing, and `Author URI` points to `https://maxtdesign.com`. Also aligns Plugin URI with the WordPress.org guideline that it be distinct from the directory listing.
+- In-plugin "Documentation & Support" links (Plugin Documentation, FAQ) and the Elementor popup-ID help link now point to the official plugin page.
+- Translation README support contact now points to the WordPress.org support forum.
+
+### Removed
+- Deleted the stale `README.md` release-checklist from the repository (already excluded from the distributed package; removing it prevents any future re-leak).
+
 ## [1.7.5] - 2026-06-11
 
 ### Fixed
@@ -135,7 +145,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 - First public release scaffolding
 
-[Unreleased]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.5...HEAD
+[Unreleased]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.6...HEAD
+[1.7.6]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.5...v1.7.6
 [1.7.5]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.4...v1.7.5
 [1.7.4]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.3...v1.7.4
 [1.7.3]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.2...v1.7.3

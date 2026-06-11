@@ -1,13 +1,13 @@
 <?php
 /**
  * Plugin Name: MaxtDesign Cookie Consent - Google Consent Mode v2
- * Plugin URI: https://wordpress.org/plugins/maxtdesign-cookie-consent/
+ * Plugin URI: https://maxtdesign.com/plugins/cookie-consent
  * Description: Actually controls Google Analytics & Ads tracking (not just a banner). Free alternative to $50/month solutions. Works with existing GA4. Won't slow your site.
- * Version: 1.7.5
+ * Version: 1.7.6
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author: MaxtDesign
- * Author URI: https://github.com/MaxtDesign
+ * Author URI: https://maxtdesign.com
  * Donate link: https://github.com/sponsors/MaxtDesign
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 // -----------------------------------------------------------------------------
 // Constants
 // -----------------------------------------------------------------------------
-define('MDCC_VERSION', '1.7.5');
+define('MDCC_VERSION', '1.7.6');
 define('MDCC_PLUGIN_FILE', __FILE__);
 define('MDCC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('MDCC_PLUGIN_URL', plugin_dir_url(__FILE__));

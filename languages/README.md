@@ -66,4 +66,4 @@ This plugin contains approximately 80-100 translatable strings:
 
 ### Questions?
 
-Contact: https://maxtdesign.com/support
+Contact: https://wordpress.org/support/plugin/maxtdesign-cookie-consent/

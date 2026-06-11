@@ -455,8 +455,8 @@ class MDCC_Admin_Settings {
                 <div class="mdcc-info-box">
                     <h3><?php esc_html_e('Documentation & Support', 'maxtdesign-cookie-consent'); ?></h3>
                     <ul>
-                        <li><a href="https://wordpress.org/plugins/maxtdesign-cookie-consent/#description" target="_blank"><?php esc_html_e('Plugin Documentation', 'maxtdesign-cookie-consent'); ?></a></li>
-                        <li><a href="https://wordpress.org/plugins/maxtdesign-cookie-consent/#faq" target="_blank"><?php esc_html_e('FAQ & Troubleshooting', 'maxtdesign-cookie-consent'); ?></a></li>
+                        <li><a href="https://maxtdesign.com/plugins/cookie-consent" target="_blank"><?php esc_html_e('Plugin Documentation', 'maxtdesign-cookie-consent'); ?></a></li>
+                        <li><a href="https://maxtdesign.com/plugins/cookie-consent#faq" target="_blank"><?php esc_html_e('FAQ & Troubleshooting', 'maxtdesign-cookie-consent'); ?></a></li>
                         <li><a href="https://wordpress.org/support/plugin/maxtdesign-cookie-consent/" target="_blank"><?php esc_html_e('Support Forum', 'maxtdesign-cookie-consent'); ?></a></li>
                         <li><a href="https://github.com/sponsors/MaxtDesign" target="_blank" style="color: #d63638; font-weight: 600;"><?php esc_html_e('♥ Sponsor This Plugin', 'maxtdesign-cookie-consent'); ?></a></li>
                     </ul>
@@ -712,7 +712,7 @@ class MDCC_Admin_Settings {
             printf(
                 /* translators: %s: Link to documentation */
                 esc_html__('Enter your Elementor Popup ID to use a custom popup instead of the built-in one. %s', 'maxtdesign-cookie-consent'),
-                '<a href="https://wordpress.org/plugins/maxtdesign-cookie-consent/#faq" target="_blank">' . esc_html__('Learn how to find your popup ID', 'maxtdesign-cookie-consent') . '</a>'
+                '<a href="https://maxtdesign.com/plugins/cookie-consent#faq" target="_blank">' . esc_html__('Learn how to find your popup ID', 'maxtdesign-cookie-consent') . '</a>'
             );
             ?>
         </p>
