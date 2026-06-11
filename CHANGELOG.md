@@ -6,6 +6,15 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [1.7.5] - 2026-06-11
+
+### Fixed
+- Consent popup reappeared on every page load even after the visitor had stored a consent choice. The display decision was server-side only (the `mdcc_popup_shown` cookie gate in `should_show_popup()`); the client behavior script showed the popup unconditionally whenever the markup was present. Under full-page caching the cached HTML (markup + inline JS) is served to every visitor regardless of cookies, so the server gate never re-evaluated and the popup showed every time. Added a client-side `shouldShow()` gate in the popup behavior JS that mirrors the server gate, so the popup stays hidden once consent is stored (or the dismissal cookie is present), and re-shows only on decline when "Re-prompt on Decline" is enabled.
+- "Re-prompt on Decline" never re-showed the popup from its own Decline All button. `handleConsentAction('decline-all')` dispatched `mdcc:changed` synchronously while the popup was still visible, and the re-prompt listener guarded on `display === 'none'`, so the guard always failed (`closePopup()` only hides ~300ms later via `setTimeout`). The re-prompt is now driven directly from the Decline All path via `scheduleRepromptOnDecline()`, with the once-per-session flag consumed only on a successful re-show, so unrelated decline events (`reset()`, the `[mdcc_manage_consent]` shortcode) no longer burn the one-shot.
+
+### Added
+- `window.mdccConsent.stored()` returns the raw stored consent object, or `null` when no choice has been made yet. Unlike `current()`, this distinguishes "no choice yet" from "declined all", which the popup uses to decide whether to show. Documented in `docs/JAVASCRIPT-API.md`.
+
 ## [1.7.4] - 2026-05-28
 
 ### Added
@@ -126,7 +135,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 - First public release scaffolding
 
-[Unreleased]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.4...HEAD
+[Unreleased]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.5...HEAD
+[1.7.5]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.4...v1.7.5
 [1.7.4]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.3...v1.7.4
 [1.7.3]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.2...v1.7.3
 [1.7.2]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.1...v1.7.2

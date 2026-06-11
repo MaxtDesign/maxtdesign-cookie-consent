@@ -5,7 +5,7 @@ Donate link: https://github.com/sponsors/MaxtDesign
 Tags: cookie-consent, gdpr, google-consent-mode, ccpa, analytics
 Requires at least: 5.8
 Tested up to: 7.0
-Stable tag: 1.7.4
+Stable tag: 1.7.5
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -399,6 +399,13 @@ Yes! The plugin is fully translation-ready. Contribute translations at: [https:/
 
 == Changelog ==
 
+= 1.7.5 - 2026-06-11 =
+**Popup display fixes**
+
+**Fixed:**
+* Consent popup no longer reappears on every page load after a visitor has already accepted or declined. The popup now checks the stored consent choice in the browser before showing, so it stays hidden once a choice is made. This also covers sites using full-page caching, where the previous server-side check could not run for each visitor.
+* "Re-prompt on Decline" now works from the popup's own Decline All button. Previously, declining directly in the popup did not re-show it as the setting intends.
+
 = 1.7.4 - 2026-05-28 =
 **WordPress 7.0 compatibility, CSP hardening, and reset() bug fix**
 
@@ -502,6 +509,9 @@ Yes! The plugin is fully translation-ready. Contribute translations at: [https:/
 
 
 == Upgrade Notice ==
+
+= 1.7.5 =
+Fixes the consent popup reappearing on every page load after a choice was already made (notably on cached sites). Also fixes the optional "Re-prompt on Decline" setting. Recommended update.
 
 = 1.7.4 =
 WordPress 7.0 compatible. Fixes the manage-consent reset button so the popup reappears after a reset. Hardens default-consent injection for CSP environments. Recommended update.
