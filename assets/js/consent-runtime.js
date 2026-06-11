@@ -94,6 +94,14 @@
             return readState();
         },
 
+        // Returns the raw stored consent object, or null if the visitor has
+        // never made a choice. Unlike current(), this distinguishes "no choice
+        // yet" (null) from "declined all" ({analytics:false, ads:false}) — the
+        // popup needs that distinction to decide whether to show on load.
+        stored: function () {
+            return readStoredState();
+        },
+
         acceptAll: function () {
             updateConsent({
                 analytics: true,

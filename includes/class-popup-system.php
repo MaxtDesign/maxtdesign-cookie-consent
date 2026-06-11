@@ -180,7 +180,61 @@ class MDCC_Popup_System {
     var closeBtn = null;
     var firstFocusable = null;
     var lastFocusable = null;
-    
+
+    /**
+     * Read a cookie value by name (returns null if absent)
+     */
+    function getCookie(name) {
+        var prefix = name + '=';
+        var parts = document.cookie ? document.cookie.split(';') : [];
+        for (var i = 0; i < parts.length; i++) {
+            var part = parts[i].replace(/^\s+/, '');
+            if (part.indexOf(prefix) === 0) {
+                return part.substring(prefix.length);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Decide whether the popup should be shown on this page load.
+     *
+     * This mirrors the server-side should_show_popup() gate, but runs in the
+     * browser so it stays correct under full-page caching. With a page cache,
+     * the cached HTML (popup markup + this script) is served to every visitor
+     * regardless of their cookies, so the PHP gate never re-evaluates — without
+     * this client-side check the popup would reappear on every load even after
+     * the visitor consented. Precedence:
+     *
+     *   - Stored consent exists (visitor made a choice):
+     *       - declined all + "Re-prompt on Decline" ON  -> show (re-prompt)
+     *       - otherwise (accepted something, or reprompt OFF) -> don't show
+     *   - No stored consent:
+     *       - "popup shown" cookie present (dismissed without choosing) -> don't show
+     *       - otherwise (genuine first visit) -> show
+     */
+    function shouldShow() {
+        var stored = (window.mdccConsent && typeof window.mdccConsent.stored === 'function')
+            ? window.mdccConsent.stored()
+            : null;
+
+        if (stored) {
+            var declinedAll = !stored.analytics && !stored.ads;
+            // Re-prompt only when the visitor declined everything AND the site
+            // owner enabled re-prompting. Any acceptance, or reprompt OFF, means
+            // we honor the stored choice and stay hidden.
+            return declinedAll && !!config.repromptDecline;
+        }
+
+        // No choice recorded yet — respect the "already shown" cookie so a
+        // dismissal (close button / overlay) isn't undone by a cached page.
+        if (config.cookieName && getCookie(config.cookieName) !== null) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Set cookie to remember popup shown
      */
@@ -291,9 +345,17 @@ class MDCC_Popup_System {
     function init() {
         popup = document.querySelector('.mdcc-popup');
         if (!popup) return;
-        
+
+        // Bail before showing if the visitor has already consented (or was
+        // already prompted). Keeps the popup hidden on cached pages where the
+        // server-side gate couldn't run for this visitor.
+        if (!shouldShow()) {
+            popup.style.display = 'none';
+            return;
+        }
+
         closeBtn = popup.querySelector('.mdcc-popup__close');
-        
+
         // Show popup with animation
         setTimeout(function() {
             popup.style.display = 'block';

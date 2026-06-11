@@ -41,6 +41,27 @@ console.log(state.ads);       // true or false
 
 ---
 
+### `stored()`
+
+Get the raw stored consent choice, or `null` if the visitor has never made one.
+
+**Returns:** `{Object|null}` Stored state `{analytics: boolean, ads: boolean}`, or `null` when nothing valid is stored.
+
+**Behavior:**
+- Reads and validates the localStorage entry (same validation as `current()`).
+- Unlike `current()`, does **not** fall back to a default — returns `null` when no choice exists.
+- Lets callers distinguish "no choice yet" (`null`) from "declined all" (`{analytics: false, ads: false}`). The popup uses this to decide whether to display on load.
+
+**Example:**
+```javascript
+const choice = window.mdccConsent.stored();
+if (choice === null) {
+    // First-time visitor — no consent decision recorded yet
+}
+```
+
+---
+
 ### `acceptAll()`
 
 Accept all tracking (analytics + ads).
