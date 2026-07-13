@@ -264,6 +264,14 @@ class MDCC_Admin_Settings {
             self::PAGE_SLUG,
             'mdcc_advanced_section'
         );
+
+        add_settings_field(
+            'consent_api_bridge',
+            __('WP Consent API Integration', 'maxtdesign-cookie-consent'),
+            array($this, 'render_consent_api_bridge_field'),
+            self::PAGE_SLUG,
+            'mdcc_advanced_section'
+        );
     }
 
     /**
@@ -337,6 +345,9 @@ class MDCC_Admin_Settings {
 
         // GCM inject default (boolean)
         $sanitized['gcm_inject_default'] = !empty($input['gcm_inject_default']);
+
+        // WP Consent API bridge (boolean)
+        $sanitized['consent_api_bridge'] = !empty($input['consent_api_bridge']);
 
         return $sanitized;
     }
@@ -742,6 +753,47 @@ class MDCC_Admin_Settings {
                 'maxtdesign-cookie-consent'
             );
             ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render WP Consent API bridge checkbox field
+     *
+     * When enabled and the free WP Consent API plugin is active, the plugin
+     * mirrors each visitor choice onto the standard consent categories
+     * (analytics -> statistics, ads -> marketing, functional always allowed) so
+     * other consent-aware plugins on the site respect the same decision.
+     *
+     * @since 1.8.0
+     */
+    public function render_consent_api_bridge_field() {
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
+        // Default on for installs upgrading before this key existed.
+        $value = !array_key_exists('consent_api_bridge', $settings) || !empty($settings['consent_api_bridge']);
+        $api_active = function_exists('wp_has_consent');
+        ?>
+        <label>
+            <input type="checkbox"
+                   name="<?php echo esc_attr(self::OPTION_NAME); ?>[consent_api_bridge]"
+                   value="1"
+                   <?php checked($value, true); ?> />
+            <?php esc_html_e('Share consent choices with the WordPress Consent API', 'maxtdesign-cookie-consent'); ?>
+        </label>
+        <p class="description">
+            <?php
+            esc_html_e(
+                'When the free WP Consent API plugin is active, this bridges each visitor choice onto the standard WordPress consent categories so other consent-aware plugins (WooCommerce and others) respect the same decision. Analytics maps to "statistics", Ads maps to "marketing", and strictly-necessary "functional" cookies are always allowed. Has no effect unless the WP Consent API plugin is installed and active.',
+                'maxtdesign-cookie-consent'
+            );
+            ?>
+        </p>
+        <p class="description">
+            <?php if ($api_active) : ?>
+                <strong style="color:#227122;">&#10003; <?php esc_html_e('WP Consent API plugin detected — the bridge is active.', 'maxtdesign-cookie-consent'); ?></strong>
+            <?php else : ?>
+                <strong style="color:#996800;">&#9432; <?php esc_html_e('WP Consent API plugin not detected. Install and activate it to enable the bridge; until then this setting has no effect and the plugin works exactly as before.', 'maxtdesign-cookie-consent'); ?></strong>
+            <?php endif; ?>
         </p>
         <?php
     }

@@ -6,12 +6,20 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-07-13
+
 ### Added
+- **WP Consent API bridge** — the plugin is now a first-class provider for the WordPress Consent API (the wp.org standard that WooCommerce and others read). When the free WP Consent API plugin is active, each visitor choice is mirrored onto the standard consent categories via `wp_set_consent()` — `analytics` → `statistics`, `ads` → `marketing`, and strictly-necessary `functional` cookies are always allowed — and the plugin declares the site's consent model as `optin` (GDPR) through the `wp_get_consent_type` filter. This lets other consent-aware plugins respect the same decision with `wp_has_consent()`, replacing owner-asserted consent with real, visitor-controlled consent. Purely additive: with the WP Consent API plugin absent, every path is a no-op and the plugin keeps its existing client-only behavior.
+- New **"WP Consent API Integration"** admin toggle (Advanced Settings, default on), with live detection of whether the WP Consent API plugin is active.
+- Developer filters: `mdcc_consent_type` (override the declared consent model), `mdcc_consent_api_enabled` (force the JS bridge on/off), and `mdcc_consent_runtime_deps` (declare script dependencies for the consent runtime).
 - `mdcc_should_show_popup` filter — lets site developers suppress the consent popup on specific pages or conditions (per page, post type, user role, etc.) without disabling it sitewide. Runs only after all built-in gates pass, so it can turn a "would show" into "don't show" but cannot force the popup on in admin, when disabled, or once already shown.
 
 ### Changed
 - Extracted the popup's inline behavior JavaScript out of a PHP heredoc in `class-popup-system.php` into a dedicated source file (`assets/js/popup.js`, minified to `popup.min.js` via `npm run build:popup-js`). The script is still inlined into the footer — no new HTTP request — so this is a maintainability/build-tooling change with no behavior change. Edit `popup.js`; never edit the generated `.min.js`.
 - In-plugin "Plugin Documentation" link now points to the dedicated docs page (`https://maxtdesign.com/plugins/cookie-consent/docs`) instead of the plugin landing page.
+
+### Privacy
+- The Privacy Policy generator content now discloses the WP Consent API bridge and its category mapping when the integration applies.
 
 ## [1.7.6] - 2026-06-11
 
@@ -152,7 +160,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 - First public release scaffolding
 
-[Unreleased]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.6...HEAD
+[Unreleased]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.6...v1.8.0
 [1.7.6]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.5...v1.7.6
 [1.7.5]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.4...v1.7.5
 [1.7.4]: https://github.com/maxtdesign/maxtdesign-cookie-consent/compare/v1.7.3...v1.7.4

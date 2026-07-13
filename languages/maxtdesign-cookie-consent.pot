@@ -3,9 +3,9 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: MaxtDesign Cookie Consent - Google Consent Mode v2 1.7.2\n"
+"Project-Id-Version: MaxtDesign Cookie Consent - Google Consent Mode v2 1.8.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/maxtdesign-cookie-consent/\n"
-"POT-Creation-Date: 2026-02-28 00:00+0000\n"
+"POT-Creation-Date: 2026-07-13 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -361,4 +361,28 @@ msgstr ""
 
 #: includes/class-shortcodes.php:563
 msgid "Current Settings:"
+msgstr ""
+
+#: maxtdesign-cookie-consent.php:133
+msgid "If the WP Consent API plugin is active, your choice is also shared with other consent-aware plugins on this site using WordPress's standard consent signals: your analytics choice maps to the \"statistics\" category and your advertising choice maps to the \"marketing\" category, while strictly-necessary (\"functional\") cookies remain always active. This lets other plugins respect the same decision without setting additional cookies of their own."
+msgstr ""
+
+#: includes/class-admin-settings.php:270
+msgid "WP Consent API Integration"
+msgstr ""
+
+#: includes/class-admin-settings.php:781
+msgid "Share consent choices with the WordPress Consent API"
+msgstr ""
+
+#: includes/class-admin-settings.php:786
+msgid "When the free WP Consent API plugin is active, this bridges each visitor choice onto the standard WordPress consent categories so other consent-aware plugins (WooCommerce and others) respect the same decision. Analytics maps to \"statistics\", Ads maps to \"marketing\", and strictly-necessary \"functional\" cookies are always allowed. Has no effect unless the WP Consent API plugin is installed and active."
+msgstr ""
+
+#: includes/class-admin-settings.php:793
+msgid "WP Consent API plugin detected — the bridge is active."
+msgstr ""
+
+#: includes/class-admin-settings.php:795
+msgid "WP Consent API plugin not detected. Install and activate it to enable the bridge; until then this setting has no effect and the plugin works exactly as before."
 msgstr ""

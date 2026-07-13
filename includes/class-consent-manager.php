@@ -122,10 +122,24 @@ class MDCC_Consent_Manager {
 
         $suffix = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
 
+        /**
+         * Filter the script dependencies of the consent runtime.
+         *
+         * Lets add-on features (e.g. the WP Consent API bridge) declare a load
+         * order without this class needing to know about them. The bridge adds
+         * the 'wp-consent-api' handle here — but only after verifying it is
+         * actually registered — so wp_set_consent() is guaranteed available by
+         * the time the runtime initializes.
+         *
+         * @since 1.8.0
+         * @param string[] $deps Registered script handles the runtime depends on.
+         */
+        $deps = (array) apply_filters('mdcc_consent_runtime_deps', array());
+
         wp_enqueue_script(
             'mdcc-consent-runtime',
             MDCC_PLUGIN_URL . 'assets/js/consent-runtime' . $suffix . '.js',
-            array(),
+            $deps,
             MDCC_VERSION,
             true
         );
@@ -137,6 +151,16 @@ class MDCC_Consent_Manager {
             array(
                 'storageKey' => self::STORAGE_KEY,
                 'debug'      => defined('WP_DEBUG') && WP_DEBUG,
+                /**
+                 * Whether to mirror consent choices into the WP Consent API.
+                 *
+                 * The bridge sets this true only when its admin toggle is on and
+                 * the WP Consent API plugin is active; the runtime additionally
+                 * guards on `typeof wp_set_consent === 'function'` before calling.
+                 *
+                 * @since 1.8.0
+                 */
+                'consentApi' => (bool) apply_filters('mdcc_consent_api_enabled', false),
             )
         );
     }

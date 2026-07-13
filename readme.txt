@@ -5,7 +5,7 @@ Donate link: https://github.com/sponsors/MaxtDesign
 Tags: cookie-consent, gdpr, google-consent-mode, ccpa, analytics
 Requires at least: 5.8
 Tested up to: 7.0
-Stable tag: 1.7.6
+Stable tag: 1.8.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -46,6 +46,9 @@ Compatible with any theme. Works with Elementor (optional). Mobile responsive. A
 
 **✓ Developer-Friendly**
 Clean code following WordPress standards. Two shortcodes for easy integration. No jQuery dependency. Vanilla JavaScript.
+
+**✓ WP Consent API Ready**
+Acts as a provider for the WordPress Consent API standard. With the free WP Consent API plugin active, your visitors' choices are respected site-wide by WooCommerce and other consent-aware plugins automatically.
 
 **✓ Privacy-First**
 No server-side user tracking. No external API calls. User consent stored locally. GDPR/CCPA compliant by design.
@@ -305,6 +308,12 @@ If you have `WP_DEBUG` enabled in wp-config.php, open the browser console (F12) 
 
 Yes. The plugin is theme and plugin agnostic. It works with WooCommerce, Elementor, and any other WordPress plugins.
 
+= Does this integrate with the WP Consent API? =
+
+Yes. As of version 1.8.0 the plugin is a provider for the WordPress Consent API — the wp.org standard that WooCommerce and many other plugins read. Install and activate the free WP Consent API plugin alongside this one, and each visitor choice is automatically shared using the standard consent categories: your Analytics choice maps to "statistics", your Ads choice maps to "marketing", and strictly-necessary "functional" cookies stay always active. Other consent-aware plugins on your site then respect the same decision with no extra configuration.
+
+This integration is enabled by default and can be turned off under Settings > Cookie Consent > Advanced Settings. It has no effect unless the WP Consent API plugin is active, so nothing changes for sites that do not use it.
+
 = Can I customize the popup appearance? =
 
 Yes! Choose from three style presets (Minimal, Modern, Bold), three positions (Top, Bottom, Center), customize the primary color, edit all text, and control animation style.
@@ -398,6 +407,20 @@ Yes! The plugin is fully translation-ready. Contribute translations at: [https:/
 
 
 == Changelog ==
+
+= 1.8.0 - 2026-07-13 =
+**WP Consent API integration — real, visitor-controlled consent for the whole site**
+
+**Added:**
+* WP Consent API bridge: the plugin is now a first-class provider for the WordPress Consent API (the wp.org standard that WooCommerce and others read). When the free WP Consent API plugin is active, each visitor choice is shared with other consent-aware plugins — Analytics maps to the "statistics" category, Ads maps to "marketing", and strictly-necessary "functional" cookies stay always active. Other plugins can then respect the same decision automatically.
+* New "WP Consent API Integration" toggle in Advanced Settings (on by default), with live detection of whether the WP Consent API plugin is active.
+* Developer filters: mdcc_consent_type, mdcc_consent_api_enabled, mdcc_consent_runtime_deps, and mdcc_should_show_popup (suppress the popup on specific pages without disabling it sitewide).
+
+**Changed:**
+* Popup behavior JavaScript moved from inline PHP into a dedicated, minified source file (assets/js/popup.js). Still inlined into the footer — no extra HTTP request — purely an internal maintainability change with no behavior change.
+
+**Compatibility:**
+* Fully additive and backward compatible. Without the WP Consent API plugin installed, the plugin behaves exactly as it did before — nothing changes for existing installs.
 
 = 1.7.6 - 2026-06-11 =
 **Link corrections**
@@ -516,6 +539,9 @@ Yes! The plugin is fully translation-ready. Contribute translations at: [https:/
 
 
 == Upgrade Notice ==
+
+= 1.8.0 =
+Adds WP Consent API integration so your consent choices are respected site-wide by WooCommerce and other consent-aware plugins. Fully additive — existing installs behave exactly as before, and the integration only activates if you also run the free WP Consent API plugin.
 
 = 1.7.6 =
 Minor maintenance: corrects the plugin homepage and in-plugin documentation links. No functional changes.

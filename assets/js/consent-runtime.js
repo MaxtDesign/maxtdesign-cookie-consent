@@ -69,6 +69,32 @@
         }
     }
 
+    // Mirror the visitor's choice onto the WordPress Consent API so other
+    // consent-aware plugins (WooCommerce, etc.) respect the same decision.
+    // One-way by design: this plugin is the consent provider / source of truth.
+    //
+    //   functional  -> always 'allow' (strictly-necessary; consent-exempt)
+    //   statistics  -> analytics choice
+    //   marketing   -> ads choice
+    //
+    // Guarded twice: config.consentApi is only true when the admin toggle is on
+    // AND the WP Consent API plugin is active, and we still confirm the function
+    // exists at call time (it is defined by wp-consent-api.js). Absent either,
+    // this is a no-op and the plugin keeps its normal client-only behavior.
+    function syncConsentAPI(state) {
+        if (!config.consentApi || typeof window.wp_set_consent !== 'function') {
+            return;
+        }
+        try {
+            window.wp_set_consent('functional', 'allow');
+            window.wp_set_consent('statistics', state.analytics ? 'allow' : 'deny');
+            window.wp_set_consent('marketing', state.ads ? 'allow' : 'deny');
+            debug('WP Consent API synced:', state);
+        } catch (e) {
+            debug('Error syncing WP Consent API:', e);
+        }
+    }
+
     function dispatchChangeEvent(state) {
         try {
             var event = new CustomEvent('mdcc:changed', {
@@ -86,6 +112,7 @@
     function updateConsent(s) {
         writeState(s);
         updateGCM(s);
+        syncConsentAPI(s);
         dispatchChangeEvent(s);
     }
 
@@ -137,6 +164,7 @@
 
             var d = { analytics: false, ads: false };
             updateGCM(d);
+            syncConsentAPI(d);
             dispatchChangeEvent(d);
         }
     };
@@ -150,6 +178,9 @@
         var stored = readStoredState();
         if (stored) {
             updateGCM(stored);
+            // Re-assert the API cookie on load so server-side wp_has_consent()
+            // stays correct even on full-page-cached responses.
+            syncConsentAPI(stored);
             debug('Consent manager initialized with stored state:', stored);
         } else {
             debug('No stored consent — letting inline default state ride');
