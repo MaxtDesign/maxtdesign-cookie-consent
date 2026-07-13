@@ -6,7 +6,11 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+### Added
+- `mdcc_should_show_popup` filter — lets site developers suppress the consent popup on specific pages or conditions (per page, post type, user role, etc.) without disabling it sitewide. Runs only after all built-in gates pass, so it can turn a "would show" into "don't show" but cannot force the popup on in admin, when disabled, or once already shown.
+
 ### Changed
+- Extracted the popup's inline behavior JavaScript out of a PHP heredoc in `class-popup-system.php` into a dedicated source file (`assets/js/popup.js`, minified to `popup.min.js` via `npm run build:popup-js`). The script is still inlined into the footer — no new HTTP request — so this is a maintainability/build-tooling change with no behavior change. Edit `popup.js`; never edit the generated `.min.js`.
 - In-plugin "Plugin Documentation" link now points to the dedicated docs page (`https://maxtdesign.com/plugins/cookie-consent/docs`) instead of the plugin landing page.
 
 ## [1.7.6] - 2026-06-11

@@ -67,6 +67,13 @@ class MDCC_Popup_System {
      * - Cookie indicates popup already shown (and not expired)
      * - User has already made a consent choice
      *
+     * The final decision is passed through the `mdcc_should_show_popup` filter
+     * so site developers can selectively suppress the popup (per page, post
+     * type, user role, etc.) without disabling it globally. The filter only
+     * runs after every built-in gate has passed — it can turn a "would show"
+     * into "don't show", but it intentionally cannot force the popup back on in
+     * admin, when disabled, or once already shown.
+     *
      * @since 1.6.0
      * @return bool True if popup should display
      */
@@ -94,7 +101,24 @@ class MDCC_Popup_System {
             return false;
         }
 
-        return true;
+        /**
+         * Filter whether the consent popup should display on this request.
+         *
+         * Fires only after all built-in gates pass (not in admin, popup
+         * enabled, no Elementor override, no "already shown" cookie). Return
+         * false to suppress the popup on specific pages or conditions without
+         * disabling it sitewide.
+         *
+         * Example — hide the popup on the contact page:
+         *
+         *     add_filter('mdcc_should_show_popup', function ($show) {
+         *         return is_page('contact') ? false : $show;
+         *     });
+         *
+         * @since 1.7.7
+         * @param bool $should_show True when the popup would otherwise display.
+         */
+        return (bool) apply_filters('mdcc_should_show_popup', true);
     }
 
     /**
@@ -163,273 +187,30 @@ class MDCC_Popup_System {
     /**
      * Get popup behavior JavaScript
      *
-     * Handles popup display, close functionality, button clicks, keyboard navigation,
-     * cookie management, and consent integration.
+     * Returns the popup's client-side logic for inlining into the footer.
+     * Authored in assets/js/popup.js and minified to popup.min.js by terser
+     * (`npm run build:popup-js`); the minified build ships by default, with the
+     * readable source served when SCRIPT_DEBUG is enabled. Kept inline rather
+     * than enqueued as a URL on purpose — the consent gate is render-critical
+     * and show-once, so an extra HTTP request would never benefit from caching.
      *
      * @since 1.6.0
-     * @return string JavaScript code
+     * @return string JavaScript code (empty string if the asset is missing)
      */
     private function get_popup_javascript() {
-        ob_start();
-        ?>
-(function(window, document) {
-    'use strict';
-    
-    var config = window.mdccPopupConfig || {};
-    var popup = null;
-    var closeBtn = null;
-    var firstFocusable = null;
-    var lastFocusable = null;
+        $suffix = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
+        $path   = MDCC_PLUGIN_DIR . 'assets/js/popup' . $suffix . '.js';
 
-    /**
-     * Read a cookie value by name (returns null if absent)
-     */
-    function getCookie(name) {
-        var prefix = name + '=';
-        var parts = document.cookie ? document.cookie.split(';') : [];
-        for (var i = 0; i < parts.length; i++) {
-            var part = parts[i].replace(/^\s+/, '');
-            if (part.indexOf(prefix) === 0) {
-                return part.substring(prefix.length);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Decide whether the popup should be shown on this page load.
-     *
-     * This mirrors the server-side should_show_popup() gate, but runs in the
-     * browser so it stays correct under full-page caching. With a page cache,
-     * the cached HTML (popup markup + this script) is served to every visitor
-     * regardless of their cookies, so the PHP gate never re-evaluates — without
-     * this client-side check the popup would reappear on every load even after
-     * the visitor consented. Precedence:
-     *
-     *   - Stored consent exists (visitor made a choice):
-     *       - declined all + "Re-prompt on Decline" ON  -> show (re-prompt)
-     *       - otherwise (accepted something, or reprompt OFF) -> don't show
-     *   - No stored consent:
-     *       - "popup shown" cookie present (dismissed without choosing) -> don't show
-     *       - otherwise (genuine first visit) -> show
-     */
-    function shouldShow() {
-        var stored = (window.mdccConsent && typeof window.mdccConsent.stored === 'function')
-            ? window.mdccConsent.stored()
-            : null;
-
-        if (stored) {
-            var declinedAll = !stored.analytics && !stored.ads;
-            // Re-prompt only when the visitor declined everything AND the site
-            // owner enabled re-prompting. Any acceptance, or reprompt OFF, means
-            // we honor the stored choice and stay hidden.
-            return declinedAll && !!config.repromptDecline;
+        if (!is_readable($path)) {
+            return '';
         }
 
-        // No choice recorded yet — respect the "already shown" cookie so a
-        // dismissal (close button / overlay) isn't undone by a cached page.
-        if (config.cookieName && getCookie(config.cookieName) !== null) {
-            return false;
-        }
+        // Reading a bundled plugin asset off local disk to inline it; this is a
+        // file read, not a remote fetch, so WP_Filesystem is unnecessary here.
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+        $js = file_get_contents($path);
 
-        return true;
-    }
-
-    /**
-     * Set cookie to remember popup shown
-     */
-    function setCookie() {
-        var days = config.cookieDuration || 7;
-        var date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        var expires = 'expires=' + date.toUTCString();
-        document.cookie = config.cookieName + '=1;' + expires + ';path=/;SameSite=Lax';
-    }
-    
-    /**
-     * Close popup
-     */
-    function closePopup() {
-        if (!popup) return;
-        
-        popup.classList.add('mdcc-popup--closing');
-        
-        setTimeout(function() {
-            popup.style.display = 'none';
-            popup.classList.remove('mdcc-popup--closing');
-            document.body.classList.remove('mdcc-popup-open');
-        }, 300); // Match animation duration
-        
-        // Set cookie so popup doesn't show again
-        setCookie();
-    }
-    
-    /**
-     * Re-show the popup once per session after a decline (if enabled).
-     *
-     * Driven directly from the popup's own Decline All button rather than a
-     * global 'mdcc:changed' listener: that event also fires for reset() and the
-     * [mdcc_manage_consent] shortcode, which would consume the once-per-session
-     * one-shot without ever re-showing. We only arm here, and we only consume
-     * the session flag on a *successful* re-show. The delay outlasts closePopup's
-     * 300ms hide animation, and the display check confirms the visitor actually
-     * dismissed the popup before we bring it back.
-     */
-    function scheduleRepromptOnDecline() {
-        if (!config.repromptDecline) return;
-
-        var repromptKey = 'mdcc_reprompted_session';
-        if (sessionStorage.getItem(repromptKey)) return;
-
-        setTimeout(function() {
-            if (popup && popup.style.display === 'none') {
-                sessionStorage.setItem(repromptKey, '1');
-                popup.style.display = 'block';
-                popup.classList.add('mdcc-popup--visible');
-                document.body.classList.add('mdcc-popup-open');
-                setupFocusTrap();
-            }
-        }, 2000);
-    }
-
-    /**
-     * Handle consent button clicks
-     */
-    function handleConsentAction(action) {
-        if (!window.mdccConsent) return;
-
-        switch(action) {
-            case 'accept-all':
-                mdccConsent.acceptAll();
-                break;
-            case 'analytics-only':
-                mdccConsent.acceptAnalyticsOnly();
-                break;
-            case 'decline-all':
-                mdccConsent.declineAll();
-                break;
-        }
-
-        closePopup();
-
-        // Re-prompt only when the visitor declined everything via the popup.
-        if (action === 'decline-all') {
-            scheduleRepromptOnDecline();
-        }
-    }
-    
-    /**
-     * Setup focus trap for accessibility
-     */
-    function setupFocusTrap() {
-        if (!popup) return;
-        
-        var focusableElements = popup.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        
-        if (focusableElements.length > 0) {
-            firstFocusable = focusableElements[0];
-            lastFocusable = focusableElements[focusableElements.length - 1];
-            
-            // Focus first button when popup opens
-            setTimeout(function() {
-                if (firstFocusable) {
-                    firstFocusable.focus();
-                }
-            }, 100);
-        }
-    }
-    
-    /**
-     * Handle keyboard navigation
-     */
-    function handleKeyboard(e) {
-        if (!popup || popup.style.display === 'none') return;
-        
-        // ESC key closes popup
-        if (e.key === 'Escape' || e.keyCode === 27) {
-            e.preventDefault();
-            closePopup();
-            return;
-        }
-        
-        // TAB key - trap focus within popup
-        if (e.key === 'Tab' || e.keyCode === 9) {
-            if (e.shiftKey) {
-                // Shift + Tab
-                if (document.activeElement === firstFocusable) {
-                    e.preventDefault();
-                    lastFocusable.focus();
-                }
-            } else {
-                // Tab
-                if (document.activeElement === lastFocusable) {
-                    e.preventDefault();
-                    firstFocusable.focus();
-                }
-            }
-        }
-    }
-    
-    /**
-     * Initialize popup behavior
-     */
-    function init() {
-        popup = document.querySelector('.mdcc-popup');
-        if (!popup) return;
-
-        // Bail before showing if the visitor has already consented (or was
-        // already prompted). Keeps the popup hidden on cached pages where the
-        // server-side gate couldn't run for this visitor.
-        if (!shouldShow()) {
-            popup.style.display = 'none';
-            return;
-        }
-
-        closeBtn = popup.querySelector('.mdcc-popup__close');
-
-        // Show popup with animation
-        setTimeout(function() {
-            popup.style.display = 'block';
-            document.body.classList.add('mdcc-popup-open');
-            setTimeout(function() {
-                popup.classList.add('mdcc-popup--visible');
-                setupFocusTrap();
-            }, 10);
-        }, 500); // Delay initial appearance
-        
-        // Close button
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                closePopup();
-            });
-        }
-        
-        // Consent button clicks (event delegation)
-        popup.addEventListener('click', function(e) {
-            var btn = e.target.closest('[data-mdcc-action]');
-            if (btn) {
-                e.preventDefault();
-                var action = btn.getAttribute('data-mdcc-action');
-                handleConsentAction(action);
-            }
-        });
-        
-        // Keyboard navigation
-        document.addEventListener('keydown', handleKeyboard);
-        
-    }
-    
-    // Initialize after full page load (ensures wp_footer has rendered popup HTML)
-    // Using 'load' instead of 'DOMContentLoaded' because popup is rendered via wp_footer
-    // which may execute after DOMContentLoaded, causing a race condition
-    window.addEventListener('load', init);
-    
-})(window, document);
-        <?php
-        return ob_get_clean();
+        return false === $js ? '' : $js;
     }
 
     /**
@@ -488,7 +269,21 @@ class MDCC_Popup_System {
                     <p id="mdcc-popup-message" class="mdcc-popup__message">
                         <?php echo esc_html($message); ?>
                     </p>
-                    
+
+                    <?php
+                    // Link the site's designated Privacy Policy (Settings → Privacy)
+                    // when one is set. A consent notice should point users to the
+                    // policy that explains the cookies; renders nothing otherwise.
+                    $mdcc_privacy_url = function_exists('get_privacy_policy_url') ? get_privacy_policy_url() : '';
+                    if ($mdcc_privacy_url) :
+                    ?>
+                    <p class="mdcc-popup__privacy-link">
+                        <a href="<?php echo esc_url($mdcc_privacy_url); ?>">
+                            <?php esc_html_e('Privacy Policy', 'maxtdesign-cookie-consent'); ?>
+                        </a>
+                    </p>
+                    <?php endif; ?>
+
                     <div class="mdcc-popup__actions">
                         <button type="button" 
                                 class="mdcc-popup__button mdcc-popup__button--primary" 

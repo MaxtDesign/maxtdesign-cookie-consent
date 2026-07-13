@@ -13,8 +13,12 @@
 | Commit | Change | Ships next release |
 |---|---|---|
 | `9c21ad8` | `fix(admin)`: in-plugin "Plugin Documentation" link → `https://maxtdesign.com/plugins/cookie-consent/docs` (was the landing page) | ✅ |
+| _1.7.7_ | `refactor(popup)`: extract popup inline JS → `assets/js/popup.js`/`popup.min.js` (still inlined, no extra HTTP); add `mdcc_should_show_popup` filter. Code version bumped to 1.7.7. | ✅ |
 
 These are also recorded under `## [Unreleased]` in `CHANGELOG.md`.
+
+## In progress (not yet on `main`)
+- **`feat/wp-consent-api-bridge` → 1.8.0**: makes the plugin a WP Consent API provider (registers `wp_get_consent_type` = `optin`, bridges the existing analytics→`statistics` / ads→`marketing` choices to `wp_set_consent()`; `functional` always allowed). Additive, degrades gracefully without the WP Consent API plugin. Supersedes the 1.7.7 checkpoint when it ships (1.8.0 contains everything above).
 
 ## Next release checklist (when doing the next SVN push)
 1. Bump version everywhere (header `Version`, `MDCC_VERSION`, `package.json`, `readme.txt` Stable tag).
