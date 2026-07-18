@@ -1,0 +1,241 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:add_settings_link\\(\\) has parameter \\$links with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:add_settings_link\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:add_settings_page\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:enqueue_admin_assets\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:init_hooks\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:maybe_render_elementor_missing_notice\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:register_settings\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_advanced_section\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_consent_api_bridge_field\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_field_elementor_popup_id\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_field_popup_animation\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_field_popup_enabled\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_field_popup_message\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_field_popup_position\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_field_popup_primary_color\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_field_popup_shown_duration\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_field_popup_style\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_field_popup_title\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_field_reprompt_on_decline\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_gcm_inject_default_field\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_section_appearance\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_section_behavior\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_section_content\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_section_elementor\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:render_settings_page\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:sanitize_settings\\(\\) has parameter \\$input with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Admin_Settings\\:\\:sanitize_settings\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: includes/class-admin-settings.php
+
+		-
+			message: "#^Method MDCC_Consent_API_Bridge\\:\\:init_hooks\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-consent-api-bridge.php
+
+		-
+			message: "#^Method MDCC_Consent_Manager\\:\\:get_default_state\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: includes/class-consent-manager.php
+
+		-
+			message: "#^Method MDCC_Consent_Manager\\:\\:init_hooks\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-consent-manager.php
+
+		-
+			message: "#^Method MDCC_Popup_System\\:\\:enqueue_popup_assets\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-popup-system.php
+
+		-
+			message: "#^Method MDCC_Popup_System\\:\\:init_hooks\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-popup-system.php
+
+		-
+			message: "#^Method MDCC_Popup_System\\:\\:render_popup\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-popup-system.php
+
+		-
+			message: "#^Method MDCC_Shortcodes\\:\\:enqueue_shortcode_assets\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-shortcodes.php
+
+		-
+			message: "#^Method MDCC_Shortcodes\\:\\:get_shortcode_css\\(\\) should return string but returns string\\|false\\.$#"
+			count: 1
+			path: includes/class-shortcodes.php
+
+		-
+			message: "#^Method MDCC_Shortcodes\\:\\:get_shortcode_javascript\\(\\) should return string but returns string\\|false\\.$#"
+			count: 1
+			path: includes/class-shortcodes.php
+
+		-
+			message: "#^Method MDCC_Shortcodes\\:\\:init_hooks\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: includes/class-shortcodes.php
+
+		-
+			message: "#^Method MDCC_Shortcodes\\:\\:render_consent_status\\(\\) has parameter \\$atts with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: includes/class-shortcodes.php
+
+		-
+			message: "#^Method MDCC_Shortcodes\\:\\:render_consent_status\\(\\) should return string but returns string\\|false\\.$#"
+			count: 1
+			path: includes/class-shortcodes.php
+
+		-
+			message: "#^Method MDCC_Shortcodes\\:\\:render_manage_consent\\(\\) has parameter \\$atts with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: includes/class-shortcodes.php
+
+		-
+			message: "#^Method MDCC_Shortcodes\\:\\:render_manage_consent\\(\\) should return string but returns string\\|false\\.$#"
+			count: 1
+			path: includes/class-shortcodes.php
+
+		-
+			message: "#^Function mdcc_activate_plugin\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: maxtdesign-cookie-consent.php
+
+		-
+			message: "#^Function mdcc_deactivate_plugin\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: maxtdesign-cookie-consent.php
+
+		-
+			message: "#^Function mdcc_default_settings\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: maxtdesign-cookie-consent.php
+
+		-
+			message: "#^Function mdcc_init_plugin\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: maxtdesign-cookie-consent.php
+
+		-
+			message: "#^Function mdcc_register_privacy_policy_content\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: maxtdesign-cookie-consent.php
+
+		-
+			message: "#^Function mdcc_uninstall\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: uninstall.php
+
+		-
+			message: "#^Function mdcc_uninstall_site\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: uninstall.php

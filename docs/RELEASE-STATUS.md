@@ -32,3 +32,14 @@ These are also recorded under `## [Unreleased]` in `CHANGELOG.md`.
 ## Open follow-ups to confirm before/at next release
 - **`#faq` anchor on maxtdesign.com**: a separate session is adding `id="faq"` to the FAQ section. The in-plugin FAQ links (`/plugins/cookie-consent#faq`, in `class-admin-settings.php` lines 459 and 715) only scroll correctly once that anchor is live — confirm it exists.
 - Empty this file's "ahead of SVN" table once the pending work has shipped.
+
+## Build/release tooling modernized (2026-07-17) — matches Disable REST / Product Bundles
+Dev-only; no runtime/shipped-code change. All excluded from the user zip.
+- **`.distignore`** added — defense-in-depth deny-list layered under the allow-list (`bin/build-zip.php` cross-checks the two so they can't drift).
+- **`bin/build-zip.php`** — allow-list packager → verified `_build/<slug>-<ver>.zip` (forward-slash Linux-safe entries, staleness guard, PHP-lint, leak-check). Verified: 21-file set identical to `svn-upload/trunk/`. `npm run build:zip`.
+- **PHPStan** (level 8) added — `phpstan.neon.dist` + hand-written `stubs/phpstan-stubs.php` (no Composer) + `phpstan-baseline.neon` grandfathering the current 48 findings (0 real bugs). Analyzer `phpstan.phar` is **git-ignored** (see `BUILD.md` to obtain it). `npm run phpstan`.
+- `tools/prepare-svn.sh` / the SVN release path unchanged — new tooling layers on top.
+- Full how-to in `BUILD.md`; rationale/decisions in memory `project-deferred-work-1-8-0`.
+
+## Post-launch polish (not release-gating)
+- **PHPCS still absent** (PHPStan is now in place, above). Add PHPCS as dev-only tooling (WPCS ruleset) when convenient, mirroring the suite plugins — never a runtime dependency; exclude from the shipped zip. Not release-gating.

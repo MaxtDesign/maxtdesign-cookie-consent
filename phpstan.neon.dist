@@ -1,0 +1,18 @@
+includes:
+  - phpstan-baseline.neon
+
+parameters:
+  level: 8
+  paths:
+    - includes
+    - maxtdesign-cookie-consent.php
+    - uninstall.php
+  bootstrapFiles:
+    - stubs/phpstan-stubs.php
+  treatPhpDocTypesAsCertain: false
+  # Env constants whose value varies at runtime — prevents false "always
+  # false/true" on guards like `defined('WP_DEBUG') && WP_DEBUG`.
+  dynamicConstantNames:
+    - WP_DEBUG
+    - WP_DEBUG_DISPLAY
+    - WP_DEBUG_LOG

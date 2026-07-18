@@ -11,6 +11,8 @@
     "build:admin-css": "postcss assets/css/admin.css -o assets/css/admin.min.css --no-map",
     "build:admin-js": "terser assets/js/admin.js -o assets/js/admin.min.js --compress --mangle --comments false",
     "validate": "node tools/validate-size.js",
+    "build:zip": "npm run build && php -d extension=zip bin/build-zip.php",
+    "phpstan": "php -d memory_limit=2G phpstan.phar analyse",
     "test": "php tests/performance-validation.php && php tests/functional-tests.php",
     "test:performance": "php tests/performance-validation.php",
     "test:functional": "php tests/functional-tests.php",

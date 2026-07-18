@@ -1,0 +1,67 @@
+# .distignore — files NOT shipped to the WordPress.org SVN trunk / user zip.
+#
+# Defense-in-depth ONLY. The primary, authoritative gate is the allow-list in
+# bin/build-zip.php (and tools/prepare-svn.sh) — what those don't copy never
+# reaches trunk. This file is the second layer: WordPress.org's own zip-builder
+# reads .distignore at the trunk root and strips these, catching anything a
+# future `cp -r` might drag past the allow-list. bin/build-zip.php also cross-
+# checks every allow-listed file against these patterns so the two layers can't
+# silently drift. See memory: project-distignore-vs-prepare-svn.
+#
+# Patterns are root-anchored path prefixes (leading `/`). Basename-only cruft
+# (.DS_Store etc.) is matched at any depth by bin/build-zip.php.
+
+# Version control
+/.git
+/.github
+/.gitignore
+/.gitattributes
+/.npmrc
+
+# Agent / editor tooling — NEVER ship
+/.claude
+/.cursor
+/.cursorrules
+/.vscode
+/.idea
+
+# Node / JS build tooling (plugin ships pre-built assets, not the toolchain)
+/node_modules
+/package.json
+/package-lock.json
+/postcss.config.js
+
+# PHP dev tooling / static analysis
+/phpstan.phar
+/phpstan.neon.dist
+/phpstan-baseline.neon
+/stubs
+
+# Build + release tooling and staging/output dirs
+/bin
+/tools
+/svn-upload
+/_build
+
+# Tests
+/tests
+
+# Developer documentation (wp.org reads readme.txt, not markdown).
+# NOTE: languages/README.md IS shipped (translator guidance) — do not add a
+# bare `README.md` basename rule; these are root-anchored so languages/ is safe.
+/docs
+/BUILD.md
+/CHANGELOG.md
+/README.md
+/SYMLINK-COMMANDS.md
+/SYMLINK-SETUP-GUIDE.md
+
+# This file self-lists — wp.org strips it from the zip too.
+/.distignore
+
+# Misc developer cruft (matched by basename at any depth by bin/build-zip.php)
+*.log
+*.bak
+*.swp
+.DS_Store
+Thumbs.db

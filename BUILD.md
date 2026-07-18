@@ -112,7 +112,66 @@ Run `npm install`
 ### Size validation fails
 Run `npm run validate` to see which files exceed targets. Review CSS/JS optimizations.
 
+## Static Analysis (PHPStan)
+
+Level-8 static analysis, matching the MaxtDesign suite plugins. Runs from a
+committed config + hand-written WordPress/Consent-API stubs, with **no Composer
+dependency**.
+
+The analyzer binary (`phpstan.phar`, ~23 MB) is **git-ignored** — grab it once:
+
+```bash
+# Any of these work; the plugin is pinned to the PHPStan 1.x line.
+curl -L -o phpstan.phar https://github.com/phpstan/phpstan/releases/download/1.12.27/phpstan.phar
+# …or copy it from a sibling suite plugin that already has it:
+cp ../maxtdesign-product-bundles/phpstan.phar ./phpstan.phar
+```
+
+Then:
+
+```bash
+npm run phpstan          # php -d memory_limit=2G phpstan.phar analyse
+```
+
+- Config: `phpstan.neon.dist` (level 8; paths `includes/` + main + `uninstall.php`).
+- WP/Consent-API surface: `stubs/phpstan-stubs.php` (add a symbol when the plugin
+  starts calling a new WP function).
+- Existing findings are grandfathered in `phpstan-baseline.neon` — a clean run
+  means **no new** issues. Regenerate after a burn-down with
+  `php phpstan.phar analyse --generate-baseline`.
+
+None of these files ship (excluded by `.distignore` + `bin/build-zip.php`).
+
+## Packaging (WordPress.org zip)
+
+```bash
+npm run build:zip        # npm run build && php -d extension=zip bin/build-zip.php
+```
+
+Produces a verified, WordPress.org-ready zip at `_build/<slug>-<version>.zip`
+(git-ignored). The script:
+
+- stages by an **allow-list** (the only files that ship — no dev file can leak),
+- writes **forward-slash, slug-rooted** entries (Windows zip tools write
+  backslashes that break extraction on the Linux boxes wp.org/SVN run on),
+- refuses to package a `.min` older than its source (run `npm run build` first —
+  note `npm run build` omits the admin variants; run `build:admin-css` /
+  `build:admin-js` if you edited those),
+- PHP-lints every shipped file, cross-checks the allow-list against `.distignore`,
+  and fails if any dev entry leaked.
+
+Test the built zip on a clean install before uploading.
+
 ## Distribution
 
-- **Git:** Commits both source and minified files.
-- **WordPress.org SVN:** Distributes only minified files (see `.svnignore`).
+Two layers keep dev files out of what users install (see memory
+`project-distignore-vs-prepare-svn`):
+
+1. **Allow-list (primary):** `bin/build-zip.php` and `tools/prepare-svn.sh` copy
+   only the ~21 shippable files. What they don't copy never reaches trunk.
+2. **`.distignore` (defense-in-depth):** WordPress.org's own zip-builder reads it
+   at the trunk root and strips anything listed, catching a stray `cp -r`.
+
+- **Git:** commits both source and minified assets (plus the tooling above).
+- **WordPress.org SVN:** trunk carries only the shipped subset; `tools/prepare-svn.sh`
+  stages it and the SVN release copies from there.

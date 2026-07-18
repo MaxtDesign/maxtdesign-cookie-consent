@@ -45,6 +45,13 @@ svn-upload/
 .svnignore
 .github/
 
+# Build output (verified distribution zips — bin/build-zip.php)
+_build/
+
+# PHPStan analyzer binary — not committed (23 MB); see BUILD.md to obtain it.
+# The config (phpstan.neon.dist), stubs, and baseline ARE tracked.
+/phpstan.phar
+
 # Development notes (keep docs in repo)
 .notes/
 
