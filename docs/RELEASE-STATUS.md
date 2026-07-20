@@ -4,34 +4,26 @@
 > Dev-only file; excluded from the distributed package by `tools/prepare-svn.sh`.
 
 ## Live on WordPress.org
-- **Stable tag: 1.7.6** — SVN commit r3569354 (2026-06-11), trunk + `tags/1.7.6`.
-- Trunk is the clean 18-file package (the stale `docs/` + `CHANGELOG.md` + root `README.md` that shipped in 1.7.2–1.7.4 were removed in the 1.7.5 push).
+- **Stable tag: 1.8.0** — SVN r3615713 (2026-07-20), atomic commit (trunk + `tags/1.8.0` in one revision).
+- Trunk is the clean 21-file package: the 18 from 1.7.6 + `assets/js/popup.js` + `assets/js/popup.min.js` (1.7.7 popup-JS extraction) + `includes/class-consent-api-bridge.php` (1.8.0 bridge). Diff vs staged confirmed no stale files.
+- **1.8.0** = WP Consent API provider (registers `wp_get_consent_type` = `optin`; bridges analytics→`statistics` / ads→`marketing` via `wp_set_consent()`; `functional` always allowed). Bridge toggle defaults **ON** — a complete no-op unless the WP Consent API plugin is active. Also ships the 1.7.7 popup-JS extraction + `mdcc_should_show_popup` filter + the `9c21ad8` doc-link fix. Verified live before push: Test A (bridge active, razorback2 full stack) + Test B (no-op, plugin-test) + Plugin Check (shipping code clean) + PHPStan L8.
+- ⏳ wp.org builds the downloadable zip asynchronously after a Stable-tag bump — verify `downloads.wordpress.org/plugin/maxtdesign-cookie-consent.1.8.0.zip` returns 200 (usually within minutes).
 
-## ⚠️ GitHub `main` is AHEAD of the live SVN release
-`main` contains changes that are committed to git but **not yet pushed to SVN** (deferred to the next release trip):
-
-| Commit | Change | Ships next release |
-|---|---|---|
-| `9c21ad8` | `fix(admin)`: in-plugin "Plugin Documentation" link → `https://maxtdesign.com/plugins/cookie-consent/docs` (was the landing page) | ✅ |
-| _1.7.7_ | `refactor(popup)`: extract popup inline JS → `assets/js/popup.js`/`popup.min.js` (still inlined, no extra HTTP); add `mdcc_should_show_popup` filter. Code version bumped to 1.7.7. | ✅ |
-
-These are also recorded under `## [Unreleased]` in `CHANGELOG.md`.
-
-## In progress (not yet on `main`)
-- **`feat/wp-consent-api-bridge` → 1.8.0**: makes the plugin a WP Consent API provider (registers `wp_get_consent_type` = `optin`, bridges the existing analytics→`statistics` / ads→`marketing` choices to `wp_set_consent()`; `functional` always allowed). Additive, degrades gracefully without the WP Consent API plugin. Supersedes the 1.7.7 checkpoint when it ships (1.8.0 contains everything above).
+## GitHub `main` == live SVN (in sync)
+`main` at `17cadb0`, tagged `v1.8.0`, pushed to origin. Live SVN r3615713 = 1.8.0. Nothing pending.
 
 ## Next release checklist (when doing the next SVN push)
 1. Bump version everywhere (header `Version`, `MDCC_VERSION`, `package.json`, `readme.txt` Stable tag).
 2. Move `CHANGELOG.md` `## [Unreleased]` → the new version + date; add a `readme.txt` changelog + upgrade-notice entry.
 3. `npm run build` (+ admin variants), run tests.
 4. Commit + tag `vX.Y.Z`, push `main` + tag.
-5. `bash tools/prepare-svn.sh X.Y.Z`; verify 18 files + versions.
+5. `bash tools/prepare-svn.sh X.Y.Z`; verify 21 files + versions.
 6. SVN: `svn up`; **diff WC trunk vs staged to catch any stale files**; copy staged in; `svn cp trunk tags/X.Y.Z`; atomic `svn ci`.
 7. Verify on server (tags list, Stable tag, clean tag); reply on any open support threads.
 
 ## Open follow-ups to confirm before/at next release
 - **`#faq` anchor on maxtdesign.com**: a separate session is adding `id="faq"` to the FAQ section. The in-plugin FAQ links (`/plugins/cookie-consent#faq`, in `class-admin-settings.php` lines 459 and 715) only scroll correctly once that anchor is live — confirm it exists.
-- Empty this file's "ahead of SVN" table once the pending work has shipped.
+- **Post-1.8.0 (verify shortly):** confirm `downloads.wordpress.org/plugin/maxtdesign-cookie-consent.1.8.0.zip` returns 200 and inspect the zip is the clean 21-file package. Watch the wp.org support forum for any 1.8.0 upgrade reports.
 
 ## Build/release tooling modernized (2026-07-17) — matches Disable REST / Product Bundles
 Dev-only; no runtime/shipped-code change. All excluded from the user zip.
