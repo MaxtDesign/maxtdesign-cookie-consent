@@ -6,6 +6,17 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [1.9.0] - Unreleased
+
+### Added
+- **Extensibility API** — a public, versioned developer API so add-ons and integrators can hook consent cleanly (the foundation for Cookie Consent Pro, and useful for any third-party integration):
+  - **JavaScript** (`window.mdccConsent`, `apiVersion: '1'`): `registerService(id, {category, onGrant, onRevoke})` — consent-gated service loading that fires immediately for the current state and on every change, so load order does not matter; `getCategory(name)`; `on('change', cb)` / `off('change', cb)`; `requireConsent(category, cb)`. All existing methods (`current/stored/acceptAll/acceptAnalyticsOnly/declineAll/reset`) are unchanged.
+  - **PHP**: `mdcc_gcm_default_state` (filter — set region-specific GCM defaults), `mdcc_consent_categories` (filter — category labels/metadata exposed to the runtime + UI), `mdcc_tracking_services` (filter — declare consent-gated services), `mdcc_admin_settings_sections` (action — register add-on settings sections/fields), `mdcc_popup_before_actions` (action — inject markup into the popup, e.g. per-category toggles).
+- **EU dark-pattern warning** on the "re-prompt on decline" setting — surfaces EDPB/CNIL guidance that re-prompting after a decline approaches a dark pattern.
+
+### Changed
+- Nothing removed or altered in existing behavior: the extension API is purely additive and backward-compatible. The consent runtime's on-load behavior and the `mdcc:changed` event are byte-compatible with 1.8.x. Frontend footprint stays within the zero-footprint budget (8.85 KB / 10 KB).
+
 ## [1.8.0] - 2026-07-13
 
 ### Added

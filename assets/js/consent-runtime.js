@@ -10,6 +10,10 @@
         debug: false
     };
 
+    // Public extension API version (window.mdccConsent.apiVersion). Bump on any
+    // breaking change to the registerService/on/getCategory/requireConsent surface.
+    var API_VERSION = '1';
+
     function debug(msg, data) {
         if (config.debug && console && console.log) {
             console.log(`[MDCC] ${msg}`, data || '');
@@ -109,14 +113,77 @@
         }
     }
 
+    // -----------------------------------------------------------------------
+    // v1.9.0 extension layer — categories, services, listeners.
+    // The consent axes stay analytics/ads (they map 1:1 to GCM v2 and the WP
+    // Consent API); 'functional' is strictly-necessary and always granted.
+    // -----------------------------------------------------------------------
+
+    function categoryGranted(state, name) {
+        if (name === 'functional') { return true; }
+        if (name === 'analytics') { return state.analytics === true; }
+        if (name === 'ads') { return state.ads === true; }
+        return false;
+    }
+
+    var services = {};        // id -> { category, onGrant, onRevoke, granted }
+    var changeListeners = []; // function(state)
+
+    function applyService(id, state) {
+        var svc = services[id];
+        if (!svc) { return; }
+        var granted = categoryGranted(state, svc.category);
+        if (granted === svc.granted) { return; } // no transition
+        svc.granted = granted;
+        try {
+            if (granted) {
+                if (typeof svc.onGrant === 'function') { svc.onGrant(state); }
+            } else if (typeof svc.onRevoke === 'function') {
+                svc.onRevoke(state);
+            }
+        } catch (e) {
+            debug('Service "' + id + '" callback error:', e);
+        }
+    }
+
+    function applyAllServices(state) {
+        for (var id in services) {
+            if (Object.prototype.hasOwnProperty.call(services, id)) {
+                applyService(id, state);
+            }
+        }
+    }
+
+    function notifyListeners(state) {
+        for (var i = 0; i < changeListeners.length; i++) {
+            try {
+                changeListeners[i](state);
+            } catch (e) {
+                debug('Change listener error:', e);
+            }
+        }
+    }
+
+    // Central fan-out on every state change (user action). Order preserves the
+    // pre-1.9.0 behavior (GCM → Consent API → DOM event) and adds services +
+    // listeners. NOT run on page load init (see init()), so the mdcc:changed
+    // DOM event keeps its "fires on user action only" semantics.
+    function propagate(state) {
+        updateGCM(state);
+        syncConsentAPI(state);
+        applyAllServices(state);
+        dispatchChangeEvent(state);
+        notifyListeners(state);
+    }
+
     function updateConsent(s) {
         writeState(s);
-        updateGCM(s);
-        syncConsentAPI(s);
-        dispatchChangeEvent(s);
+        propagate(s);
     }
 
     window.mdccConsent = {
+        apiVersion: API_VERSION,
+
         current: function () {
             return readState();
         },
@@ -127,6 +194,11 @@
         // popup needs that distinction to decide whether to show on load.
         stored: function () {
             return readStoredState();
+        },
+
+        // Boolean grant for a category ('functional' always true; unknown false).
+        getCategory: function (name) {
+            return categoryGranted(readState(), name);
         },
 
         acceptAll: function () {
@@ -162,10 +234,68 @@
                 debug('Error resetting consent:', e);
             }
 
-            var d = { analytics: false, ads: false };
-            updateGCM(d);
-            syncConsentAPI(d);
-            dispatchChangeEvent(d);
+            // No writeState — reset removes the key. Propagate the denied state so
+            // GCM, the Consent API, services, and listeners all reflect the reset.
+            propagate({ analytics: false, ads: false });
+        },
+
+        // --- Public extension API (apiVersion 1) ---------------------------
+
+        // Register a consent-gated service. onGrant/onRevoke fire immediately for
+        // the current state, then on every transition. Idempotent per id, so
+        // load order relative to this runtime does not matter.
+        //   registerService('facebook-pixel', {
+        //     category: 'ads',
+        //     onGrant: function () { /* load pixel */ },
+        //     onRevoke: function () { /* stop / no-op */ }
+        //   });
+        registerService: function (id, opts) {
+            if (!id || !opts || !opts.category) {
+                debug('registerService: id and opts.category are required');
+                return;
+            }
+            services[id] = {
+                category: opts.category,
+                onGrant: opts.onGrant,
+                onRevoke: opts.onRevoke,
+                granted: undefined
+            };
+            applyService(id, readState());
+        },
+
+        unregisterService: function (id) {
+            delete services[id];
+        },
+
+        // Subscribe to consent changes (event === 'change'), fired with the state.
+        on: function (event, cb) {
+            if (event === 'change' && typeof cb === 'function') {
+                changeListeners.push(cb);
+            }
+        },
+
+        off: function (event, cb) {
+            if (event !== 'change') { return; }
+            changeListeners = changeListeners.filter(function (fn) {
+                return fn !== cb;
+            });
+        },
+
+        // Run cb now if the category is granted, else once on the next grant.
+        requireConsent: function (category, cb) {
+            if (typeof cb !== 'function') { return; }
+            if (categoryGranted(readState(), category)) {
+                cb();
+                return;
+            }
+            var self = this;
+            var wrapped = function (state) {
+                if (categoryGranted(state, category)) {
+                    self.off('change', wrapped);
+                    cb();
+                }
+            };
+            this.on('change', wrapped);
         }
     };
 
@@ -175,6 +305,10 @@
         // leave the inline default state (denied + wait_for_update:500) in
         // place — this preserves GCM v2's wait window and avoids emitting a
         // redundant update:denied that short-circuits cookieless pings.
+        //
+        // Services/listeners are not notified here: none can be registered
+        // before this runtime defines window.mdccConsent, and registerService
+        // applies the current state on registration — so nothing is missed.
         var stored = readStoredState();
         if (stored) {
             updateGCM(stored);

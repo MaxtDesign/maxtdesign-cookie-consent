@@ -284,6 +284,20 @@ class MDCC_Popup_System {
                     </p>
                     <?php endif; ?>
 
+                    <?php
+                    /**
+                     * Fires inside the popup, before the action buttons.
+                     *
+                     * Add-ons (e.g. Pro granular consent) echo their own markup
+                     * here — e.g. per-category toggle checkboxes. Callbacks are
+                     * responsible for escaping their own output.
+                     *
+                     * @since 1.9.0
+                     * @param array $settings Current plugin settings.
+                     */
+                    do_action('mdcc_popup_before_actions', $settings);
+                    ?>
+
                     <div class="mdcc-popup__actions">
                         <button type="button" 
                                 class="mdcc-popup__button mdcc-popup__button--primary" 

@@ -87,18 +87,36 @@ class MDCC_Consent_Manager {
             return;
         }
 
+        // Build the GCM v2 default state as a filterable array.
+        $default_state = array(
+            'analytics_storage'       => 'denied',
+            'ad_storage'              => 'denied',
+            'ad_user_data'            => 'denied',
+            'ad_personalization'      => 'denied',
+            'security_storage'        => 'granted',
+            'functionality_storage'   => 'granted',
+            'personalization_storage' => 'denied',
+            'wait_for_update'         => 500,
+        );
+
+        /**
+         * Filter the Google Consent Mode v2 default state injected in <head>.
+         *
+         * Lets add-ons (e.g. Pro geolocation) set region-specific defaults —
+         * e.g. an opt-out-only default for US traffic vs deny-all for the EU.
+         * Return an associative array of GCM signals ('granted'/'denied');
+         * keep the int 'wait_for_update' (ms). Runs synchronously on wp_head at
+         * priority 1 before any tracking — do NOT perform async work here.
+         *
+         * @since 1.9.0
+         * @param array       $default_state GCM default signals.
+         * @param string|null $region        Region hint (null in free; Pro may pass a country code).
+         */
+        $default_state = (array) apply_filters('mdcc_gcm_default_state', $default_state, null);
+
         $js = "window.dataLayer = window.dataLayer || [];\n"
             . "function gtag(){dataLayer.push(arguments);}\n"
-            . "gtag('consent', 'default', {"
-            . "'analytics_storage':'denied',"
-            . "'ad_storage':'denied',"
-            . "'ad_user_data':'denied',"
-            . "'ad_personalization':'denied',"
-            . "'security_storage':'granted',"
-            . "'functionality_storage':'granted',"
-            . "'personalization_storage':'denied',"
-            . "'wait_for_update':500"
-            . "});";
+            . 'gtag(\'consent\', \'default\', ' . wp_json_encode($default_state) . ');';
 
         // wp_print_inline_script_tag (WP 5.7+) composes with CSP nonce plugins
         // via the wp_inline_script_attributes filter.
@@ -161,6 +179,36 @@ class MDCC_Consent_Manager {
                  * @since 1.8.0
                  */
                 'consentApi' => (bool) apply_filters('mdcc_consent_api_enabled', false),
+
+                /**
+                 * Filter the consent categories exposed to the runtime + UI.
+                 *
+                 * The stored consent axes stay analytics/ads (they map 1:1 to
+                 * GCM v2 and the WP Consent API); 'functional' is always granted.
+                 * Add-ons use this to label/describe categories. Each entry:
+                 * id => ['label' => string, 'required' => bool].
+                 *
+                 * @since 1.9.0
+                 * @param array $categories
+                 */
+                'categories' => apply_filters('mdcc_consent_categories', array(
+                    'functional' => array('label' => __('Functional', 'maxtdesign-cookie-consent'), 'required' => true),
+                    'analytics'  => array('label' => __('Analytics', 'maxtdesign-cookie-consent'), 'required' => false),
+                    'ads'        => array('label' => __('Advertising', 'maxtdesign-cookie-consent'), 'required' => false),
+                )),
+
+                /**
+                 * Filter server-declared, consent-gated tracking services.
+                 *
+                 * Data channel for add-ons (Pro) to declare services the runtime
+                 * should gate. Each entry: id => ['label' => string, 'category' =>
+                 * 'analytics'|'ads'|'functional', ...]. The load behavior is JS —
+                 * consumers call window.mdccConsent.registerService(id, {...}).
+                 *
+                 * @since 1.9.0
+                 * @param array $services
+                 */
+                'trackingServices' => apply_filters('mdcc_tracking_services', array()),
             )
         );
     }

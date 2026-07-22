@@ -272,6 +272,18 @@ class MDCC_Admin_Settings {
             self::PAGE_SLUG,
             'mdcc_advanced_section'
         );
+
+        /**
+         * Fires after the core settings sections and fields are registered.
+         *
+         * Lets add-ons (e.g. Pro) register their own sections/fields under the
+         * plugin's settings page via add_settings_section()/add_settings_field().
+         *
+         * @since 1.9.0
+         * @param string $page  The settings page slug (self::PAGE_SLUG).
+         * @param string $group The registered setting/option group (self::OPTION_GROUP).
+         */
+        do_action('mdcc_admin_settings_sections', self::PAGE_SLUG, self::OPTION_GROUP);
     }
 
     /**
@@ -700,6 +712,9 @@ class MDCC_Admin_Settings {
         </label>
         <p class="description">
             <?php esc_html_e('If enabled, the popup will re-appear once per browsing session when a user declines tracking.', 'maxtdesign-cookie-consent'); ?>
+        </p>
+        <p class="description" style="color:#b32d2e;">
+            <?php esc_html_e('Caution: EU regulators (EDPB, CNIL) have flagged re-prompting after a decline as approaching a "dark pattern" — a decline should be as easy to honor as an accept. Leave this off for GDPR-strict compliance; enable only where you have a lawful basis.', 'maxtdesign-cookie-consent'); ?>
         </p>
         <?php
     }
