@@ -2,7 +2,15 @@
 
 > Dev-only file (excluded from the distributed package by `tools/prepare-svn.sh`).
 > Read this in full before doing anything. It is the takeover brief for a fresh
-> session that has no memory of prior work on this plugin. Last updated: 2026-07-13.
+> session that has no memory of prior work on this plugin. Last updated: 2026-09-12.
+>
+> **⚠️ 2026-09-12 — READ THIS FIRST. Sections 3–6 below describe the 1.8.0 release
+> cycle and are HISTORICAL.** 1.8.0 shipped 2026-07-20 (r3615713) and **1.10.0 shipped
+> 2026-09-12 (r3692962)** — the regional consent model (EEA opt-in / California CCPA
+> opt-out notice / no banner elsewhere) + the 1.9.0 extensibility API. **Live state is
+> `docs/RELEASE-STATUS.md`** (incl. the post-ship checklist) and memory
+> `project-regional-consent-model`. §0, §2, §7, §8 (what the plugin is, paths,
+> conventions, deferred work) are still accurate. Nothing is pending a ship.
 
 ## 0. What this plugin is — and is NOT
 
@@ -26,11 +34,13 @@ state, **zero frontend footprint** (VeloCommerce standard — hard rule 3). Unde
 
 ## 1. Version topology (read carefully — three layers)
 
-| Layer | Version | Where | State |
+| Layer | Version | Where | State (as of 2026-09-12) |
 |---|---|---|---|
-| **wp.org live** | **1.7.6** | SVN `tags/1.7.6`, r3569354 (2026-06-11) | shipped |
-| **git `main`** | 1.7.7 | HEAD `7b9f287` | committed, **UNPUSHED to origin**, not on SVN |
-| **`feat/wp-consent-api-bridge`** | **1.8.0** | HEAD `7bc8ac7` | committed, **local-only branch**, not merged/pushed |
+| **wp.org live** | **1.10.0** | SVN `tags/1.10.0`, **r3692962** (2026-09-12) | shipped; downloads zip verified clean |
+| **git `main`** | 1.10.0 | `810177e`, tag `v1.10.0` | **== origin/main**, nothing unpushed |
+| feature branches | — | — | none; only `chore/add-wporg-release-tooling` (closed PR #14, kept on purpose) remains on origin |
+
+(The original 2026-07-13 table — 1.7.6 live / 1.7.7 unpushed / 1.8.0 on a local branch — is history: 1.8.0 shipped 2026-07-20 r3615713; 1.9.0 was never released alone and rode inside 1.10.0.)
 
 - `main` = 1.7.6 code + an unreleased doc-link fix (`9c21ad8`) + the 1.7.7 popup-JS
   extraction (`7b9f287`). 1.7.7 was a checkpoint; it never shipped independently.
@@ -50,10 +60,16 @@ state, **zero frontend footprint** (VeloCommerce standard — hard rule 3). Unde
 - Release tracker: `docs/RELEASE-STATUS.md` (update it at every release)
 - SlikSvn client: `C:\Program Files\SlikSvn\bin\svn`
 
-## 3. THE PENDING TASK — finish shipping 1.8.0
+## 3. THE PENDING TASK — (HISTORICAL: this was the 1.8.0 ship, done 2026-07-20)
 
-The 1.8.0 WP Consent API bridge is built, committed on `feat/wp-consent-api-bridge`,
-and staged. It is **waiting on Cody's local test sign-off** before release.
+**Nothing is pending a ship as of 2026-09-12.** Open items live in the post-ship
+checklist in `docs/RELEASE-STATUS.md` (set Consent Model = Regional on maxtoffroad;
+remove the plugin-test `-svncheck` junction; `.pot` regen; stale "Coming in Pro"
+readme copy). Next planned work: Cookie Consent Pro (§8) — the v1.9.0 extensibility
+gate it required has now shipped inside 1.10.0. The text below is kept for the record.
+
+The 1.8.0 WP Consent API bridge was built, committed on `feat/wp-consent-api-bridge`,
+and staged. It was **waiting on Cody's local test sign-off** before release.
 Sequence once he confirms tests pass:
 
 1. **Confirm the open decision in §6** (bridge default on vs off) — do not ship
