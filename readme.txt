@@ -4,7 +4,7 @@ Contributors: slaacr
 Donate link: https://github.com/sponsors/MaxtDesign
 Tags: cookie-consent, gdpr, google-consent-mode, ccpa, analytics
 Requires at least: 5.8
-Tested up to: 7.0
+Tested up to: 7.1
 Stable tag: 1.8.0
 Requires PHP: 7.4
 License: GPLv2 or later
