@@ -408,6 +408,15 @@ Yes! The plugin is fully translation-ready. Contribute translations at: [https:/
 
 == Changelog ==
 
+= 1.10.0 - 2026-09-12 =
+**Regional consent model + developer extensibility API. Default behavior unchanged.**
+
+**Added:**
+* Consent Model setting (Behavior Settings). Opt-in everywhere stays the default, so existing sites upgrade with no change. Regional mode splits visitors into three tiers: EEA/UK/Switzerland get the opt-in popup (tracking off until accepted); California gets a "Do Not Sell or Share My Personal Information" opt-out notice with tracking on by default, as CCPA/CPRA requires (detected by the Pacific time zone); everyone else gets implied consent with no banner. Opt-out everywhere applies the notice to all visitors.
+* Tracking defaults use Google Consent Mode's own region handling, so Google resolves the visitor's region — nothing is looked up on your server and pages stay fully cacheable. Browsers sending Global Privacy Control are always treated as opt-in. Visitors who opt out are never re-prompted.
+* Developer extensibility API: JS registerService / getCategory / on / requireConsent / bannerMode, plus PHP hooks (mdcc_gcm_default_state, mdcc_consent_categories, mdcc_tracking_services, mdcc_admin_settings_sections, mdcc_popup_before_actions, mdcc_optin_regions, mdcc_optin_timezones, mdcc_optout_timezones). Fully backward compatible.
+* Caution note on the "re-prompt on decline" setting reflecting EU regulator guidance.
+
 = 1.8.0 - 2026-07-13 =
 **WP Consent API integration — real, visitor-controlled consent for the whole site**
 
@@ -539,6 +548,9 @@ Yes! The plugin is fully translation-ready. Contribute translations at: [https:/
 
 
 == Upgrade Notice ==
+
+= 1.10.0 =
+Adds an optional Consent Model setting (regional / CCPA-style opt-out) and a developer API. Safe to upgrade: the default stays opt-in everywhere, so nothing changes until you choose a different model in Behavior Settings.
 
 = 1.8.0 =
 Adds WP Consent API integration so your consent choices are respected site-wide by WooCommerce and other consent-aware plugins. Fully additive — existing installs behave exactly as before, and the integration only activates if you also run the free WP Consent API plugin.

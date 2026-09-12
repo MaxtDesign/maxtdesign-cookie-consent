@@ -6,6 +6,22 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [1.10.0] - Unreleased
+
+Ships together with the never-released 1.9.0 extensibility work (below). The default behavior is unchanged: the new **Consent Model** setting defaults to *Opt-in everywhere*, so existing sites upgrade with no change until the owner opts in.
+
+### Added
+- **Regional consent model** (Behavior Settings → Consent Model). Three models: *Opt-in everywhere* (GDPR; the default and every earlier version's behavior), *Regional*, and *Opt-out everywhere* (implied consent with an opt-out notice). Under **Regional**, visitors are split into three tiers:
+  - **EEA / UK / Switzerland** — opt-in: tracking denied until the visitor accepts (the existing popup).
+  - **California** — opt-out, as CCPA/CPRA requires: tracking on by default, a dismissible **"Do Not Sell or Share My Personal Information"** notice, and never re-prompted after opting out. Detected by the Pacific time zone (so WA/OR/part of NV also see the harmless notice).
+  - **Everyone else** — implied consent, **no banner at all**.
+  - Tracking defaults use Google Consent Mode's own `region` handling (`gtag('consent','default',…)` with a region-scoped denied command), so **Google resolves the visitor's region — nothing is geolocated on your server and pages stay fully cacheable**. The banner decision is a browser time-zone heuristic that fails closed to opt-in. Browsers sending **Global Privacy Control** are always treated as opt-in.
+  - The implied-consent tiers still call `wp_set_consent()` with explicit values, so WooCommerce and other WP Consent API consumers see consent there too. The declared consent type follows the model (`optout` only under *Opt-out everywhere*).
+- New settings: *Popup Title / Message (opt-out regions)*. New filters: `mdcc_optin_regions` (ISO codes for the GCM region-scoped denied default), `mdcc_optin_timezones`, `mdcc_optout_timezones`. New JS: `mdccConsent.model()`, `mdccConsent.bannerMode()` (`'optin'|'optout'|'none'`), `mdccConsent.requiresOptIn()`; the implied state is flagged `implied: true` on `mdcc:changed`. `mdcc_gcm_default_state` now runs once per emitted default command with a `$region` argument (`null` for the global default, `string[]` for the region-scoped one).
+
+### Privacy
+- The Privacy Policy generator content now describes the regional tiers (including the California opt-out notice) and the opt-out model when either is enabled.
+
 ## [1.9.0] - Unreleased
 
 ### Added

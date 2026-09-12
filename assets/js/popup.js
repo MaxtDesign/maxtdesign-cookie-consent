@@ -38,6 +38,52 @@
     }
 
     /**
+     * Which banner this visitor gets: 'optin' | 'optout' | 'none' (1.10.0).
+     * Read from the consent runtime; defaults to 'optin' (the pre-1.10 behavior)
+     * when the runtime is absent or predates the regional model.
+     */
+    function bannerMode() {
+        var c = window.mdccConsent;
+        if (c && typeof c.bannerMode === 'function') {
+            var mode = c.bannerMode();
+            if (mode === 'optout' || mode === 'none') {
+                return mode;
+            }
+        }
+        return 'optin';
+    }
+
+    /**
+     * Swap the server-rendered (cached, opt-in) copy for the opt-out notice
+     * when this visitor is in an opt-out region (e.g. California). The markup
+     * is identical for every visitor so pages stay cacheable; the strings come
+     * from mdccPopupConfig and are applied as text, never as HTML.
+     */
+    function applyPresentation() {
+        if (!popup || bannerMode() !== 'optout') return;
+
+        var title = popup.querySelector('#mdcc-popup-title');
+        var message = popup.querySelector('#mdcc-popup-message');
+        var accept = popup.querySelector('[data-mdcc-action="accept-all"]');
+        var analytics = popup.querySelector('[data-mdcc-action="analytics-only"]');
+        var decline = popup.querySelector('[data-mdcc-action="decline-all"]');
+
+        if (title && config.optoutTitle) title.textContent = config.optoutTitle;
+        if (message && config.optoutMessage) message.textContent = config.optoutMessage;
+        if (accept && config.optoutAcceptLabel) {
+            accept.textContent = config.optoutAcceptLabel;
+            accept.setAttribute('aria-label', config.optoutAcceptLabel);
+        }
+        if (decline && config.optoutDeclineLabel) {
+            decline.textContent = config.optoutDeclineLabel;
+            decline.setAttribute('aria-label', config.optoutDeclineLabel);
+        }
+        // An opt-out notice offers keep-or-opt-out only; "Analytics Only" is an
+        // opt-in refinement that makes no sense when consent is already implied.
+        if (analytics) analytics.style.display = 'none';
+    }
+
+    /**
      * Decide whether the popup should be shown on this page load.
      *
      * This mirrors the server-side should_show_popup() gate, but runs in the
@@ -55,6 +101,12 @@
      *       - otherwise (genuine first visit) -> show
      */
     function shouldShow() {
+        // 1.10.0: visitors the regional model classes as 'none' (implied consent,
+        // outside every opt-in and opt-out region) never see a banner at all.
+        if (bannerMode() === 'none') {
+            return false;
+        }
+
         var stored = (window.mdccConsent && typeof window.mdccConsent.stored === 'function')
             ? window.mdccConsent.stored()
             : null;
@@ -153,8 +205,10 @@
 
         closePopup();
 
-        // Re-prompt only when the visitor declined everything via the popup.
-        if (action === 'decline-all') {
+        // Re-prompt only when the visitor declined everything via the opt-in
+        // popup. Never re-prompt after a CCPA-style opt-out: nagging a visitor
+        // who just exercised "Do Not Sell or Share" is a dark pattern.
+        if (action === 'decline-all' && bannerMode() !== 'optout') {
             scheduleRepromptOnDecline();
         }
     }
@@ -229,6 +283,9 @@
         }
 
         closeBtn = popup.querySelector('.mdcc-popup__close');
+
+        // Opt-out regions get the notice copy before the popup is revealed.
+        applyPresentation();
 
         // Show popup with animation
         setTimeout(function() {

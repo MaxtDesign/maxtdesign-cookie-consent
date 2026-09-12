@@ -174,17 +174,19 @@ class MDCC_Popup_System {
             'repromptDecline' => !empty($settings['reprompt_on_decline']),
         );
 
-        // Opt-out presentation. The markup is server-rendered (and cached) with
-        // the opt-in copy; popup.js swaps in these strings client-side when
-        // mdccConsent.requiresOptIn() is false. Only emitted when the model can
-        // produce an opt-out visitor, so opt-in installs ship identical config.
+        // Opt-out-notice presentation (California under 'regional'; everyone
+        // under 'optout'). The markup is server-rendered (and cached) with the
+        // opt-in copy; popup.js swaps in these strings client-side when
+        // mdccConsent.bannerMode() === 'optout'. Only emitted when the model can
+        // produce such a visitor, so opt-in installs ship identical config. The
+        // decline label is the CCPA/CPRA-prescribed control wording.
         if (MDCC_Consent_Manager::MODEL_OPTIN !== MDCC_Consent_Manager::get_consent_model()) {
             $defaults = mdcc_default_settings();
 
             $popup_config['optoutTitle']        = !empty($settings['popup_title_optout']) ? (string) $settings['popup_title_optout'] : (string) $defaults['popup_title_optout'];
             $popup_config['optoutMessage']      = !empty($settings['popup_message_optout']) ? (string) $settings['popup_message_optout'] : (string) $defaults['popup_message_optout'];
             $popup_config['optoutAcceptLabel']  = __('Got it', 'maxtdesign-cookie-consent');
-            $popup_config['optoutDeclineLabel'] = __('Opt out', 'maxtdesign-cookie-consent');
+            $popup_config['optoutDeclineLabel'] = __('Do Not Sell or Share My Personal Information', 'maxtdesign-cookie-consent');
         }
 
         // Pass settings to JavaScript

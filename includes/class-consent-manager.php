@@ -92,7 +92,7 @@ class MDCC_Consent_Manager {
     public static function consent_models() {
         return array(
             self::MODEL_OPTIN    => __('Opt-in everywhere (GDPR)', 'maxtdesign-cookie-consent'),
-            self::MODEL_REGIONAL => __('Regional: opt-in in the EEA, UK and Switzerland; opt-out elsewhere', 'maxtdesign-cookie-consent'),
+            self::MODEL_REGIONAL => __('Regional: opt-in in the EEA, UK and Switzerland; opt-out notice in California; no banner elsewhere', 'maxtdesign-cookie-consent'),
             self::MODEL_OPTOUT   => __('Opt-out everywhere (implied consent)', 'maxtdesign-cookie-consent'),
         );
     }
@@ -182,6 +182,46 @@ class MDCC_Consent_Manager {
          * @param array{prefixes: string[], zones: string[]} $timezones
          */
         $filtered = apply_filters('mdcc_optin_timezones', $timezones);
+
+        if (!is_array($filtered)) {
+            return $timezones;
+        }
+
+        return array(
+            'prefixes' => array_values(array_map('strval', (array) ($filtered['prefixes'] ?? array()))),
+            'zones'    => array_values(array_map('strval', (array) ($filtered['zones'] ?? array()))),
+        );
+    }
+
+    /**
+     * Browser time-zone heuristic for the opt-out-notice tier under the
+     * 'regional' model: California.
+     *
+     * CCPA/CPRA is an opt-out law (tracking is permitted by default; the site
+     * must offer a "Do Not Sell or Share" control and honor Global Privacy
+     * Control), so Californians get implied consent plus a dismissible opt-out
+     * notice rather than the EEA opt-in popup. California cannot be isolated
+     * client-side: America/Los_Angeles is the whole Pacific zone, so WA, OR and
+     * part of NV also see the notice. Tracking stays on for them by default,
+     * so the only cost is a dismissible notice. Presentation heuristic only;
+     * no GCM region default is emitted for this tier (it is implied consent).
+     *
+     * @since 1.10.0
+     * @return array{prefixes: string[], zones: string[]}
+     */
+    public static function optout_timezones() {
+        $timezones = array(
+            'prefixes' => array(),
+            'zones'    => array('America/Los_Angeles'),
+        );
+
+        /**
+         * Filter the time-zone heuristic for the opt-out-notice (California) tier.
+         *
+         * @since 1.10.0
+         * @param array{prefixes: string[], zones: string[]} $timezones
+         */
+        $filtered = apply_filters('mdcc_optout_timezones', $timezones);
 
         if (!is_array($filtered)) {
             return $timezones;
@@ -408,11 +448,14 @@ class MDCC_Consent_Manager {
             'trackingServices' => apply_filters('mdcc_tracking_services', array()),
         );
 
-        // Time-zone heuristic for the regional banner decision. Only emitted
-        // under the 'regional' model; the runtime fails closed (opt-in) when
-        // it is absent. See optin_timezones() for the filter.
+        // Time-zone heuristics for the regional banner decision: opt-in zones
+        // (EEA/UK/CH) and opt-out-notice zones (California / Pacific). Only
+        // emitted under the 'regional' model; the runtime fails closed (opt-in)
+        // when the opt-in list is absent. See optin_timezones() and
+        // optout_timezones() for the filters.
         if (self::MODEL_REGIONAL === $model) {
-            $config['optinTimezones'] = self::optin_timezones();
+            $config['optinTimezones']  = self::optin_timezones();
+            $config['optoutTimezones'] = self::optout_timezones();
         }
 
         wp_localize_script('mdcc-consent-runtime', 'mdccConfig', $config);

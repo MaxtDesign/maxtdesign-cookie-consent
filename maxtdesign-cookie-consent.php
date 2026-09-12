@@ -82,11 +82,14 @@ function mdcc_default_settings() {
         'popup_animation'      => 'slide',
         'popup_title'          => __('Cookie Consent', 'maxtdesign-cookie-consent'),
         'popup_message'        => __('We use cookies to enhance your browsing experience and analyze our traffic.', 'maxtdesign-cookie-consent'),
-        // Shown instead of the two fields above when the visitor is in an
-        // opt-out region (consent_model 'regional' outside the EEA/UK/CH, or
-        // 'optout' everywhere). The swap happens client-side in popup.js.
-        'popup_title_optout'   => __('Cookies & analytics', 'maxtdesign-cookie-consent'),
-        'popup_message_optout' => __('We use cookies for analytics and to improve the store. You can opt out any time.', 'maxtdesign-cookie-consent'),
+        // Shown instead of the two fields above to visitors in an opt-out-notice
+        // region (consent_model 'regional' -> California / Pacific time zone,
+        // or 'optout' -> everyone). CCPA/CPRA wording: tracking is on by default
+        // and the visitor may opt out. The swap happens client-side in popup.js;
+        // the buttons become "Got it" and "Do Not Sell or Share My Personal
+        // Information".
+        'popup_title_optout'   => __('Your privacy choices', 'maxtdesign-cookie-consent'),
+        'popup_message_optout' => __('We use cookies and analytics to improve the store and measure our advertising. You can opt out of the sale or sharing of your personal information at any time.', 'maxtdesign-cookie-consent'),
         'popup_shown_duration' => 7,
         // 'optin' (GDPR everywhere; the pre-1.10 behavior), 'regional' (opt-in
         // in the EEA/UK/CH, implied consent elsewhere) or 'optout' (implied
@@ -144,7 +147,7 @@ function mdcc_register_privacy_policy_content() {
     // Describe the consent model when it is not the default opt-in-everywhere.
     $consent_model = class_exists('MDCC_Consent_Manager') ? MDCC_Consent_Manager::get_consent_model() : 'optin';
     if ('regional' === $consent_model) {
-        $paragraphs[] = esc_html__('This site uses a regional consent model. If you are visiting from the European Economic Area, the United Kingdom or Switzerland, analytics and advertising tracking stays off until you opt in. Visitors from other regions are treated under an opt-out model: analytics and advertising are enabled by default and you can opt out at any time using the consent popup or the consent management controls on this site. Your region is determined in your browser (time zone) and by Google Consent Mode\'s own region handling; no location data is sent to our servers. Browsers that send the Global Privacy Control signal are always treated as opt-in.', 'maxtdesign-cookie-consent');
+        $paragraphs[] = esc_html__('This site uses a regional consent model. If you are visiting from the European Economic Area, the United Kingdom or Switzerland, analytics and advertising tracking stays off until you opt in. If you are visiting from California (Pacific time zone), analytics and advertising are enabled by default and you are shown a "Do Not Sell or Share My Personal Information" notice through which you can opt out at any time, as provided by the CCPA/CPRA; you can also opt out later using the consent management controls on this site. Visitors from all other regions are treated under an implied-consent model with no banner, and can opt out at any time using the consent management controls on this site. Your region is determined in your browser (time zone) and by Google Consent Mode\'s own region handling; no location data is sent to our servers. Browsers that send the Global Privacy Control signal are treated as having opted out: tracking stays off unless you choose to opt in.', 'maxtdesign-cookie-consent');
     } elseif ('optout' === $consent_model) {
         $paragraphs[] = esc_html__('This site uses an opt-out consent model: analytics and advertising are enabled by default and you can opt out at any time using the consent popup or the consent management controls on this site. Browsers that send the Global Privacy Control signal are treated as having opted out.', 'maxtdesign-cookie-consent');
     }

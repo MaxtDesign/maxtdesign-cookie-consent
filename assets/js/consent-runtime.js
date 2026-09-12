@@ -36,21 +36,12 @@
     // whether the visitor gets an opt-in banner or implied consent.
     // -----------------------------------------------------------------------
 
-    var optInRequired; // memoized: neither the time zone nor GPC changes mid-page
+    var bannerModeMemo; // memoized: neither the time zone nor GPC changes mid-page
 
-    function timezoneRequiresOptIn() {
-        var tz = '';
-        try {
-            tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-        } catch (e) {
-            tz = '';
-        }
-        if (!tz) {
-            return true; // fail closed
-        }
-        var zones = config.optinTimezones;
+    // Does the browser's IANA time zone match a {prefixes, zones} heuristic?
+    function timezoneMatches(zones, tz) {
         if (!zones) {
-            return true; // no heuristic shipped: fail closed
+            return false;
         }
         var prefixes = zones.prefixes || [];
         for (var i = 0; i < prefixes.length; i++) {
@@ -61,24 +52,50 @@
         return (zones.zones || []).indexOf(tz) !== -1;
     }
 
-    // true  -> nothing is granted until the visitor explicitly accepts
-    // false -> implied consent applies until the visitor explicitly declines
-    function requiresOptIn() {
-        if (optInRequired === undefined) {
+    // Which banner THIS visitor gets:
+    //   'optin'  -> nothing is granted until they explicitly accept (opt-in popup)
+    //   'optout' -> implied consent, shown a "Do Not Sell or Share" opt-out notice
+    //   'none'   -> implied consent, no banner at all
+    // Under 'regional': EEA/UK/CH time zones -> 'optin'; California (Pacific
+    // time zone; CCPA/CPRA is an opt-out law) -> 'optout'; everyone else ->
+    // 'none'. Fails closed to 'optin' when the zone is unavailable or the
+    // heuristics were not shipped.
+    function bannerMode() {
+        if (bannerModeMemo === undefined) {
             if (MODEL === 'optin') {
-                optInRequired = true;
+                bannerModeMemo = 'optin';
             } else if (window.navigator && window.navigator.globalPrivacyControl === true) {
                 // Global Privacy Control is a legally recognised opt-out signal
                 // (CCPA/CPRA, Colorado, etc.): never imply consent for these visitors.
-                optInRequired = true;
+                bannerModeMemo = 'optin';
             } else if (MODEL === 'optout') {
-                optInRequired = false;
+                bannerModeMemo = 'optout';
             } else {
-                optInRequired = timezoneRequiresOptIn();
+                var tz = '';
+                try {
+                    tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+                } catch (e) {
+                    tz = '';
+                }
+                if (!tz || !config.optinTimezones) {
+                    bannerModeMemo = 'optin'; // fail closed
+                } else if (timezoneMatches(config.optinTimezones, tz)) {
+                    bannerModeMemo = 'optin';
+                } else if (timezoneMatches(config.optoutTimezones, tz)) {
+                    bannerModeMemo = 'optout';
+                } else {
+                    bannerModeMemo = 'none';
+                }
             }
-            debug('Consent model ' + MODEL + ', requiresOptIn:', optInRequired);
+            debug('Consent model ' + MODEL + ', bannerMode:', bannerModeMemo);
         }
-        return optInRequired;
+        return bannerModeMemo;
+    }
+
+    // true  -> nothing is granted until the visitor explicitly accepts
+    // false -> implied consent applies until the visitor explicitly declines
+    function requiresOptIn() {
+        return bannerMode() === 'optin';
     }
 
     function readStoredState() {
@@ -320,10 +337,15 @@
             return MODEL;
         },
 
-        // Whether THIS visitor must opt in before anything is granted. Always
-        // true under 'optin'; always true when the browser sends Global Privacy
-        // Control; false under 'optout'; under 'regional' true for EEA/UK/CH
-        // browser time zones (fails closed when the zone is unavailable).
+        // Which banner this visitor gets: 'optin' | 'optout' | 'none'. Always
+        // 'optin' under the 'optin' model and whenever the browser sends Global
+        // Privacy Control; 'optout' everywhere under the 'optout' model; under
+        // 'regional': EEA/UK/CH zones -> 'optin', Pacific (California) ->
+        // 'optout', everyone else -> 'none'.
+        bannerMode: bannerMode,
+
+        // Whether THIS visitor must opt in before anything is granted
+        // (bannerMode() === 'optin'). Kept for integrations.
         requiresOptIn: requiresOptIn,
 
         // --- Public extension API (apiVersion 1) ---------------------------

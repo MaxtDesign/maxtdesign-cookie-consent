@@ -721,7 +721,7 @@ class MDCC_Admin_Settings {
      *
      * @since 1.10.0
      */
-    public function render_field_popup_title_optout() {
+    public function render_field_popup_title_optout(): void {
         $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
         $defaults = mdcc_default_settings();
         $current  = !empty($settings['popup_title_optout']) ? $settings['popup_title_optout'] : $defaults['popup_title_optout'];
@@ -741,7 +741,7 @@ class MDCC_Admin_Settings {
      *
      * @since 1.10.0
      */
-    public function render_field_popup_message_optout() {
+    public function render_field_popup_message_optout(): void {
         $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
         $defaults = mdcc_default_settings();
         $current  = !empty($settings['popup_message_optout']) ? $settings['popup_message_optout'] : $defaults['popup_message_optout'];
@@ -760,7 +760,7 @@ class MDCC_Admin_Settings {
      *
      * @since 1.10.0
      */
-    public function render_field_consent_model() {
+    public function render_field_consent_model(): void {
         $current = MDCC_Consent_Manager::get_consent_model();
         ?>
         <select name="<?php echo esc_attr(self::OPTION_NAME); ?>[consent_model]" id="mdcc-consent-model">
@@ -771,10 +771,10 @@ class MDCC_Admin_Settings {
             <?php endforeach; ?>
         </select>
         <p class="description">
-            <?php esc_html_e('Opt-in everywhere: nothing is tracked until the visitor accepts (GDPR; the default and the behavior of every earlier version). Regional: opt-in for visitors in the EEA, UK and Switzerland, implied consent everywhere else with an easy opt-out (CCPA-style). Opt-out everywhere: implied consent for every visitor, who can opt out at any time.', 'maxtdesign-cookie-consent'); ?>
+            <?php esc_html_e('Opt-in everywhere: nothing is tracked until the visitor accepts (GDPR; the default and the behavior of every earlier version). Regional: an opt-in popup for visitors in the EEA, UK and Switzerland; a "Do Not Sell or Share" opt-out notice for California (CCPA/CPRA is an opt-out law, so tracking is on by default there); no banner and implied consent everywhere else. Opt-out everywhere: implied consent for every visitor, shown the opt-out notice, who can opt out at any time.', 'maxtdesign-cookie-consent'); ?>
         </p>
         <p class="description">
-            <?php esc_html_e('Regional mode uses Google Consent Mode\'s own region-specific defaults for tracking (Google resolves the visitor\'s region; nothing is looked up on your server, so pages stay cacheable) plus a browser time-zone heuristic to decide which banner to show. Visitors whose browser sends the Global Privacy Control signal are always treated as opt-in.', 'maxtdesign-cookie-consent'); ?>
+            <?php esc_html_e('Regional mode uses Google Consent Mode\'s own region-specific defaults for tracking (Google resolves the visitor\'s region; nothing is looked up on your server, so pages stay cacheable) plus a browser time-zone heuristic to decide which banner to show. California is detected by the Pacific time zone, so visitors in Washington, Oregon and part of Nevada also see the (dismissible, harmless) opt-out notice. Visitors whose browser sends the Global Privacy Control signal are always treated as opt-in.', 'maxtdesign-cookie-consent'); ?>
         </p>
         <p class="description" style="color:#b32d2e;">
             <?php esc_html_e('You remain responsible for choosing the model that is lawful for your audience and jurisdiction. If in doubt, keep Opt-in everywhere.', 'maxtdesign-cookie-consent'); ?>
