@@ -3,7 +3,7 @@
  * Plugin Name: MaxtDesign Cookie Consent - Google Consent Mode v2
  * Plugin URI: https://maxtdesign.com/plugins/cookie-consent
  * Description: Actually controls Google Analytics & Ads tracking (not just a banner). Free alternative to $50/month solutions. Works with existing GA4. Won't slow your site.
- * Version: 1.9.0
+ * Version: 1.10.0
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author: MaxtDesign
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 // -----------------------------------------------------------------------------
 // Constants
 // -----------------------------------------------------------------------------
-define('MDCC_VERSION', '1.9.0');
+define('MDCC_VERSION', '1.10.0');
 define('MDCC_PLUGIN_FILE', __FILE__);
 define('MDCC_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('MDCC_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -82,7 +82,16 @@ function mdcc_default_settings() {
         'popup_animation'      => 'slide',
         'popup_title'          => __('Cookie Consent', 'maxtdesign-cookie-consent'),
         'popup_message'        => __('We use cookies to enhance your browsing experience and analyze our traffic.', 'maxtdesign-cookie-consent'),
+        // Shown instead of the two fields above when the visitor is in an
+        // opt-out region (consent_model 'regional' outside the EEA/UK/CH, or
+        // 'optout' everywhere). The swap happens client-side in popup.js.
+        'popup_title_optout'   => __('Cookies & analytics', 'maxtdesign-cookie-consent'),
+        'popup_message_optout' => __('We use cookies for analytics and to improve the store. You can opt out any time.', 'maxtdesign-cookie-consent'),
         'popup_shown_duration' => 7,
+        // 'optin' (GDPR everywhere; the pre-1.10 behavior), 'regional' (opt-in
+        // in the EEA/UK/CH, implied consent elsewhere) or 'optout' (implied
+        // consent everywhere). See MDCC_Consent_Manager::consent_models().
+        'consent_model'        => 'optin',
         'reprompt_on_decline'  => false,
         'elementor_popup_id'   => '',
         'gcm_inject_default'   => true,
@@ -125,13 +134,22 @@ function mdcc_register_privacy_policy_content() {
         return;
     }
 
-    $content = sprintf(
-        '<p>%s</p><p>%s</p><p>%s</p><p>%s</p>',
+    $paragraphs = array(
         esc_html__('This site uses MaxtDesign Cookie Consent to manage your tracking preferences for Google Analytics and Google Ads. When you make a choice in the consent popup, that choice is stored locally in your browser using localStorage (key: mdcc_consent). It is not transmitted to our servers.', 'maxtdesign-cookie-consent'),
         esc_html__('A small cookie named mdcc_popup_shown is set when you dismiss the popup, so we do not show it again for the duration configured by the site administrator (default 7 days). This cookie contains only a flag value and no personal data.', 'maxtdesign-cookie-consent'),
         esc_html__('This plugin implements Google Consent Mode v2. When you grant or deny consent, the choice is signalled to Google Analytics and Google Ads via their gtag API. Please refer to Google\'s own privacy policies for details on data they collect once consent is granted.', 'maxtdesign-cookie-consent'),
-        esc_html__('If the WP Consent API plugin is active, your choice is also shared with other consent-aware plugins on this site using WordPress\'s standard consent signals: your analytics choice maps to the "statistics" category and your advertising choice maps to the "marketing" category, while strictly-necessary ("functional") cookies remain always active. This lets other plugins respect the same decision without setting additional cookies of their own.', 'maxtdesign-cookie-consent')
+        esc_html__('If the WP Consent API plugin is active, your choice is also shared with other consent-aware plugins on this site using WordPress\'s standard consent signals: your analytics choice maps to the "statistics" category and your advertising choice maps to the "marketing" category, while strictly-necessary ("functional") cookies remain always active. This lets other plugins respect the same decision without setting additional cookies of their own.', 'maxtdesign-cookie-consent'),
     );
+
+    // Describe the consent model when it is not the default opt-in-everywhere.
+    $consent_model = class_exists('MDCC_Consent_Manager') ? MDCC_Consent_Manager::get_consent_model() : 'optin';
+    if ('regional' === $consent_model) {
+        $paragraphs[] = esc_html__('This site uses a regional consent model. If you are visiting from the European Economic Area, the United Kingdom or Switzerland, analytics and advertising tracking stays off until you opt in. Visitors from other regions are treated under an opt-out model: analytics and advertising are enabled by default and you can opt out at any time using the consent popup or the consent management controls on this site. Your region is determined in your browser (time zone) and by Google Consent Mode\'s own region handling; no location data is sent to our servers. Browsers that send the Global Privacy Control signal are always treated as opt-in.', 'maxtdesign-cookie-consent');
+    } elseif ('optout' === $consent_model) {
+        $paragraphs[] = esc_html__('This site uses an opt-out consent model: analytics and advertising are enabled by default and you can opt out at any time using the consent popup or the consent management controls on this site. Browsers that send the Global Privacy Control signal are treated as having opted out.', 'maxtdesign-cookie-consent');
+    }
+
+    $content = '<p>' . implode('</p><p>', $paragraphs) . '</p>';
 
     wp_add_privacy_policy_content(
         __('MaxtDesign Cookie Consent', 'maxtdesign-cookie-consent'),

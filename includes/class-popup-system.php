@@ -168,16 +168,27 @@ class MDCC_Popup_System {
         wp_register_script('mdcc-popup-behavior', false, array('mdcc-consent-runtime'), MDCC_VERSION, true);
         wp_enqueue_script('mdcc-popup-behavior');
 
-        // Pass settings to JavaScript
-        wp_localize_script(
-            'mdcc-popup-behavior',
-            'mdccPopupConfig',
-            array(
-                'cookieName'      => self::SHOWN_COOKIE,
-                'cookieDuration'  => absint($settings['popup_shown_duration']), // Days
-                'repromptDecline' => !empty($settings['reprompt_on_decline']),
-            )
+        $popup_config = array(
+            'cookieName'      => self::SHOWN_COOKIE,
+            'cookieDuration'  => absint($settings['popup_shown_duration']), // Days
+            'repromptDecline' => !empty($settings['reprompt_on_decline']),
         );
+
+        // Opt-out presentation. The markup is server-rendered (and cached) with
+        // the opt-in copy; popup.js swaps in these strings client-side when
+        // mdccConsent.requiresOptIn() is false. Only emitted when the model can
+        // produce an opt-out visitor, so opt-in installs ship identical config.
+        if (MDCC_Consent_Manager::MODEL_OPTIN !== MDCC_Consent_Manager::get_consent_model()) {
+            $defaults = mdcc_default_settings();
+
+            $popup_config['optoutTitle']        = !empty($settings['popup_title_optout']) ? (string) $settings['popup_title_optout'] : (string) $defaults['popup_title_optout'];
+            $popup_config['optoutMessage']      = !empty($settings['popup_message_optout']) ? (string) $settings['popup_message_optout'] : (string) $defaults['popup_message_optout'];
+            $popup_config['optoutAcceptLabel']  = __('Got it', 'maxtdesign-cookie-consent');
+            $popup_config['optoutDeclineLabel'] = __('Opt out', 'maxtdesign-cookie-consent');
+        }
+
+        // Pass settings to JavaScript
+        wp_localize_script('mdcc-popup-behavior', 'mdccPopupConfig', $popup_config);
 
         // Add inline popup behavior script
         $popup_js = $this->get_popup_javascript();

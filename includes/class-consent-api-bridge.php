@@ -151,13 +151,22 @@ class MDCC_Consent_API_Bridge {
     /**
      * Declare the site's consent model to the WP Consent API.
      *
-     * Returns 'optin' (GDPR: nothing is granted until the visitor allows it),
-     * which matches this plugin's deny-by-default behavior. Filterable via
-     * mdcc_consent_type for sites that need a different regional model.
+     * Maps the plugin's `consent_model` setting onto the API's two types:
      *
-     * Only overrides when the admin toggle is on; otherwise the incoming value
-     * is passed through untouched so a different consent manager can win.
+     * - 'optout' when the model is 'optout' (implied consent everywhere).
+     * - 'optin' for 'optin' AND for 'regional'. The server cannot know the
+     *   visitor's region (pages are full-page cached), so it declares the
+     *   strict type; the consent runtime then calls wp_set_consent() with
+     *   explicit 'allow' values for the implied state in opt-out regions, so
+     *   consumers such as WooCommerce still see consent there.
      *
+     * Filterable via mdcc_consent_type (applied last) for sites that need to
+     * override the declared type. Only overrides when the admin toggle is on;
+     * otherwise the incoming value is passed through untouched so a different
+     * consent manager can win.
+     *
+     * @since 1.8.0
+     * @since 1.10.0 Derives the type from the consent_model setting.
      * @param string|false $type Incoming consent type.
      * @return string|false
      */
@@ -166,13 +175,16 @@ class MDCC_Consent_API_Bridge {
             return $type;
         }
 
+        $model        = MDCC_Consent_Manager::get_consent_model();
+        $consent_type = MDCC_Consent_Manager::MODEL_OPTOUT === $model ? 'optout' : 'optin';
+
         /**
          * Filter the consent type this plugin declares to the WP Consent API.
          *
          * @since 1.8.0
          * @param string $type Either 'optin' (GDPR) or 'optout' (CCPA-style).
          */
-        return apply_filters('mdcc_consent_type', 'optin');
+        return apply_filters('mdcc_consent_type', $consent_type);
     }
 
     /**

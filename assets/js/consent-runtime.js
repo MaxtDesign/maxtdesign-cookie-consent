@@ -14,10 +14,71 @@
     // breaking change to the registerService/on/getCategory/requireConsent surface.
     var API_VERSION = '1';
 
+    // Consent model: 'optin' (GDPR everywhere; pre-1.10 behavior), 'regional'
+    // (opt-in in the EEA/UK/CH, implied consent elsewhere) or 'optout'
+    // (implied consent everywhere). Unknown/missing values fail closed to optin.
+    var MODEL = config.consentModel === 'regional' || config.consentModel === 'optout'
+        ? config.consentModel
+        : 'optin';
+
     function debug(msg, data) {
         if (config.debug && console && console.log) {
             console.log(`[MDCC] ${msg}`, data || '');
         }
+    }
+
+    // -----------------------------------------------------------------------
+    // v1.10.0 region-aware model.
+    // The decision is made in the browser because pages are full-page cached:
+    // the server cannot vary its output per visitor. Tracking defaults are
+    // still governed by Google Consent Mode's own region handling (see
+    // MDCC_Consent_Manager::inject_gcm_default); this heuristic only decides
+    // whether the visitor gets an opt-in banner or implied consent.
+    // -----------------------------------------------------------------------
+
+    var optInRequired; // memoized: neither the time zone nor GPC changes mid-page
+
+    function timezoneRequiresOptIn() {
+        var tz = '';
+        try {
+            tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+        } catch (e) {
+            tz = '';
+        }
+        if (!tz) {
+            return true; // fail closed
+        }
+        var zones = config.optinTimezones;
+        if (!zones) {
+            return true; // no heuristic shipped: fail closed
+        }
+        var prefixes = zones.prefixes || [];
+        for (var i = 0; i < prefixes.length; i++) {
+            if (tz.indexOf(prefixes[i]) === 0) {
+                return true;
+            }
+        }
+        return (zones.zones || []).indexOf(tz) !== -1;
+    }
+
+    // true  -> nothing is granted until the visitor explicitly accepts
+    // false -> implied consent applies until the visitor explicitly declines
+    function requiresOptIn() {
+        if (optInRequired === undefined) {
+            if (MODEL === 'optin') {
+                optInRequired = true;
+            } else if (window.navigator && window.navigator.globalPrivacyControl === true) {
+                // Global Privacy Control is a legally recognised opt-out signal
+                // (CCPA/CPRA, Colorado, etc.): never imply consent for these visitors.
+                optInRequired = true;
+            } else if (MODEL === 'optout') {
+                optInRequired = false;
+            } else {
+                optInRequired = timezoneRequiresOptIn();
+            }
+            debug('Consent model ' + MODEL + ', requiresOptIn:', optInRequired);
+        }
+        return optInRequired;
     }
 
     function readStoredState() {
@@ -37,8 +98,19 @@
         return null;
     }
 
+    // Effective state. A stored value always means an explicit choice. With no
+    // stored value, an opt-out visitor gets implied consent (flagged so callers
+    // can tell it apart from an explicit acceptAll); everyone else gets denied.
+    // The implied state is never written to localStorage.
     function readState() {
-        return readStoredState() || { analytics: false, ads: false };
+        var stored = readStoredState();
+        if (stored) {
+            return stored;
+        }
+        if (!requiresOptIn()) {
+            return { analytics: true, ads: true, implied: true };
+        }
+        return { analytics: false, ads: false };
     }
 
     function writeState(state) {
@@ -234,10 +306,25 @@
                 debug('Error resetting consent:', e);
             }
 
-            // No writeState — reset removes the key. Propagate the denied state so
-            // GCM, the Consent API, services, and listeners all reflect the reset.
-            propagate({ analytics: false, ads: false });
+            // No writeState — reset removes the key. Propagate the effective
+            // no-choice state (denied under opt-in; implied consent again for
+            // an opt-out visitor) so GCM, the Consent API, services, and
+            // listeners all reflect the reset.
+            propagate(readState());
         },
+
+        // --- Consent model (1.10.0) ----------------------------------------
+
+        // 'optin' | 'regional' | 'optout' as configured by the site owner.
+        model: function () {
+            return MODEL;
+        },
+
+        // Whether THIS visitor must opt in before anything is granted. Always
+        // true under 'optin'; always true when the browser sends Global Privacy
+        // Control; false under 'optout'; under 'regional' true for EEA/UK/CH
+        // browser time zones (fails closed when the zone is unavailable).
+        requiresOptIn: requiresOptIn,
 
         // --- Public extension API (apiVersion 1) ---------------------------
 
@@ -316,6 +403,27 @@
             // stays correct even on full-page-cached responses.
             syncConsentAPI(stored);
             debug('Consent manager initialized with stored state:', stored);
+        } else if (!requiresOptIn()) {
+            // Opt-out visitor, no explicit choice: apply implied consent. The
+            // GCM update also covers the case where the browser heuristic and
+            // Google's IP-based region disagree; the Consent API sync is what
+            // un-gates consumers such as WooCommerce. Nothing is stored, so a
+            // later explicit choice still wins. mdcc:changed fires once here
+            // (detail.implied === true) so integrations that only listen for
+            // the event see the implied grant.
+            var implied = readState();
+            updateGCM(implied);
+            syncConsentAPI(implied);
+            dispatchChangeEvent(implied);
+            debug('Consent manager initialized with implied consent:', implied);
+        } else if (MODEL !== 'optin') {
+            // Regional model, browser says opt-in, no choice yet: deny in GCM
+            // as well. Google's region default is IP-based and may have
+            // granted (VPN, travel); the stricter of the two signals wins.
+            // Under 'optin' the inline default is already denied, so this
+            // path is skipped to keep 1.9.x behavior byte-identical.
+            updateGCM({ analytics: false, ads: false });
+            debug('Opt-in visitor without a stored choice; GCM denied');
         } else {
             debug('No stored consent — letting inline default state ride');
         }

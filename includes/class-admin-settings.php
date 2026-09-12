@@ -209,12 +209,36 @@ class MDCC_Admin_Settings {
             'mdcc_section_content'
         );
 
+        add_settings_field(
+            'popup_title_optout',
+            __('Popup Title (opt-out regions)', 'maxtdesign-cookie-consent'),
+            array($this, 'render_field_popup_title_optout'),
+            self::PAGE_SLUG,
+            'mdcc_section_content'
+        );
+
+        add_settings_field(
+            'popup_message_optout',
+            __('Popup Message (opt-out regions)', 'maxtdesign-cookie-consent'),
+            array($this, 'render_field_popup_message_optout'),
+            self::PAGE_SLUG,
+            'mdcc_section_content'
+        );
+
         // Section: Behavior Settings
         add_settings_section(
             'mdcc_section_behavior',
             __('Behavior Settings', 'maxtdesign-cookie-consent'),
             array($this, 'render_section_behavior'),
             self::PAGE_SLUG
+        );
+
+        add_settings_field(
+            'consent_model',
+            __('Consent Model', 'maxtdesign-cookie-consent'),
+            array($this, 'render_field_consent_model'),
+            self::PAGE_SLUG,
+            'mdcc_section_behavior'
         );
 
         add_settings_field(
@@ -340,6 +364,22 @@ class MDCC_Admin_Settings {
         $sanitized['popup_message'] = !empty($input['popup_message'])
             ? sanitize_textarea_field($input['popup_message'])
             : $defaults['popup_message'];
+
+        // Opt-out region popup title (text)
+        $sanitized['popup_title_optout'] = !empty($input['popup_title_optout'])
+            ? sanitize_text_field($input['popup_title_optout'])
+            : $defaults['popup_title_optout'];
+
+        // Opt-out region popup message (textarea)
+        $sanitized['popup_message_optout'] = !empty($input['popup_message_optout'])
+            ? sanitize_textarea_field($input['popup_message_optout'])
+            : $defaults['popup_message_optout'];
+
+        // Consent model (whitelist; default 'optin' keeps pre-1.10 behavior)
+        $allowed_models = array_keys(MDCC_Consent_Manager::consent_models());
+        $sanitized['consent_model'] = isset($input['consent_model']) && in_array($input['consent_model'], $allowed_models, true)
+            ? $input['consent_model']
+            : $defaults['consent_model'];
 
         // Cookie duration (positive integer, 1-365 days)
         $duration = isset($input['popup_shown_duration']) ? absint($input['popup_shown_duration']) : 0;
@@ -672,6 +712,72 @@ class MDCC_Admin_Settings {
                   class="large-text"><?php echo esc_textarea($current); ?></textarea>
         <p class="description">
             <?php esc_html_e('Description text explaining cookie usage.', 'maxtdesign-cookie-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render opt-out region popup title field
+     *
+     * @since 1.10.0
+     */
+    public function render_field_popup_title_optout() {
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
+        $defaults = mdcc_default_settings();
+        $current  = !empty($settings['popup_title_optout']) ? $settings['popup_title_optout'] : $defaults['popup_title_optout'];
+        ?>
+        <input type="text"
+               name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_title_optout]"
+               value="<?php echo esc_attr($current); ?>"
+               class="regular-text" />
+        <p class="description">
+            <?php esc_html_e('Headline shown instead of the Popup Title to visitors in an opt-out region (Consent Model set to Regional or Opt-out). Not used under the Opt-in model.', 'maxtdesign-cookie-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render opt-out region popup message field
+     *
+     * @since 1.10.0
+     */
+    public function render_field_popup_message_optout() {
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
+        $defaults = mdcc_default_settings();
+        $current  = !empty($settings['popup_message_optout']) ? $settings['popup_message_optout'] : $defaults['popup_message_optout'];
+        ?>
+        <textarea name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_message_optout]"
+                  rows="3"
+                  class="large-text"><?php echo esc_textarea($current); ?></textarea>
+        <p class="description">
+            <?php esc_html_e('Description shown instead of the Popup Message to visitors in an opt-out region. The buttons become "Got it" and "Opt out"; the Analytics Only button is hidden.', 'maxtdesign-cookie-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render consent model select field
+     *
+     * @since 1.10.0
+     */
+    public function render_field_consent_model() {
+        $current = MDCC_Consent_Manager::get_consent_model();
+        ?>
+        <select name="<?php echo esc_attr(self::OPTION_NAME); ?>[consent_model]" id="mdcc-consent-model">
+            <?php foreach (MDCC_Consent_Manager::consent_models() as $value => $label) : ?>
+                <option value="<?php echo esc_attr($value); ?>" <?php selected($current, $value); ?>>
+                    <?php echo esc_html($label); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <p class="description">
+            <?php esc_html_e('Opt-in everywhere: nothing is tracked until the visitor accepts (GDPR; the default and the behavior of every earlier version). Regional: opt-in for visitors in the EEA, UK and Switzerland, implied consent everywhere else with an easy opt-out (CCPA-style). Opt-out everywhere: implied consent for every visitor, who can opt out at any time.', 'maxtdesign-cookie-consent'); ?>
+        </p>
+        <p class="description">
+            <?php esc_html_e('Regional mode uses Google Consent Mode\'s own region-specific defaults for tracking (Google resolves the visitor\'s region; nothing is looked up on your server, so pages stay cacheable) plus a browser time-zone heuristic to decide which banner to show. Visitors whose browser sends the Global Privacy Control signal are always treated as opt-in.', 'maxtdesign-cookie-consent'); ?>
+        </p>
+        <p class="description" style="color:#b32d2e;">
+            <?php esc_html_e('You remain responsible for choosing the model that is lawful for your audience and jurisdiction. If in doubt, keep Opt-in everywhere.', 'maxtdesign-cookie-consent'); ?>
         </p>
         <?php
     }
