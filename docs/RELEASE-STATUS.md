@@ -9,8 +9,15 @@
 - **1.8.0** = WP Consent API provider (registers `wp_get_consent_type` = `optin`; bridges analytics→`statistics` / ads→`marketing` via `wp_set_consent()`; `functional` always allowed). Bridge toggle defaults **ON** — a complete no-op unless the WP Consent API plugin is active. Also ships the 1.7.7 popup-JS extraction + `mdcc_should_show_popup` filter + the `9c21ad8` doc-link fix. Verified live before push: Test A (bridge active, razorback2 full stack) + Test B (no-op, plugin-test) + Plugin Check (shipping code clean) + PHPStan L8.
 - ⏳ wp.org builds the downloadable zip asynchronously after a Stable-tag bump — verify `downloads.wordpress.org/plugin/maxtdesign-cookie-consent.1.8.0.zip` returns 200 (usually within minutes).
 
-## GitHub `main` == live SVN (in sync)
-`main` at `17cadb0`, tagged `v1.8.0`, pushed to origin. Live SVN r3615713 = 1.8.0. Nothing pending.
+## 🚧 1.10.0 — built + verified, awaiting Plugin Check → release (2026-09-12)
+Branch `feat/regional-consent-model` at `c3290df` (pushed). **Hotfix driver:** the site is 88% US and deny-by-default was losing GA4/Ads data. Ships three things in one release (main at `b346d3d` = 1.8.0 is unchanged until the merge):
+- **Regional consent model** (new `consent_model` setting; default `optin` = no upgrade change). Under `regional`: EEA/UK/CH → opt-in popup (denied); **California → CCPA/CPRA opt-out** (granted by default, "Do Not Sell or Share My Personal Information" notice, no re-prompt; Pacific-TZ detection, over-inclusion accepted); everyone else → **no banner**. GCM `region`-scoped defaults — Google resolves region, server geolocates nothing, pages stay cacheable. Design/decisions: memory `project-regional-consent-model`.
+- The never-released **1.9.0 extensibility API** (`docs/v1.9.0-extensibility-scope.md`).
+- **Tested up to: 7.1** (merged `chore/wp-7-1-tested-up-to`).
+- Verified: build OK, php -l clean, **PHPStan L8 clean**, budget **9.78 / 10 KB (230 B headroom)**, no test regressions, **all three tiers + CA opt-out + EEA accept driven via CDP with timezone overrides, zero console errors**. Staged trunk 21 files / 1.10.0 / Stable tag 1.10.0; WC r3692950 diff = identical file sets (no stale files); verified zip built.
+- **Remaining gates:** Plugin Check on the staged trunk (junction `maxtdesign-cookie-consent-svncheck` recreated) → FF `main`, tag `v1.10.0`, push → copy staged into WC, `svn cp trunk tags/1.10.0` → atomic `svn ci` **only on explicit go**.
+- Deferred: `.pot` not regenerated (no wp-cli here; translate.wordpress.org extracts from source). readme "Coming in Pro… launching 2025" is stale copy — operator's call.
+- After shipping: set **Consent Model = Regional** on maxtoffroad (admin), update this file + `SESSION-HANDOFF.md`, delete the merged branches, remove the `-svncheck` junction (`cmd /c rmdir`).
 
 ## Next release checklist (when doing the next SVN push)
 1. Bump version everywhere (header `Version`, `MDCC_VERSION`, `package.json`, `readme.txt` Stable tag).
@@ -23,7 +30,7 @@
 
 ## Open follow-ups to confirm before/at next release
 - **`#faq` anchor on maxtdesign.com**: a separate session is adding `id="faq"` to the FAQ section. The in-plugin FAQ links (`/plugins/cookie-consent#faq`, in `class-admin-settings.php` lines 459 and 715) only scroll correctly once that anchor is live — confirm it exists.
-- **Post-1.8.0 (verify shortly):** confirm `downloads.wordpress.org/plugin/maxtdesign-cookie-consent.1.8.0.zip` returns 200 and inspect the zip is the clean 21-file package. Watch the wp.org support forum for any 1.8.0 upgrade reports.
+- ~~Post-1.8.0 zip verification~~ — done 2026-07-20 (HTTP 200, clean 21-file package, no dev files).
 
 ## Build/release tooling modernized (2026-07-17) — matches Disable REST / Product Bundles
 Dev-only; no runtime/shipped-code change. All excluded from the user zip.
