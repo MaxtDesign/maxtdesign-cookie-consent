@@ -5,7 +5,7 @@ Donate link: https://github.com/sponsors/MaxtDesign
 Tags: cookie-consent, gdpr, google-consent-mode, ccpa, analytics
 Requires at least: 5.8
 Tested up to: 7.1
-Stable tag: 1.10.0
+Stable tag: 1.10.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -406,7 +406,27 @@ Yes! The plugin is fully translation-ready. Contribute translations at: [https:/
 6. Developer console showing GCM v2 signals - Proper Google Consent Mode v2 implementation visible in browser console
 
 
+== Security ==
+
+Found a security issue? Please report it privately to security@maxtdesign.com rather than posting
+in a public support thread. We aim to acknowledge reports within 3 business days and will agree a
+disclosure timeline with you.
+
+Please include the plugin version, steps to reproduce, and the impact as you understand it. We will
+credit you in the changelog unless you would rather stay anonymous, and we ask that you do not test
+against a site you do not own.
+
+This plugin is published on WordPress.org by the account `slaacr`, which is MaxtDesign. The account
+name predates the brand and WordPress.org does not support renaming accounts, so the two names
+differ. Anything published under `slaacr` is ours.
+
 == Changelog ==
+
+= 1.10.1 =
+* New: published security contact and vulnerability disclosure policy. Security issues now have a private reporting route (security@maxtdesign.com) instead of a public support thread, with a 3 business day acknowledgement target.
+* New: documented that the WordPress.org account `slaacr` is MaxtDesign, so it is clear who publishes this plugin.
+* Declared compatibility with WordPress 7.1.
+* No functional changes.
 
 = 1.10.0 - 2026-09-12 =
 **Regional consent model + developer extensibility API. Default behavior unchanged.**
@@ -548,6 +568,9 @@ Yes! The plugin is fully translation-ready. Contribute translations at: [https:/
 
 
 == Upgrade Notice ==
+
+= 1.10.1 =
+Documentation and compatibility only. Adds a private security contact and confirms WordPress 7.1 support. No functional changes.
 
 = 1.10.0 =
 Adds an optional Consent Model setting (regional / CCPA-style opt-out) and a developer API. Safe to upgrade: the default stays opt-in everywhere, so nothing changes until you choose a different model in Behavior Settings.
