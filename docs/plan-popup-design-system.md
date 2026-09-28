@@ -1,6 +1,6 @@
 # Plan: popup design system (design settings + theme template override)
 
-Written 2026-09-28. Status: **awaiting operator acceptance. No code written.**
+Written 2026-09-28. Status: **ACCEPTED by the operator 2026-09-28. Decisions D1a and D2 (link only) are locked. Build not started.**
 Target release: folds into the unreleased **1.11.0** (wordpress.org serves 1.10.0).
 Branch: `feat/popup-design-system`, stacked on `feat/country-gpc-consent` (`f91fd87`).
 
@@ -214,3 +214,10 @@ explicit go.
   separate opt-out button on the popup. Confirm this is acceptable, or keep
   the opt-out button on the popup for those visitors.
 - **D3.** Accept this plan, or change it.
+
+### Decisions recorded 2026-09-28 (operator)
+
+- **D1: D1a.** Decline stays for `optin` visitors in Compact.
+- **D2: link only.** For `optout` visitors in Compact, the Manage options
+  link carries the opt-out wording. No separate opt-out button on the popup.
+- **D3: accepted** as written.

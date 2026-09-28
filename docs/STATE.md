@@ -8,9 +8,10 @@
   functional, 221 of 221 country-consent assertions.
 - **`main` is still 1.10.1 at `7074066`.** Nothing was merged. wordpress.org
   serves 1.10.0.
-- **Plan written, awaiting operator acceptance:**
+- **Plan accepted by the operator 2026-09-28:**
   `docs/plan-popup-design-system.md`. Design settings plus a theme template
-  override, folding into 1.11.0. No code written.
+  override, folding into 1.11.0. Decisions locked: D1a (Decline stays for
+  opt-in visitors), D2 link only. No code written yet.
 - **Release blocker found, not yet fixed:** `tools/prepare-svn.sh` does not
   copy `popup-loader.js` or `popup-loader.min.js`. A wordpress.org release
   staged with that script would ship a popup that never loads. Plan risk R1,
@@ -19,8 +20,16 @@
   full dialog 13,797 of 14,336 B (539 B headroom), loader 481 B.
 
 ### Next actions
-1. [operator] Accept or change the plan, and answer decisions D1 and D2 in it.
-2. [session] On acceptance, start plan phase 0 (baseline and STATE backfill).
+1. [session] Work the plan from phase 0 on branch `feat/popup-design-system`,
+   in the new session "MaxtDesign - Cookie Consent 2".
+2. [operator] wordpress.org release of 1.11.0 stays held until the release
+   gate passes and the operator gives an explicit go.
+
+### Flags
+- The main checkout `C:/maxt/projects/plugin/maxtdesign-cookie-consent` is
+  junction-mounted into LocalWP sites (plugin-test, razorback2). It is left on
+  `feat/country-gpc-consent` so those sites keep serving the 1.11.0 code they
+  served before the checkpoint. A git worktree is NOT served by LocalWP.
 
 ## September25 production release amendment
 
