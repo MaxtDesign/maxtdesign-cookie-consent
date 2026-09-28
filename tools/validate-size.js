@@ -24,6 +24,28 @@ if (coreSize > 10240 || fs.statSync(path.join(__dirname, '..', FILES['popup-load
   throw new Error('Original 10KB core budget or under-1KB bootstrap budget exceeded');
 }
 
+// The design settings print one inline <style> block on sites that use them.
+// Cap: under 512 B with every field set. A default site must print nothing.
+const INLINE_DESIGN_CAP = 512;
+const renderInline = (settings) => JSON.parse(require('child_process').execFileSync(
+  'php',
+  [path.join(__dirname, '..', 'tests', 'popup-render.php'), JSON.stringify(settings)],
+  { encoding: 'utf8' }
+)).inline_css;
+const inlineDefault = Buffer.byteLength(renderInline({}));
+const inlineFull = Buffer.byteLength(renderInline({
+  popup_primary_color: '#c8102e',
+  popup_bg_color: '#111111',
+  popup_text_color: '#ffffff',
+  popup_button_text_color: '#000000',
+  popup_radius: '24',
+  popup_desktop_width: '60',
+  popup_inherit_font: true
+}));
+if (inlineDefault !== 0 || inlineFull <= 0 || inlineFull >= INLINE_DESIGN_CAP) {
+  throw new Error('Inline design block budget failed: default site ' + inlineDefault + ' B (must be 0), every field set ' + inlineFull + ' B (must be under ' + INLINE_DESIGN_CAP + ')');
+}
+
 const RED = '\x1b[31m';
 const GREEN = '\x1b[32m';
 const YELLOW = '\x1b[33m';
@@ -58,6 +80,9 @@ Object.entries(FILES).forEach(([name, filepath]) => {
     console.log(`${YELLOW}WARN ${name}: ${size} bytes (${sizeKB}KB) - Over by ${over} bytes${RESET}`);
   }
 });
+
+console.log(`${GREEN}OK core (popup.min.css + consent-runtime.min.js): ${coreSize} bytes - cap 10240${RESET}`);
+console.log(`${GREEN}OK inline design block: default site ${inlineDefault} bytes, every field set ${inlineFull} bytes - cap under ${INLINE_DESIGN_CAP}${RESET}`);
 
 console.log('\n==========================================');
 

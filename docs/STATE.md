@@ -13,8 +13,8 @@ the working branches is **1.11.0**, unreleased. Floors: WordPress 5.8, PHP 7.4.
 ## Status
 Build phase of `docs/plan-popup-design-system.md`, on branch
 `feat/popup-design-system`, stacked on `feat/country-gpc-consent` (`f91fd87`,
-the 1.11.0 country and GPC candidate). Phases 0, 1 and 2 are done. Phases 3
-to 5 follow. `main` is `7074066`. Nothing is merged. The exact 1.11.0 candidate
+the 1.11.0 country and GPC candidate). Phases 0 to 3 are done. Phases 4 and
+5 follow. `main` is `7074066`. Nothing is merged. The exact 1.11.0 candidate
 artifacts are live on MaxtOffroad by a separate route (2026-09-25). This work
 folds into 1.11.0 and does not bump the version.
 
@@ -31,9 +31,10 @@ folds into 1.11.0 and does not bump the version.
 ## Next actions
 1. [session] Phase 1, packaging fix: DONE 2026-09-28.
 2. [session] Phase 2, template extraction: DONE 2026-09-28 (`6b52459`).
-   Phases 3 to 5 follow, one commit each.
-3. [operator] Decide on flag F1 (custom primary colour is not applied in
-   1.11.0). Phase 3 restores it unless told otherwise.
+   Phase 3, design variables: DONE 2026-09-28. It fit under the unchanged
+   caps. Phases 4 and 5 follow, one commit each.
+3. [operator] Review flags F1, F7 and F8. Each is a visible change or a
+   departure from the plan text.
 4. [operator] Start LocalWP site `plugin-test` when a real WordPress check is
    wanted. It returned 502 on 2026-09-28.
 5. [operator] wordpress.org release of 1.11.0 stays held until the release
@@ -50,17 +51,18 @@ folds into 1.11.0 and does not bump the version.
   `razorback2`. It stays on `feat/country-gpc-consent`.
 
 ## Verification state
-All run 2026-09-28 in the worktree, on the phase 2 tree.
+All run 2026-09-28 in the worktree, on the phase 3 tree.
 
 | Check | Result |
 |---|---|
 | `node tests/country-consent.cjs` | 221 of 221 assertions pass |
 | `php tests/functional-tests.php` | 30 of 30 pass |
-| `node tests/popup-baseline.cjs` | 71 of 71 checks pass, Chrome 152.0.7977.85. After the template extraction the markup is byte-identical to the phase 0 baseline in all 14 cases |
+| `node tests/popup-baseline.cjs` | 71 of 71 checks pass, Chrome 152.0.7977.85. Markup is byte-identical to the phase 0 baseline in all 14 cases. Computed styles are identical in 41 of 42 case and width pairs. The 42nd is the custom colour, flag F1 |
+| `node tests/popup-design.cjs` | 74 of 74 pass: width at 1440, 1025, 1024, 768 and 375 px, colours, radius and font under all three presets, hover colour, hostile values dropped |
 | `php tests/popup-template-test.php` | 20 of 20 pass: child before parent, filter, unreadable filter path falls back, version reader, contract items present |
 | Baseline failure test | a 1 px padding change fails 23 of 71, a markup change fails 15 of 29. The check fails when it should |
 | `npm run test:packaging` | 24 of 24 pass. Zip extracted: 24 files with `templates/popup.php`, loader present, extracted copy boots and prints the 481 B loader, staged trunk equals the zip by sha256. Before the fix the staged trunk held 21 files and no loader. With the loader filtered out of staging the test fails 2 checks |
-| `npm run validate` | core 10,101 of 10,240 B. Full dialog 13,797 of 14,336 B. Loader 481 B |
+| `npm run validate` | core 10,164 of 10,240 B (76 B headroom, was 10,101). Full dialog 13,860 of 14,336 B. Loader 481 B. Inline design block 0 B on a default site, 195 B with every field set, cap under 512. With the cap set to 100 the check fails |
 | `npm run phpstan` (level 8) | 0 errors. `templates/` is analysed too |
 | `plugin-deliverables.php` | 14 passed, 0 failed |
 | Outbound HTTP grep | 0 hits. One `file_get_contents()` reads the bundled loader from disk |
@@ -100,6 +102,21 @@ Vitals, Plugin Check on the 1.11.0 tree.
   Shown in the harness, which mirrors that document order. Not yet confirmed
   on a WordPress site. Plan phase 3 moves the colour to a CSS variable, which
   does not depend on order.
+  **Fixed in phase 3 (2026-09-28):** the harness now computes
+  `rgb(200, 16, 46)`. Sites that set a custom colour and run the 1.11.0
+  candidate, MaxtOffroad included if it set one, will see their colour return.
+- **F7. Phase 3 paid for the variables by removing CSS that was dead or
+  duplicated.** Two removals are visible. The Close button no longer draws an
+  outline on mouse hover. Buttons focused by a mouse click no longer draw the
+  2 px outline. Keyboard focus still draws the 3 px `:focus-visible` outline.
+  The plan named these rules as trim candidates. Browsers without
+  `:focus-visible` fall back to their own focus ring.
+- **F8. The button font setting is not a CSS variable.** The plan said
+  `--mdcc-font: inherit`. That cannot work: `inherit` is a CSS-wide keyword, so
+  the custom property inherits itself and the fallback wins. The setting
+  prints `.mdcc-popup .mdcc-popup__button{font-family:inherit}` in the inline
+  block instead. Cost to the stylesheet: 0 B. Also added `--mdcc-hover`, which
+  the plan did not list, for the hover colour of a custom primary colour.
 - **F2. CLOSED 2026-09-28.** PHPStan level 8 reported a missing return type
   on `country_endpoint()` in the 1.11.0 candidate. A docblock was added. No
   behaviour change.

@@ -80,6 +80,16 @@ function mdcc_default_settings() {
         'popup_position'       => 'bottom',
         'popup_primary_color'  => '#0073aa',
         'popup_animation'      => 'slide',
+        // Design settings (1.11.0). Every default is the pre-1.11 rendering:
+        // full width, the style preset's own colours and corners, and the
+        // browser's button font. Sites saved before 1.11.0 lack these keys,
+        // so every read must fall back to the value here.
+        'popup_desktop_width'     => 100,
+        'popup_bg_color'          => '',
+        'popup_text_color'        => '',
+        'popup_button_text_color' => '',
+        'popup_radius'            => '',
+        'popup_inherit_font'      => false,
         'popup_title'          => __('Cookie Consent', 'maxtdesign-cookie-consent'),
         'popup_message'        => __('We use cookies to enhance your browsing experience and analyze our traffic.', 'maxtdesign-cookie-consent'),
         // Shown instead of the two fields above to visitors in an opt-out-notice

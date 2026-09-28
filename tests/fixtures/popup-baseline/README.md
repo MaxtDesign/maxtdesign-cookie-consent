@@ -18,6 +18,16 @@ Compare: `node tests/popup-baseline.cjs`. Re-record: add `--update`.
 Re-record only when a change to the default rendering is intended, and say so
 in the commit message.
 
+## Intended changes since the recording
+
+| Date | Commit phase | What changed | Why |
+|---|---|---|---|
+| 2026-09-28 | 3 | `inline-css/*.css` went from 345 B to empty, and the byte counts in `summary.json` follow | the inline primary-colour block became a CSS variable that prints only when it differs from the default |
+| 2026-09-28 | 3 | `computed.json`, case `custom-primary@1440`: the Accept button is `rgb(200, 16, 46)`, was `rgb(0, 115, 170)` | the saved primary colour was not applied in the 1.11.0 candidate; it is again |
+
+Nothing else changed. The markup of all 14 cases and the computed styles of
+the other 41 case and width pairs are as recorded from `f91fd87`.
+
 Limits. The markup comes from the real plugin classes behind WordPress stubs
 (`tests/popup-render.php`), not from a WordPress site. The page has no theme
 stylesheet. Boxes depend on the fonts installed on the recording machine.

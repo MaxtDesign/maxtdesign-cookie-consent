@@ -164,10 +164,11 @@ function connect(url) {
   });
 }
 
-function pageHtml(rendered, css) {
+function pageHtml(rendered, css, themeCss) {
   return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
     + '<meta name="viewport" content="width=device-width, initial-scale=1">'
     + '<title>popup baseline</title>'
+    + (themeCss ? '<style id="theme">' + themeCss + '</style>' : '')
     + '<style id="mdcc-popup-inline-css">' + rendered.inline_css + '</style>'
     + '<style id="mdcc-popup-stylesheet">' + css + '</style>'
     + '</head><body><main><h1>Page</h1><p>Content.</p></main>' + rendered.html + '</body></html>';
@@ -362,4 +363,9 @@ async function main() {
   console.log(JSON.stringify({ baselineChecks: checks, passed: true, browser: !NO_BROWSER }));
 }
 
-main().catch((error) => { console.error(error.message); process.exitCode = 1; });
+if (require.main === module) {
+  main().catch((error) => { console.error(error.message); process.exitCode = 1; });
+}
+
+// Shared with tests/popup-design.cjs.
+module.exports = { ROOT, ELEMENTS, PROPS, VIEWPORTS, lf, render, launchChrome, connect, pageHtml, capture };

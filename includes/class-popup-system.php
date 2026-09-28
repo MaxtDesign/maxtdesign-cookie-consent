@@ -135,34 +135,22 @@ class MDCC_Popup_System {
 
         $suffix = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
 
-        wp_register_style(
-            'mdcc-popup',
-            false,
-            array(),
-            MDCC_VERSION,
-            'all'
-        );
-        wp_enqueue_style('mdcc-popup');
-
-        // Get settings for dynamic CSS
         $settings = get_option('mdcc_settings', mdcc_default_settings());
 
-        // Add inline CSS for primary color customization
-        $primary_color = !empty($settings['popup_primary_color']) ? sanitize_hex_color($settings['popup_primary_color']) : '#0073aa';
+        if (!is_array($settings)) {
+            $settings = mdcc_default_settings();
+        }
 
-        $custom_css = "
-            .mdcc-popup__button--primary {
-                background-color: {$primary_color};
-                border-color: {$primary_color};
-            }
-            .mdcc-popup__button--primary:hover,
-            .mdcc-popup__button--primary:focus {
-                background-color: {$primary_color}dd;
-                border-color: {$primary_color}dd;
-            }
-        ";
+        // Design settings print as CSS variables, and only the ones that
+        // differ from the defaults. A site that changed nothing prints no
+        // inline style at all.
+        $design_css = self::get_design_css($settings);
 
-        wp_add_inline_style('mdcc-popup', $custom_css);
+        if ('' !== $design_css) {
+            wp_register_style('mdcc-popup', false, array(), MDCC_VERSION, 'all');
+            wp_enqueue_style('mdcc-popup');
+            wp_add_inline_style('mdcc-popup', $design_css);
+        }
 
         // Enqueue popup behavior script (inline for minimal size)
         wp_register_script('mdcc-popup-behavior', false, array('mdcc-consent-runtime'), MDCC_VERSION, true);
@@ -197,6 +185,115 @@ class MDCC_Popup_System {
         // Add inline popup behavior script
         $popup_js = $this->get_popup_javascript();
         wp_add_inline_script('mdcc-popup-behavior', $popup_js);
+    }
+
+    /**
+     * Desktop widths the design settings offer, in percent.
+     *
+     * @since 1.11.0
+     * @return int[]
+     */
+    public static function desktop_widths() {
+        return array(100, 80, 60, 50);
+    }
+
+    /**
+     * The design settings as CSS variables.
+     *
+     * Holds only the settings that differ from the defaults, so a site that
+     * changed nothing gets an empty array. Every value is validated again
+     * here, whatever was saved.
+     *
+     * @since 1.11.0
+     * @param array<string, mixed> $settings Plugin settings.
+     * @return array<string, string> Variable name => value.
+     */
+    public static function get_design_variables($settings) {
+        $vars = array();
+
+        $primary = self::hex_color($settings['popup_primary_color'] ?? '');
+        if ('' !== $primary && '#0073aa' !== $primary) {
+            $vars['--mdcc-primary'] = $primary;
+            $vars['--mdcc-hover']   = $primary . 'dd';
+        }
+
+        $colors = array(
+            'popup_button_text_color' => '--mdcc-btn-fg',
+            'popup_bg_color'          => '--mdcc-bg',
+            'popup_text_color'        => '--mdcc-fg',
+        );
+        foreach ($colors as $key => $name) {
+            $color = self::hex_color($settings[$key] ?? '');
+            if ('' !== $color) {
+                $vars[$name] = $color;
+            }
+        }
+
+        $radius = $settings['popup_radius'] ?? '';
+        if (is_numeric($radius)) {
+            $radius          = min(24, absint($radius));
+            $vars['--mdcc-r'] = 0 === $radius ? '0' : $radius . 'px';
+        }
+
+        $width = absint($settings['popup_desktop_width'] ?? 100);
+        if (100 !== $width && in_array($width, self::desktop_widths(), true)) {
+            $vars['--mdcc-w'] = $width . '%';
+        }
+
+        return $vars;
+    }
+
+    /**
+     * The inline style that carries the design settings, or '' for none.
+     *
+     * @since 1.11.0
+     * @param array<string, mixed> $settings Plugin settings.
+     * @return string
+     */
+    public static function get_design_css($settings) {
+        $css = '';
+
+        foreach (self::get_design_variables($settings) as $name => $value) {
+            $css .= $name . ':' . $value . ';';
+        }
+
+        if ('' !== $css) {
+            $css = '.mdcc-popup{' . rtrim($css, ';') . '}';
+        }
+
+        // Not a variable: a custom property set to "inherit" inherits itself
+        // instead of carrying the keyword. Two classes outrank the stylesheet
+        // wherever this block sits in the document.
+        if (!empty($settings['popup_inherit_font'])) {
+            $css .= '.mdcc-popup .mdcc-popup__button{font-family:inherit}';
+        }
+
+        return $css;
+    }
+
+    /**
+     * A six digit lowercase hex colour, or '' when the value is not one.
+     *
+     * Three digit colours are expanded, so an alpha suffix can be appended.
+     *
+     * @since 1.11.0
+     * @param mixed $value Saved colour.
+     * @return string
+     */
+    private static function hex_color($value) {
+        $color = is_string($value) ? sanitize_hex_color($value) : '';
+
+        if (!is_string($color) || '' === $color) {
+            return '';
+        }
+
+        $color = strtolower($color);
+
+        if (4 === strlen($color)) {
+            $color = '#' . $color[1] . $color[1] . $color[2] . $color[2] . $color[3] . $color[3];
+        }
+
+        return $color;
     }
 
     /**

@@ -185,6 +185,54 @@ class MDCC_Admin_Settings {
             'mdcc_section_appearance'
         );
 
+        // Section: Popup Design
+        add_settings_section(
+            'mdcc_section_design',
+            __('Popup Design', 'maxtdesign-cookie-consent'),
+            array($this, 'render_section_design'),
+            self::PAGE_SLUG
+        );
+
+        add_settings_field(
+            'popup_desktop_width',
+            __('Desktop Width', 'maxtdesign-cookie-consent'),
+            array($this, 'render_field_popup_desktop_width'),
+            self::PAGE_SLUG,
+            'mdcc_section_design'
+        );
+
+        $design_colors = array(
+            'popup_bg_color'          => __('Background Color', 'maxtdesign-cookie-consent'),
+            'popup_text_color'        => __('Text Color', 'maxtdesign-cookie-consent'),
+            'popup_button_text_color' => __('Primary Button Text Color', 'maxtdesign-cookie-consent'),
+        );
+        foreach ($design_colors as $key => $label) {
+            add_settings_field(
+                $key,
+                $label,
+                array($this, 'render_field_design_color'),
+                self::PAGE_SLUG,
+                'mdcc_section_design',
+                array('key' => $key)
+            );
+        }
+
+        add_settings_field(
+            'popup_radius',
+            __('Corner Radius', 'maxtdesign-cookie-consent'),
+            array($this, 'render_field_popup_radius'),
+            self::PAGE_SLUG,
+            'mdcc_section_design'
+        );
+
+        add_settings_field(
+            'popup_inherit_font',
+            __('Button Font', 'maxtdesign-cookie-consent'),
+            array($this, 'render_field_popup_inherit_font'),
+            self::PAGE_SLUG,
+            'mdcc_section_design'
+        );
+
         // Section: Popup Content
         add_settings_section(
             'mdcc_section_content',
@@ -354,6 +402,26 @@ class MDCC_Admin_Settings {
         $sanitized['popup_animation'] = in_array($input['popup_animation'], $allowed_animations, true)
             ? $input['popup_animation']
             : $defaults['popup_animation'];
+
+        // Desktop width (whitelist, percent)
+        $width = isset($input['popup_desktop_width']) ? absint($input['popup_desktop_width']) : 0;
+        $sanitized['popup_desktop_width'] = in_array($width, MDCC_Popup_System::desktop_widths(), true)
+            ? $width
+            : $defaults['popup_desktop_width'];
+
+        // Design colours (hex colour, or empty to keep the style preset's own)
+        foreach (array('popup_bg_color', 'popup_text_color', 'popup_button_text_color') as $key) {
+            $color = isset($input[$key]) && is_string($input[$key]) ? sanitize_hex_color(trim($input[$key])) : '';
+            $sanitized[$key] = is_string($color) ? $color : '';
+        }
+
+        // Corner radius (0 to 24 px, or empty to keep the style preset's own)
+        $sanitized['popup_radius'] = isset($input['popup_radius']) && is_numeric($input['popup_radius'])
+            ? min(24, absint($input['popup_radius']))
+            : '';
+
+        // Buttons follow the theme font (boolean)
+        $sanitized['popup_inherit_font'] = !empty($input['popup_inherit_font']);
 
         // Popup title (text)
         $sanitized['popup_title'] = !empty($input['popup_title'])
@@ -746,6 +814,110 @@ class MDCC_Admin_Settings {
         </select>
         <p class="description">
             <?php esc_html_e('Animation when popup appears.', 'maxtdesign-cookie-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render design section description
+     *
+     * @since 1.11.0
+     */
+    public function render_section_design(): void {
+        echo '<p>' . esc_html__('Optional. Leave a field empty to keep what the style preset does. A site that changes nothing here looks the same as before.', 'maxtdesign-cookie-consent') . '</p>';
+        echo '<p>' . esc_html__('The plugin does not check your colors for contrast. Make sure the text stays readable against the background you choose.', 'maxtdesign-cookie-consent') . '</p>';
+    }
+
+    /**
+     * Render desktop width field
+     *
+     * @since 1.11.0
+     */
+    public function render_field_popup_desktop_width(): void {
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
+        $current  = absint($settings['popup_desktop_width'] ?? 100);
+        ?>
+        <select name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_desktop_width]" id="mdcc-popup-desktop-width">
+            <?php foreach (MDCC_Popup_System::desktop_widths() as $width) : ?>
+                <option value="<?php echo esc_attr((string) $width); ?>" <?php selected($current, $width); ?>>
+                    <?php echo esc_html($width . '%'); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <p class="description">
+            <?php esc_html_e('Width of the Top and Bottom banner on screens 1025 pixels and wider. The banner is centered. On tablets and phones it is always full width. The Center Modal keeps its own size.', 'maxtdesign-cookie-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render one of the design colour fields
+     *
+     * @since 1.11.0
+     * @param array<string, string> $args Field arguments; `key` is the setting key.
+     */
+    public function render_field_design_color($args): void {
+        $allowed = array('popup_bg_color', 'popup_text_color', 'popup_button_text_color');
+        $key     = isset($args['key']) && in_array($args['key'], $allowed, true) ? $args['key'] : '';
+
+        if ('' === $key) {
+            return;
+        }
+
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
+        $current  = isset($settings[$key]) && is_string($settings[$key]) ? $settings[$key] : '';
+        ?>
+        <input type="text"
+               name="<?php echo esc_attr(self::OPTION_NAME . '[' . $key . ']'); ?>"
+               value="<?php echo esc_attr($current); ?>"
+               class="mdcc-color-picker" />
+        <p class="description">
+            <?php esc_html_e('Empty keeps the color of the style preset.', 'maxtdesign-cookie-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render corner radius field
+     *
+     * @since 1.11.0
+     */
+    public function render_field_popup_radius(): void {
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
+        $current  = isset($settings['popup_radius']) && is_numeric($settings['popup_radius']) ? (string) absint($settings['popup_radius']) : '';
+        ?>
+        <input type="number"
+               name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_radius]"
+               id="mdcc-popup-radius"
+               value="<?php echo esc_attr($current); ?>"
+               min="0"
+               max="24"
+               step="1"
+               class="small-text" />
+        <?php esc_html_e('pixels', 'maxtdesign-cookie-consent'); ?>
+        <p class="description">
+            <?php esc_html_e('0 to 24. Applies to the popup and its buttons. Empty keeps the corners of the style preset.', 'maxtdesign-cookie-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render button font field
+     *
+     * @since 1.11.0
+     */
+    public function render_field_popup_inherit_font(): void {
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
+        ?>
+        <label>
+            <input type="checkbox"
+                   name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_inherit_font]"
+                   value="1"
+                   <?php checked(!empty($settings['popup_inherit_font'])); ?> />
+            <?php esc_html_e('Use the theme font on the popup buttons', 'maxtdesign-cookie-consent'); ?>
+        </label>
+        <p class="description">
+            <?php esc_html_e('Off by default: buttons use the browser font, as in earlier versions.', 'maxtdesign-cookie-consent'); ?>
         </p>
         <?php
     }
