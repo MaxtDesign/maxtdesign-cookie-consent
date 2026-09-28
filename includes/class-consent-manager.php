@@ -295,7 +295,9 @@ class MDCC_Consent_Manager {
 
         // Ordered list of [state, region] pairs. The global (region-less)
         // command must come first; GCM applies the most specific region.
-        if (self::MODEL_REGIONAL === $model) {
+        if (self::country_endpoint()) {
+            $commands = array(array($denied, null));
+        } elseif (self::MODEL_REGIONAL === $model) {
             $commands = array(
                 array($granted, null),
                 array($denied, self::optin_regions()),
@@ -344,7 +346,7 @@ class MDCC_Consent_Manager {
                 $default_state['region'] = $region;
             }
 
-            $js .= 'gtag(\'consent\', \'default\', ' . wp_json_encode($default_state) . ');' . "\n";
+            $js .= 'gtag(\'consent\', \'default\', (navigator.globalPrivacyControl===true)?' . wp_json_encode($denied) . ':' . wp_json_encode($default_state) . ');' . "\n";
         }
 
         // wp_print_inline_script_tag (WP 5.7+) composes with CSP nonce plugins
@@ -458,7 +460,23 @@ class MDCC_Consent_Manager {
             $config['optoutTimezones'] = self::optout_timezones();
         }
 
+        $endpoint = self::country_endpoint();
+        if ($endpoint) {
+            $config['countryEndpoint'] = $endpoint;
+            unset($config['optinTimezones'], $config['optoutTimezones']);
+        }
         wp_localize_script('mdcc-consent-runtime', 'mdccConfig', $config);
+    }
+
+    /**
+     * Optional same-origin, uncached policy endpoint supplied by a site adapter.
+     * Returns JSON {mode:"none"|"optin"}; failures require explicit consent.
+     * Never put visitor country in cacheable page markup. No lookup by default.
+     */
+    public static function country_endpoint() {
+        $path = apply_filters('mdcc_country_endpoint', '');
+        return is_string($path) && preg_match('#^/[a-zA-Z0-9/_-]+$#D', $path)
+            && substr($path, 0, 2) !== '//' ? $path : '';
     }
 
     /**

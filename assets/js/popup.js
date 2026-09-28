@@ -3,12 +3,10 @@
  *
  * Source of truth for the consent popup's client-side logic. This file is
  * minified to popup.min.js by `npm run build:popup-js` (terser) and the result
- * is inlined into the page footer by MDCC_Popup_System::get_popup_javascript().
+ * is loaded by the small inline popup-loader only when a dialog is needed.
  *
- * It is inlined (not enqueued as a URL) on purpose: the consent gate is
- * render-critical and show-once, so an inline block avoids an extra HTTP
- * request that could never benefit from caching (the popup stops emitting the
- * moment a choice is stored). Edit THIS file, never the generated .min.js.
+ * Country resolution and saved choices are checked before presentation assets
+ * load. Edit THIS file, never the generated .min.js.
  *
  * @package MaxtDesign_Cookie_Consent
  * @since 1.6.0
@@ -323,6 +321,7 @@
     // Initialize after full page load (ensures wp_footer has rendered popup HTML)
     // Using 'load' instead of 'DOMContentLoaded' because popup is rendered via wp_footer
     // which may execute after DOMContentLoaded, causing a race condition
-    window.addEventListener('load', init);
+    if (document.readyState === 'complete') { init(); }
+    else { window.addEventListener('load', init); }
 
 })(window, document);

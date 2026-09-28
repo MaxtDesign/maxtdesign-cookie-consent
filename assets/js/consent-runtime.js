@@ -37,6 +37,54 @@
     // -----------------------------------------------------------------------
 
     var bannerModeMemo; // memoized: neither the time zone nor GPC changes mid-page
+    var endpoint = typeof config.countryEndpoint === 'string' && /^\/[a-zA-Z0-9/_-]+$/.test(config.countryEndpoint)
+        && config.countryEndpoint.slice(0, 2) !== '//' ? config.countryEndpoint : '';
+    var countryMode = 'optin';
+    var countryReady = !endpoint;
+    var countryRequested = false;
+    var readyListeners = [];
+    // Keep this page's choice even when browser storage is unavailable.
+    var volatileState;
+
+    function privacySignal() {
+        return !!(window.navigator && window.navigator.globalPrivacyControl === true);
+    }
+
+    function whenReady(cb) {
+        if (countryReady) { cb(); } else { readyListeners.push(cb); }
+    }
+
+    function resolveCountry() {
+        if (!endpoint || countryRequested) { return; }
+        countryRequested = true;
+        countryReady = false;
+        var complete = false;
+        function finish(mode) {
+            if (complete) { return; }
+            complete = true;
+            countryMode = mode === 'none' ? 'none' : 'optin';
+            countryReady = true;
+            propagate(readState());
+            var callbacks = readyListeners.splice(0);
+            callbacks.forEach(function (cb) { try { cb(); } catch (e) { debug('Ready callback:', e); } });
+        }
+        try {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', endpoint, true);
+            xhr.timeout = 2000;
+            xhr.onload = function () {
+                var mode;
+                try {
+                    if (xhr.status === 200 && /^application\/json\b/i.test(xhr.getResponseHeader('Content-Type') || '')) {
+                        mode = JSON.parse(xhr.responseText).mode;
+                    }
+                } catch (e) { /* malformed or unknown country fails closed */ }
+                finish(mode);
+            };
+            xhr.onerror = xhr.ontimeout = xhr.onabort = function () { finish(); };
+            xhr.send();
+        } catch (e) { finish(); }
+    }
 
     // Does the browser's IANA time zone match a {prefixes, zones} heuristic?
     function timezoneMatches(zones, tz) {
@@ -61,6 +109,8 @@
     // 'none'. Fails closed to 'optin' when the zone is unavailable or the
     // heuristics were not shipped.
     function bannerMode() {
+        if (privacySignal()) { return 'none'; }
+        if (endpoint) { return readStoredState() ? 'none' : (countryReady ? countryMode : 'optin'); }
         if (bannerModeMemo === undefined) {
             if (MODEL === 'optin') {
                 bannerModeMemo = 'optin';
@@ -95,10 +145,11 @@
     // true  -> nothing is granted until the visitor explicitly accepts
     // false -> implied consent applies until the visitor explicitly declines
     function requiresOptIn() {
-        return bannerMode() === 'optin';
+        return privacySignal() || bannerMode() === 'optin';
     }
 
     function readStoredState() {
+        if (volatileState !== undefined) { return volatileState; }
         try {
             var stored = localStorage.getItem(config.storageKey);
             if (stored) {
@@ -120,6 +171,7 @@
     // can tell it apart from an explicit acceptAll); everyone else gets denied.
     // The implied state is never written to localStorage.
     function readState() {
+        if (privacySignal()) { return { analytics: false, ads: false }; }
         var stored = readStoredState();
         if (stored) {
             return stored;
@@ -131,6 +183,7 @@
     }
 
     function writeState(state) {
+        volatileState = state;
         try {
             localStorage.setItem(config.storageKey, JSON.stringify(state));
             debug('Consent state saved:', state);
@@ -266,12 +319,14 @@
     }
 
     function updateConsent(s) {
+        if (privacySignal()) { s = { analytics: false, ads: false }; }
         writeState(s);
         propagate(s);
     }
 
     window.mdccConsent = {
         apiVersion: API_VERSION,
+        ready: whenReady,
 
         current: function () {
             return readState();
@@ -312,6 +367,7 @@
         },
 
         reset: function () {
+            volatileState = undefined;
             try {
                 localStorage.removeItem(config.storageKey);
                 // Also clear the "popup shown" cookie so the popup can reappear
@@ -327,6 +383,7 @@
             // no-choice state (denied under opt-in; implied consent again for
             // an opt-out visitor) so GCM, the Consent API, services, and
             // listeners all reflect the reset.
+            if (endpoint && !countryRequested && !privacySignal()) { resolveCountry(); }
             propagate(readState());
         },
 
@@ -419,11 +476,13 @@
         // before this runtime defines window.mdccConsent, and registerService
         // applies the current state on registration — so nothing is missed.
         var stored = readStoredState();
-        if (stored) {
-            updateGCM(stored);
+        var effective = readState();
+        if (stored || privacySignal()) {
+            countryReady = true;
+            updateGCM(effective);
             // Re-assert the API cookie on load so server-side wp_has_consent()
             // stays correct even on full-page-cached responses.
-            syncConsentAPI(stored);
+            syncConsentAPI(effective);
             debug('Consent manager initialized with stored state:', stored);
         } else if (!requiresOptIn()) {
             // Opt-out visitor, no explicit choice: apply implied consent. The
@@ -438,17 +497,20 @@
             syncConsentAPI(implied);
             dispatchChangeEvent(implied);
             debug('Consent manager initialized with implied consent:', implied);
-        } else if (MODEL !== 'optin') {
+        } else if (MODEL !== 'optin' || endpoint) {
             // Regional model, browser says opt-in, no choice yet: deny in GCM
             // as well. Google's region default is IP-based and may have
             // granted (VPN, travel); the stricter of the two signals wins.
             // Under 'optin' the inline default is already denied, so this
             // path is skipped to keep 1.9.x behavior byte-identical.
             updateGCM({ analytics: false, ads: false });
+            syncConsentAPI({ analytics: false, ads: false });
             debug('Opt-in visitor without a stored choice; GCM denied');
         } else {
+            syncConsentAPI(effective);
             debug('No stored consent — letting inline default state ride');
         }
+        if (endpoint && !stored && !privacySignal()) { resolveCountry(); }
     }
 
     init();

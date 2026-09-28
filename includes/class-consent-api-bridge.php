@@ -176,7 +176,7 @@ class MDCC_Consent_API_Bridge {
         }
 
         $model        = MDCC_Consent_Manager::get_consent_model();
-        $consent_type = MDCC_Consent_Manager::MODEL_OPTOUT === $model ? 'optout' : 'optin';
+        $consent_type = !MDCC_Consent_Manager::country_endpoint() && MDCC_Consent_Manager::MODEL_OPTOUT === $model ? 'optout' : 'optin';
 
         /**
          * Filter the consent type this plugin declares to the WP Consent API.

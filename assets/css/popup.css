@@ -93,6 +93,8 @@
 }
 
 .mdcc-popup__title {
+    min-height: 32px;
+    padding-right: 48px;
     color: #1a1a1a;
     font-size: 20px;
     font-weight: 600;

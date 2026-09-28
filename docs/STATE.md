@@ -1,4 +1,40 @@
 # STATE: maxtdesign-cookie-consent
+
+## September25 production release amendment
+
+Owner approved and exact1.11.0 artifacts are now live on MaxtOffroad, alongside
+its separate country endpoint/adapter and policy wording. Independent hashes,
+endpoint HTTP checks and live preference/decline/reload passed. See
+`C:/maxt/pilots/aimasters-maxtoffroad-operations/COUNTRY-CONSENT-RELEASE-20260925.md`.
+This supersedes staging-only/pending-approval language below for that store.
+Shared source remains uncommitted; WordPress.org/general distribution unchanged.
+
+## September 25, 2026 amendment — unpublished country/GPC candidate
+
+Codex prepared 1.11.0 for MaxtOffroad's authorized staging work. Source baseline
+was clean at7074066 (main header1.10.1); deployed store baseline was1.10.0 with
+the same reviewed runtime source. Candidate is uncommitted/unpublished. No
+WordPress.org or general distribution release was performed.
+
+Adds optional `mdcc_country_endpoint` filter accepting a root-relative path.
+Endpoint must be same-origin, uncached, respond JSON `{mode:"none"|"optin"}`,
+and derive policy from a trusted server-side source outside full-page cache.
+The plugin has no default country service or U.S.-specific business policy.
+Requests time out after2seconds; unknown/failure is opt-in. Use `mdccConsent.ready`
+for UI that waits on policy resolution. Saved choices and GPC skip lookup.
+GPC denies effective state even with a prior grant; popup assets lazy load via
+an under1KB bootstrap. Production builds omit debug calls; SCRIPT_DEBUG uses
+readable source. Cached popup markup is now independent of visitor cookies.
+
+221 focused assertions and30 existing functional checks pass; asset budgets
+pass. Real staging endpoint, browser fixtures, mobile keyboard/layout, hashes
+and preserved guards were checked. Full field CWV and real foreign-egress cache
+behavior remain unverified. Exact report/rollback/immutable artifacts:
+`C:/maxt/pilots/aimasters-maxtoffroad-operations/COUNTRY-CONSENT-STAGING-20260925.md`.
+Production is unchanged and exact release approval is pending. No active writer
+after this handoff; recheck ownership before edits. Historical seed below is
+dated evidence, not current deployment status.
+
 Updated: 2026-09-13 by session
 
 ## Identity

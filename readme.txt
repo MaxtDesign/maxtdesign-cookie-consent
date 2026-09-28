@@ -5,7 +5,7 @@ Donate link: https://github.com/sponsors/MaxtDesign
 Tags: cookie-consent, gdpr, google-consent-mode, ccpa, analytics
 Requires at least: 5.8
 Tested up to: 7.1
-Stable tag: 1.10.1
+Stable tag: 1.11.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -421,6 +421,12 @@ name predates the brand and WordPress.org does not support renaming accounts, so
 differ. Anything published under `slaacr` is ours.
 
 == Changelog ==
+
+= 1.11.0 =
+* Global Privacy Control takes precedence over saved grants and consent actions.
+* Optional same-origin country policy endpoint integration; unknown/error responses require opt-in.
+* Load popup presentation assets only when the visitor needs the dialog; keep cached markup independent of visitor cookies.
+* Preserve choices in memory when browser storage is unavailable.
 
 = 1.10.1 =
 * New: published security contact and vulnerability disclosure policy. Security issues now have a private reporting route (security@maxtdesign.com) instead of a public support thread, with a 3 business day acknowledgement target.
