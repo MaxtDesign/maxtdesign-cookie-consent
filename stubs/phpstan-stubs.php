@@ -168,6 +168,13 @@ function locate_template( string|array $template_names, bool $load = false, bool
  */
 function load_template( string $_template_file, bool $load_once = true, array $args = array() ): void {}
 function wp_normalize_path( string $path ): string { return $path; }
+function get_post_type( mixed $post = null ): string|false { return false; }
+function get_post_status( mixed $post = null ): string|false { return false; }
+function get_permalink( mixed $post = 0, bool $leavename = false ): string|false { return false; }
+/**
+ * @param array<string, mixed>|string $args
+ */
+function wp_dropdown_pages( array|string $args = '' ): string { return ''; }
 function load_plugin_textdomain( string $domain, string|false $deprecated = false, string|false $plugin_rel_path = false ): bool { return true; }
 
 /* -------------------------------------------------------------------------

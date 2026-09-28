@@ -56,6 +56,162 @@ class MDCC_Popup_System {
 
         // Render popup in footer
         add_action('wp_footer', array($this, 'render_popup'));
+
+        // Keep the saved address of the cookie settings page current. These
+        // run when a page or the site address changes, never on a page view.
+        add_action('post_updated', array($this, 'refresh_manage_url_for_post'));
+        add_action('deleted_post', array($this, 'refresh_manage_url_for_post'));
+        add_action('transition_post_status', array($this, 'refresh_manage_url_on_status'), 10, 3);
+        add_action('update_option_permalink_structure', array($this, 'refresh_manage_url'), 10, 0);
+        add_action('update_option_home', array($this, 'refresh_manage_url'), 10, 0);
+    }
+
+    /**
+     * Button layouts the design settings offer.
+     *
+     * @since 1.11.0
+     * @return string[]
+     */
+    public static function button_layouts() {
+        return array('standard', 'compact');
+    }
+
+    /**
+     * Address of a published page, stored relative to the home URL.
+     *
+     * Stored relative so the link survives a move between domains, such as
+     * staging to production. Resolved when settings are saved and when the
+     * page changes, so rendering the popup needs no database query.
+     *
+     * @since 1.11.0
+     * @param mixed $page_id Page ID.
+     * @return string Path starting with '/', a full URL when the page lives
+     *                outside the home URL, or '' when the page is not a
+     *                published page.
+     */
+    public static function resolve_manage_url($page_id) {
+        $page_id = absint($page_id);
+
+        if (0 === $page_id || 'page' !== get_post_type($page_id) || 'publish' !== get_post_status($page_id)) {
+            return '';
+        }
+
+        $url = get_permalink($page_id);
+
+        if (!is_string($url) || '' === $url) {
+            return '';
+        }
+
+        $home = untrailingslashit(home_url());
+
+        if ('' !== $home && 0 === strpos($url, $home . '/')) {
+            return substr($url, strlen($home));
+        }
+
+        return esc_url_raw($url);
+    }
+
+    /**
+     * Full address of the cookie settings page, or '' when there is none.
+     *
+     * @since 1.11.0
+     * @param array<string, mixed> $settings Plugin settings.
+     * @return string
+     */
+    public static function get_manage_url($settings) {
+        $saved = isset($settings['manage_url']) && is_string($settings['manage_url']) ? $settings['manage_url'] : '';
+        $url   = '';
+
+        if ('' !== $saved && '/' === $saved[0] && '/' !== substr($saved, 1, 1)) {
+            $url = home_url($saved);
+        } elseif ('' !== $saved) {
+            $url = $saved;
+        }
+
+        /**
+         * Filter the address of the cookie settings page.
+         *
+         * For multilingual sites that serve a translated page. Return '' to
+         * make the popup fall back to the standard three buttons.
+         *
+         * @since 1.11.0
+         * @param string               $url      Full URL, or '' when no page is set.
+         * @param array<string, mixed> $settings Plugin settings.
+         */
+        $url = apply_filters('mdcc_manage_url', $url, $settings);
+
+        // Anything that is not a plain web address counts as "no page", and
+        // the popup falls back to the standard buttons.
+        return is_string($url) && 1 === preg_match('#^https?://[^\s"\'<>]+$#i', $url) ? $url : '';
+    }
+
+    /**
+     * The button layout the popup renders with.
+     *
+     * Compact needs a cookie settings page. Without one the popup renders
+     * Standard, so a visitor is never left without choices.
+     *
+     * @since 1.11.0
+     * @param array<string, mixed> $settings Plugin settings.
+     * @return string 'standard' or 'compact'.
+     */
+    public static function get_button_layout($settings) {
+        $wanted = isset($settings['popup_buttons']) ? $settings['popup_buttons'] : 'standard';
+
+        return 'compact' === $wanted && '' !== self::get_manage_url($settings) ? 'compact' : 'standard';
+    }
+
+    /**
+     * Re-resolve the saved address of the cookie settings page.
+     *
+     * @since 1.11.0
+     * @return void
+     */
+    public function refresh_manage_url() {
+        $settings = get_option('mdcc_settings');
+
+        if (!is_array($settings) || empty($settings['manage_page_id'])) {
+            return;
+        }
+
+        $url = self::resolve_manage_url($settings['manage_page_id']);
+
+        if (isset($settings['manage_url']) && $url === $settings['manage_url']) {
+            return;
+        }
+
+        $settings['manage_url'] = $url;
+        update_option('mdcc_settings', $settings);
+    }
+
+    /**
+     * Re-resolve the address when the cookie settings page itself changed.
+     *
+     * @since 1.11.0
+     * @param mixed $post_id ID of the post that changed.
+     * @return void
+     */
+    public function refresh_manage_url_for_post($post_id) {
+        $settings = get_option('mdcc_settings');
+
+        if (is_array($settings) && !empty($settings['manage_page_id']) && absint($post_id) === absint($settings['manage_page_id'])) {
+            $this->refresh_manage_url();
+        }
+    }
+
+    /**
+     * Re-resolve the address when a post is published, unpublished or trashed.
+     *
+     * @since 1.11.0
+     * @param mixed $new_status New post status.
+     * @param mixed $old_status Old post status.
+     * @param mixed $post       Post object.
+     * @return void
+     */
+    public function refresh_manage_url_on_status($new_status, $old_status, $post) {
+        if ($new_status !== $old_status && is_object($post) && isset($post->ID)) {
+            $this->refresh_manage_url_for_post($post->ID);
+        }
     }
 
     /**
@@ -268,6 +424,13 @@ class MDCC_Popup_System {
             $css .= '.mdcc-popup .mdcc-popup__button{font-family:inherit}';
         }
 
+        // The Compact layout's link sits in the button row. A link is sized
+        // and aligned differently from a button until told otherwise. Printed
+        // here, so sites on the standard layout carry no bytes for it.
+        if ('compact' === self::get_button_layout($settings)) {
+            $css .= '.mdcc-popup .mdcc-popup__manage{box-sizing:border-box;text-align:center}';
+        }
+
         return $css;
     }
 
@@ -426,25 +589,52 @@ class MDCC_Popup_System {
         $title     = !empty($settings['popup_title']) ? $settings['popup_title'] : __('Cookie Consent', 'maxtdesign-cookie-consent');
         $message   = !empty($settings['popup_message']) ? $settings['popup_message'] : __('We use cookies to enhance your browsing experience and analyze our traffic.', 'maxtdesign-cookie-consent');
 
+        $classes = array(
+            'mdcc-popup',
+            'mdcc-popup--style-' . $style,
+            'mdcc-popup--position-' . $position,
+            'mdcc-popup--animation-' . $animation,
+        );
+
+        $buttons = self::get_button_layout($settings);
+
+        if ('compact' === $buttons) {
+            $classes[] = 'mdcc-popup--compact';
+        }
+
+        $labels = array(
+            'close'          => __('Close consent popup', 'maxtdesign-cookie-consent'),
+            'accept'         => __('Accept All', 'maxtdesign-cookie-consent'),
+            'accept_aria'    => __('Accept all cookies', 'maxtdesign-cookie-consent'),
+            'analytics'      => __('Analytics Only', 'maxtdesign-cookie-consent'),
+            'analytics_aria' => __('Accept analytics cookies only', 'maxtdesign-cookie-consent'),
+            'decline'        => __('Decline All', 'maxtdesign-cookie-consent'),
+            'decline_aria'   => __('Decline all cookies', 'maxtdesign-cookie-consent'),
+            'manage'         => __('Manage options', 'maxtdesign-cookie-consent'),
+        );
+
+        // A label the site owner typed replaces the default. Its accessible
+        // name follows it, so what is read out matches what is shown.
+        foreach (array('accept', 'analytics', 'decline', 'manage') as $key) {
+            $custom = isset($settings['label_' . $key]) && is_string($settings['label_' . $key]) ? trim($settings['label_' . $key]) : '';
+
+            if ('' !== $custom) {
+                $labels[$key] = $custom;
+
+                if (isset($labels[$key . '_aria'])) {
+                    $labels[$key . '_aria'] = $custom;
+                }
+            }
+        }
+
         return array(
-            'classes'     => array(
-                'mdcc-popup',
-                'mdcc-popup--style-' . $style,
-                'mdcc-popup--position-' . $position,
-                'mdcc-popup--animation-' . $animation,
-            ),
+            'classes'     => $classes,
             'title'       => (string) $title,
             'message'     => (string) $message,
             'privacy_url' => function_exists('get_privacy_policy_url') ? (string) get_privacy_policy_url() : '',
-            'labels'      => array(
-                'close'          => __('Close consent popup', 'maxtdesign-cookie-consent'),
-                'accept'         => __('Accept All', 'maxtdesign-cookie-consent'),
-                'accept_aria'    => __('Accept all cookies', 'maxtdesign-cookie-consent'),
-                'analytics'      => __('Analytics Only', 'maxtdesign-cookie-consent'),
-                'analytics_aria' => __('Accept analytics cookies only', 'maxtdesign-cookie-consent'),
-                'decline'        => __('Decline All', 'maxtdesign-cookie-consent'),
-                'decline_aria'   => __('Decline all cookies', 'maxtdesign-cookie-consent'),
-            ),
+            'buttons'     => $buttons,
+            'manage_url'  => 'compact' === $buttons ? self::get_manage_url($settings) : '',
+            'labels'      => $labels,
             'settings'    => $settings,
         );
     }

@@ -65,6 +65,15 @@
         var accept = popup.querySelector('[data-mdcc-action="accept-all"]');
         var analytics = popup.querySelector('[data-mdcc-action="analytics-only"]');
         var decline = popup.querySelector('[data-mdcc-action="decline-all"]');
+        // Compact layout (1.11.0): the link to the cookie settings page. For an
+        // opt-out visitor it carries the opt-out wording and replaces the
+        // decline control, so the notice shows that link and "Got it".
+        var manage = popup.querySelector('.mdcc-popup__manage');
+
+        if (manage && decline) {
+            decline.style.display = 'none';
+            decline = manage;
+        }
 
         if (title && config.optoutTitle) title.textContent = config.optoutTitle;
         if (message && config.optoutMessage) message.textContent = config.optoutMessage;

@@ -98,6 +98,41 @@ function get_privacy_policy_url() {
 	return $GLOBALS['mdcc_test']['privacy_url'];
 }
 
+/* ---- pages and URLs. $GLOBALS['mdcc_test']['pages'][ id ] = array( type, status, url ) */
+
+function home_url( $path = '' ) {
+	return 'https://example.test' . ( '' !== $path ? '/' . ltrim( $path, '/' ) : '' );
+}
+
+function untrailingslashit( $value ) {
+	return rtrim( (string) $value, '/\\' );
+}
+
+function esc_url_raw( $url ) {
+	return preg_match( '#^https?://#i', (string) $url ) ? (string) $url : '';
+}
+
+function get_post_type( $id ) {
+	return isset( $GLOBALS['mdcc_test']['pages'][ $id ] ) ? $GLOBALS['mdcc_test']['pages'][ $id ][0] : false;
+}
+
+function get_post_status( $id ) {
+	return isset( $GLOBALS['mdcc_test']['pages'][ $id ] ) ? $GLOBALS['mdcc_test']['pages'][ $id ][1] : false;
+}
+
+function get_permalink( $id ) {
+	return isset( $GLOBALS['mdcc_test']['pages'][ $id ] ) ? $GLOBALS['mdcc_test']['pages'][ $id ][2] : false;
+}
+
+function update_option( $name, $value ) {
+	$GLOBALS['mdcc_test']['options'][ $name ] = $value;
+	return true;
+}
+
+function sanitize_textarea_field( $text ) {
+	return trim( strip_tags( (string) $text ) );
+}
+
 /* ---- templates (MDCC_THEME_DIRS: child theme first, separated by "|") ------ */
 
 function locate_template( $names, $load = false, $load_once = true, $args = array() ) {
@@ -235,6 +270,9 @@ if ( getenv( 'MDCC_TEMPLATE_FILTER' ) ) {
 	);
 }
 
+// The consent runtime's config, for tests that run the real scripts.
+MDCC_Consent_Manager::get_instance()->enqueue_frontend_assets();
+
 $mdcc_popup = MDCC_Popup_System::get_instance();
 $mdcc_popup->enqueue_popup_assets();
 
@@ -247,6 +285,8 @@ echo json_encode(
 		'html'            => str_replace( "\r\n", "\n", $mdcc_html ),
 		'inline_css'      => str_replace( "\r\n", "\n", implode( "\n", $GLOBALS['mdcc_test']['inline_css'] ) ),
 		'config'          => isset( $GLOBALS['mdcc_test']['localized']['mdccPopupConfig'] ) ? $GLOBALS['mdcc_test']['localized']['mdccPopupConfig'] : null,
+		'runtime_config'  => isset( $GLOBALS['mdcc_test']['localized']['mdccConfig'] ) ? $GLOBALS['mdcc_test']['localized']['mdccConfig'] : null,
+		'inline_js'       => implode( '', $GLOBALS['mdcc_test']['inline_js'] ),
 		'inline_js_bytes' => strlen( implode( '', $GLOBALS['mdcc_test']['inline_js'] ) ),
 		'template'        => method_exists( 'MDCC_Popup_System', 'locate_popup_template' ) ? str_replace( '\\', '/', MDCC_Popup_System::locate_popup_template() ) : '',
 	),

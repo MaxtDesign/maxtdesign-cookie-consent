@@ -40,7 +40,9 @@ const inlineFull = Buffer.byteLength(renderInline({
   popup_button_text_color: '#000000',
   popup_radius: '24',
   popup_desktop_width: '60',
-  popup_inherit_font: true
+  popup_inherit_font: true,
+  popup_buttons: 'compact',
+  manage_url: '/cookie-settings/'
 }));
 if (inlineDefault !== 0 || inlineFull <= 0 || inlineFull >= INLINE_DESIGN_CAP) {
   throw new Error('Inline design block budget failed: default site ' + inlineDefault + ' B (must be 0), every field set ' + inlineFull + ' B (must be under ' + INLINE_DESIGN_CAP + ')');

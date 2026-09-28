@@ -90,6 +90,19 @@ function mdcc_default_settings() {
         'popup_button_text_color' => '',
         'popup_radius'            => '',
         'popup_inherit_font'      => false,
+        // Buttons: 'standard' (Accept All, Analytics Only, Decline All) or
+        // 'compact' (Manage options link, Decline, Accept all). Compact needs
+        // manage_page_id, the page that holds [mdcc_manage_consent].
+        // manage_url is that page's address, resolved when settings are saved
+        // so the popup renders without a database query. Empty labels use the
+        // translated defaults.
+        'popup_buttons'           => 'standard',
+        'manage_page_id'          => 0,
+        'manage_url'              => '',
+        'label_accept'            => '',
+        'label_manage'            => '',
+        'label_decline'           => '',
+        'label_analytics'         => '',
         'popup_title'          => __('Cookie Consent', 'maxtdesign-cookie-consent'),
         'popup_message'        => __('We use cookies to enhance your browsing experience and analyze our traffic.', 'maxtdesign-cookie-consent'),
         // Shown instead of the two fields above to visitors in an opt-out-notice

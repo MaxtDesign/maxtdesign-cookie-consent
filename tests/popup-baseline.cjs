@@ -142,10 +142,12 @@ function connect(url) {
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(url);
     const pending = new Map();
+    const listeners = [];
     let nextId = 1;
     ws.onerror = () => reject(new Error('Cannot connect to the DevTools endpoint'));
     ws.onmessage = (event) => {
       const msg = JSON.parse(event.data);
+      if (msg.method) listeners.forEach((listener) => listener(msg.method, msg.params || {}, msg.sessionId));
       if (!msg.id || !pending.has(msg.id)) return;
       const handler = pending.get(msg.id);
       pending.delete(msg.id);
@@ -159,6 +161,7 @@ function connect(url) {
         if (sessionId) payload.sessionId = sessionId;
         return new Promise((res, rej) => { pending.set(id, { resolve: res, reject: rej }); ws.send(JSON.stringify(payload)); });
       },
+      onEvent(listener) { listeners.push(listener); },
       close() { ws.close(); }
     });
   });

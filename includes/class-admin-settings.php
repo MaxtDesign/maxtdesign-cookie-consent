@@ -194,6 +194,30 @@ class MDCC_Admin_Settings {
         );
 
         add_settings_field(
+            'popup_buttons',
+            __('Buttons', 'maxtdesign-cookie-consent'),
+            array($this, 'render_field_popup_buttons'),
+            self::PAGE_SLUG,
+            'mdcc_section_design'
+        );
+
+        add_settings_field(
+            'manage_page_id',
+            __('Cookie settings page', 'maxtdesign-cookie-consent'),
+            array($this, 'render_field_manage_page_id'),
+            self::PAGE_SLUG,
+            'mdcc_section_design'
+        );
+
+        add_settings_field(
+            'popup_labels',
+            __('Button Labels', 'maxtdesign-cookie-consent'),
+            array($this, 'render_field_popup_labels'),
+            self::PAGE_SLUG,
+            'mdcc_section_design'
+        );
+
+        add_settings_field(
             'popup_desktop_width',
             __('Desktop Width', 'maxtdesign-cookie-consent'),
             array($this, 'render_field_popup_desktop_width'),
@@ -402,6 +426,22 @@ class MDCC_Admin_Settings {
         $sanitized['popup_animation'] = in_array($input['popup_animation'], $allowed_animations, true)
             ? $input['popup_animation']
             : $defaults['popup_animation'];
+
+        // Button layout (whitelist)
+        $sanitized['popup_buttons'] = isset($input['popup_buttons']) && in_array($input['popup_buttons'], MDCC_Popup_System::button_layouts(), true)
+            ? $input['popup_buttons']
+            : $defaults['popup_buttons'];
+
+        // Cookie settings page: must be a published page, else none. Its
+        // address is resolved here, never taken from the form.
+        $manage_url = MDCC_Popup_System::resolve_manage_url($input['manage_page_id'] ?? 0);
+        $sanitized['manage_page_id'] = '' !== $manage_url ? absint($input['manage_page_id']) : 0;
+        $sanitized['manage_url']     = $manage_url;
+
+        // Button labels (text, or empty to use the translated default)
+        foreach (array('label_accept', 'label_manage', 'label_decline', 'label_analytics') as $key) {
+            $sanitized[$key] = isset($input[$key]) && is_string($input[$key]) ? sanitize_text_field($input[$key]) : '';
+        }
 
         // Desktop width (whitelist, percent)
         $width = isset($input['popup_desktop_width']) ? absint($input['popup_desktop_width']) : 0;
@@ -826,6 +866,122 @@ class MDCC_Admin_Settings {
     public function render_section_design(): void {
         echo '<p>' . esc_html__('Optional. Leave a field empty to keep what the style preset does. A site that changes nothing here looks the same as before.', 'maxtdesign-cookie-consent') . '</p>';
         echo '<p>' . esc_html__('The plugin does not check your colors for contrast. Make sure the text stays readable against the background you choose.', 'maxtdesign-cookie-consent') . '</p>';
+    }
+
+    /**
+     * Render button layout field, with the Compact setup steps
+     *
+     * @since 1.11.0
+     */
+    public function render_field_popup_buttons(): void {
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
+        $settings = is_array($settings) ? $settings : mdcc_default_settings();
+        $current  = isset($settings['popup_buttons']) ? $settings['popup_buttons'] : 'standard';
+        ?>
+        <select name="<?php echo esc_attr(self::OPTION_NAME); ?>[popup_buttons]" id="mdcc-popup-buttons">
+            <option value="standard" <?php selected($current, 'standard'); ?>>
+                <?php esc_html_e('Standard: Accept All, Analytics Only, Decline All', 'maxtdesign-cookie-consent'); ?>
+            </option>
+            <option value="compact" <?php selected($current, 'compact'); ?>>
+                <?php esc_html_e('Compact: Manage options link, Accept all', 'maxtdesign-cookie-consent'); ?>
+            </option>
+        </select>
+        <?php if ('compact' === $current && 'compact' !== MDCC_Popup_System::get_button_layout($settings)) : ?>
+            <div class="notice notice-warning inline">
+                <p>
+                    <?php esc_html_e('Compact is selected, but no published cookie settings page is set. The popup shows the standard three buttons until you select one below.', 'maxtdesign-cookie-consent'); ?>
+                </p>
+            </div>
+        <?php endif; ?>
+        <p class="description">
+            <strong><?php esc_html_e('Compact', 'maxtdesign-cookie-consent'); ?></strong>
+            <?php esc_html_e('shows a "Manage options" link and an "Accept all" button. To use it:', 'maxtdesign-cookie-consent'); ?>
+        </p>
+        <ol class="description">
+            <li><?php esc_html_e('Create a page, for example "Cookie settings".', 'maxtdesign-cookie-consent'); ?></li>
+            <li>
+                <?php
+                printf(
+                    /* translators: %s: the shortcode [mdcc_manage_consent] */
+                    esc_html__('Add the shortcode %s to that page and publish it.', 'maxtdesign-cookie-consent'),
+                    '<code>[mdcc_manage_consent]</code>'
+                );
+                ?>
+            </li>
+            <li><?php esc_html_e('Select that page under Cookie settings page below.', 'maxtdesign-cookie-consent'); ?></li>
+            <li><?php esc_html_e('Set Buttons to Compact and save.', 'maxtdesign-cookie-consent'); ?></li>
+        </ol>
+        <p class="description">
+            <?php esc_html_e('Visitors who must give consent before tracking also see a Decline button. If no page is selected, the popup keeps the standard three buttons.', 'maxtdesign-cookie-consent'); ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render cookie settings page picker
+     *
+     * @since 1.11.0
+     */
+    public function render_field_manage_page_id(): void {
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
+        $current  = is_array($settings) && isset($settings['manage_page_id']) ? absint($settings['manage_page_id']) : 0;
+
+        wp_dropdown_pages(
+            array(
+                'name'              => esc_attr(self::OPTION_NAME) . '[manage_page_id]',
+                'id'                => 'mdcc-manage-page-id',
+                'selected'          => $current, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- integer, escaped by wp_dropdown_pages().
+                'show_option_none'  => esc_html__('None', 'maxtdesign-cookie-consent'),
+                'option_none_value' => '0',
+                'post_status'       => 'publish',
+            )
+        );
+        ?>
+        <p class="description">
+            <?php
+            printf(
+                /* translators: %s: the shortcode [mdcc_manage_consent] */
+                esc_html__('The published page that holds %s. The Compact layout links to it.', 'maxtdesign-cookie-consent'),
+                '<code>[mdcc_manage_consent]</code>'
+            );
+            ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Render the four button label fields
+     *
+     * @since 1.11.0
+     */
+    public function render_field_popup_labels(): void {
+        $settings = get_option(self::OPTION_NAME, mdcc_default_settings());
+        $fields   = array(
+            'label_accept'    => __('Accept All', 'maxtdesign-cookie-consent'),
+            'label_analytics' => __('Analytics Only', 'maxtdesign-cookie-consent'),
+            'label_decline'   => __('Decline All', 'maxtdesign-cookie-consent'),
+            'label_manage'    => __('Manage options', 'maxtdesign-cookie-consent'),
+        );
+
+        foreach ($fields as $key => $default_label) {
+            $current = is_array($settings) && isset($settings[$key]) && is_string($settings[$key]) ? $settings[$key] : '';
+            ?>
+            <p>
+                <label>
+                    <input type="text"
+                           name="<?php echo esc_attr(self::OPTION_NAME . '[' . $key . ']'); ?>"
+                           value="<?php echo esc_attr($current); ?>"
+                           placeholder="<?php echo esc_attr($default_label); ?>"
+                           class="regular-text" />
+                </label>
+            </p>
+            <?php
+        }
+        ?>
+        <p class="description">
+            <?php esc_html_e('Empty uses the default shown in grey, in the language of the site. Visitors in opt-out regions see the opt-out wording instead.', 'maxtdesign-cookie-consent'); ?>
+        </p>
+        <?php
     }
 
     /**

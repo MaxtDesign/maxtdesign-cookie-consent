@@ -16,8 +16,12 @@
  * - the root element with the class `mdcc-popup`, printed with
  *   `style="display: none;"`
  * - `id="mdcc-popup-title"` and `id="mdcc-popup-message"`
- * - one control for each of `data-mdcc-action="accept-all"`,
- *   `data-mdcc-action="decline-all"` and `data-mdcc-action="analytics-only"`
+ * - one control for each of `data-mdcc-action="accept-all"` and
+ *   `data-mdcc-action="decline-all"`, and in the standard layout also
+ *   `data-mdcc-action="analytics-only"`
+ * - in the Compact layout, the link with the class `mdcc-popup__manage`.
+ *   popup.js gives it the opt-out wording and hides the decline control for
+ *   visitors who are tracked by default and may opt out
  * - the close control with the class `mdcc-popup__close`
  * - the `mdcc_popup_before_actions` action, which add-ons print into
  *
@@ -27,8 +31,12 @@
  * - `title`       string   popup title
  * - `message`     string   popup message
  * - `privacy_url` string   the site's privacy policy URL, or ''
+ * - `buttons`     string   `standard` or `compact`. It is `compact` only when
+ *                          the site has a published cookie settings page
+ * - `manage_url`  string   address of the cookie settings page, or ''
  * - `labels`      array    `close`, `accept`, `accept_aria`, `analytics`,
- *                          `analytics_aria`, `decline`, `decline_aria`
+ *                          `analytics_aria`, `decline`, `decline_aria`,
+ *                          `manage`
  * - `settings`    array    the plugin settings
  *
  * When the plugin updates this file it raises the version below. The plugin's
@@ -99,6 +107,26 @@ if (!defined('ABSPATH')) {
                     ?>
 
                     <div class="mdcc-popup__actions">
+<?php if ('compact' === $args['buttons']) : ?>
+                        <a class="mdcc-popup__button mdcc-popup__button--tertiary mdcc-popup__manage"
+                           href="<?php echo esc_url($args['manage_url']); ?>">
+                            <?php echo esc_html($args['labels']['manage']); ?>
+                        </a>
+
+                        <button type="button"
+                                class="mdcc-popup__button mdcc-popup__button--secondary"
+                                data-mdcc-action="decline-all"
+                                aria-label="<?php echo esc_attr($args['labels']['decline_aria']); ?>">
+                            <?php echo esc_html($args['labels']['decline']); ?>
+                        </button>
+
+                        <button type="button"
+                                class="mdcc-popup__button mdcc-popup__button--primary"
+                                data-mdcc-action="accept-all"
+                                aria-label="<?php echo esc_attr($args['labels']['accept_aria']); ?>">
+                            <?php echo esc_html($args['labels']['accept']); ?>
+                        </button>
+<?php else : ?>
                         <button type="button" 
                                 class="mdcc-popup__button mdcc-popup__button--primary" 
                                 data-mdcc-action="accept-all"
@@ -119,6 +147,7 @@ if (!defined('ABSPATH')) {
                                 aria-label="<?php echo esc_attr($args['labels']['decline_aria']); ?>">
                             <?php echo esc_html($args['labels']['decline']); ?>
                         </button>
+<?php endif; ?>
                     </div>
                     
                 </div>
