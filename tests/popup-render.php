@@ -185,7 +185,10 @@ function wp_add_inline_script( $handle, $js, $position = 'after' ) {
 
 /* ---- run ------------------------------------------------------------------ */
 
-require dirname( __DIR__ ) . '/maxtdesign-cookie-consent.php';
+// MDCC_RENDER_ROOT points the harness at another copy of the plugin, such as
+// an extracted zip (tests/packaging-test.php).
+$mdcc_root = getenv( 'MDCC_RENDER_ROOT' );
+require ( $mdcc_root ? rtrim( $mdcc_root, '/\\' ) : dirname( __DIR__ ) ) . '/maxtdesign-cookie-consent.php';
 
 $mdcc_overrides = isset( $argv[1] ) ? json_decode( (string) $argv[1], true ) : array();
 if ( ! is_array( $mdcc_overrides ) ) {

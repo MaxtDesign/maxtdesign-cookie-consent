@@ -13,7 +13,7 @@ the working branches is **1.11.0**, unreleased. Floors: WordPress 5.8, PHP 7.4.
 ## Status
 Build phase of `docs/plan-popup-design-system.md`, on branch
 `feat/popup-design-system`, stacked on `feat/country-gpc-consent` (`f91fd87`,
-the 1.11.0 country and GPC candidate). Phase 0 (baseline) is done. Phases 1 to
+the 1.11.0 country and GPC candidate). Phases 0 and 1 are done. Phases 2 to
 5 follow. `main` is `7074066`. Nothing is merged. The exact 1.11.0 candidate
 artifacts are live on MaxtOffroad by a separate route (2026-09-25). This work
 folds into 1.11.0 and does not bump the version.
@@ -29,9 +29,7 @@ folds into 1.11.0 and does not bump the version.
   `optin` stays the plugin default.
 
 ## Next actions
-1. [session] Phase 1, packaging fix: `tools/prepare-svn.sh` must copy
-   `popup-loader.js`, `popup-loader.min.js` and `templates/`.
-   `bin/build-zip.php` allow-list gains `templates/*.php`. Prove by extraction.
+1. [session] Phase 1, packaging fix: DONE 2026-09-28.
 2. [session] Phases 2 to 5 of the plan, one commit each.
 3. [operator] Decide on flag F1 (custom primary colour is not applied in
    1.11.0). Phase 3 restores it unless told otherwise.
@@ -59,6 +57,7 @@ All run 2026-09-28 in the worktree, on the phase 0 tree.
 | `php tests/functional-tests.php` | 30 of 30 pass |
 | `node tests/popup-baseline.cjs` | 71 of 71 checks pass, Chrome 152.0.7977.85 |
 | Baseline failure test | a 1 px padding change fails 23 of 71, a markup change fails 15 of 29. The check fails when it should |
+| `npm run test:packaging` | 23 of 23 pass. Zip extracted: 23 files, loader present, extracted copy boots and prints the 481 B loader, staged trunk equals the zip by sha256. Before the fix the staged trunk held 21 files and no loader. With the loader filtered out of staging the test fails 2 checks |
 | `npm run validate` | core 10,101 of 10,240 B. Full dialog 13,797 of 14,336 B. Loader 481 B |
 | `npm run phpstan` (level 8) | **1 error**, already in `f91fd87`: `MDCC_Consent_Manager::country_endpoint()` has no return type. See flag F2 |
 | `plugin-deliverables.php` | 14 passed, 0 failed |
@@ -102,9 +101,10 @@ Vitals, Plugin Check on the 1.11.0 tree.
 - **F2. PHPStan level 8 has 1 error in the 1.11.0 candidate.** A missing
   return type on `country_endpoint()`. A docblock fixes it. Plan phase 5
   requires a clean run.
-- **F3. `package.json` script `prepare-svn` calls `tools/prepare-svn.ps1` on
-  Windows. That file does not exist.** Only `tools/prepare-svn.sh` does.
-  Handled in phase 1.
+- **F3. CLOSED 2026-09-28.** `npm run prepare-svn` called a missing
+  `tools/prepare-svn.ps1` on Windows. It now runs `bash tools/prepare-svn.sh`.
+  Older docs (`SVN-FINAL-CHECKLIST.md`, `SVN-UPLOAD-FILE-LIST.md`,
+  `TEST-BEFORE-SVN.md`) still name the `.ps1` file and a 21 file count.
 - **F4. Worktree.** This session works in
   `.claude/worktrees/popup-design-system` inside the main checkout. The path
   is listed in the main checkout's `.git/info/exclude`. LocalWP does not

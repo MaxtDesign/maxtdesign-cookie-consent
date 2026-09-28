@@ -6,6 +6,10 @@
  *   php -d extension=zip bin/build-zip.php [version]
  * Or via npm (runs the JS/CSS build first):
  *   npm run build:zip
+ * Print the allow-listed files, one per line, and build nothing:
+ *   php bin/build-zip.php --list
+ * tools/prepare-svn.sh stages the SVN trunk from that list, so the zip and the
+ * trunk cannot ship different file sets.
  *
  * Method (matches maxtdesign-disable-rest-api / maxtdesign-product-bundles):
  *
@@ -30,7 +34,10 @@
 
 declare(strict_types=1);
 
-if ( ! class_exists( 'ZipArchive' ) ) {
+$list_only = in_array( '--list', $argv, true );
+$argv      = array_values( array_diff( $argv, array( '--list' ) ) );
+
+if ( ! $list_only && ! class_exists( 'ZipArchive' ) ) {
 	fwrite( STDERR, "ZipArchive unavailable. Re-run: php -d extension=zip bin/build-zip.php\n" );
 	exit( 1 );
 }
@@ -72,6 +79,7 @@ $patterns = array(
 	'LICENSE.txt',
 	'uninstall.php',
 	'includes/*.php',
+	'templates/*.php',
 	'assets/css/*.css',
 	'assets/js/*.js',
 	'languages/*.pot',
@@ -151,6 +159,14 @@ foreach ( $files as $rel ) {
 		exit( 1 );
 	}
 	$out = array();
+}
+
+/* ---- --list: hand the verified allow-list to tools/prepare-svn.sh --------- */
+if ( $list_only ) {
+	echo implode( "
+", $files ) . "
+";
+	exit( 0 );
 }
 
 /* ---- pack: forward-slash, slug-rooted ------------------------------------ */

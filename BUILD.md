@@ -167,8 +167,12 @@ Test the built zip on a clean install before uploading.
 Two layers keep dev files out of what users install (see memory
 `project-distignore-vs-prepare-svn`):
 
-1. **Allow-list (primary):** `bin/build-zip.php` and `tools/prepare-svn.sh` copy
-   only the ~21 shippable files. What they don't copy never reaches trunk.
+1. **Allow-list (primary):** one list, in `bin/build-zip.php`. The zip is built
+   from it, and `tools/prepare-svn.sh` stages the trunk from
+   `php bin/build-zip.php --list`, so both ship the same files (23 as of
+   1.11.0). What the list doesn't name never reaches trunk.
+   `npm run test:packaging` extracts the zip and compares it with a staged
+   trunk.
 2. **`.distignore` (defense-in-depth):** WordPress.org's own zip-builder reads it
    at the trunk root and strips anything listed, catching a stray `cp -r`.
 

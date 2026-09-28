@@ -4,6 +4,14 @@
 # Runs build, then copies only SVN-allowed files into svn-upload/trunk/.
 # Usage: ./tools/prepare-svn.sh [version]
 #
+# The file list comes from `php bin/build-zip.php --list`, the same allow-list
+# the distribution zip is built from. Do not add hand-written cp lines here:
+# a hand-written list left popup-loader.js out of the 1.11.0 candidate.
+#
+# Environment (used by tests/packaging-test.php):
+#   MDCC_SVN_OUT     output directory, default svn-upload/trunk
+#   MDCC_SKIP_BUILD  set to 1 to stage the assets as they are
+#
 
 set -e
 
@@ -12,7 +20,7 @@ ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 cd "$ROOT_DIR"
 
 VERSION="${1:-$(node -p "require('./package.json').version" 2>/dev/null || echo "dev")}"
-OUT_DIR="svn-upload/trunk"
+OUT_DIR="${MDCC_SVN_OUT:-svn-upload/trunk}"
 
 echo "=============================================="
 echo "MaxtDesign Cookie Consent - Prepare for SVN"
@@ -21,21 +29,42 @@ echo "Version: $VERSION"
 echo "Output:  $OUT_DIR/"
 echo ""
 
-if [ -d "node_modules" ]; then
-  npm run build
-else
-  echo "Installing dependencies..."
-  npm install
+if [ "${MDCC_SKIP_BUILD:-0}" != "1" ]; then
+  if [ ! -d "node_modules" ]; then
+    echo "Installing dependencies..."
+    npm install
+  fi
   npm run build
 fi
 
+# Fails here, before anything is staged, on a stale .min file, a .distignore
+# conflict or a PHP lint error.
+FILES="$(php bin/build-zip.php --list | tr -d '\r')"
+
+if [ -z "$FILES" ]; then
+  echo "bin/build-zip.php --list returned no files." >&2
+  exit 1
+fi
+
 rm -rf "$OUT_DIR"
-mkdir -p "$OUT_DIR/includes" "$OUT_DIR/assets/css" "$OUT_DIR/assets/js" "$OUT_DIR/languages"
+mkdir -p "$OUT_DIR"
 
-cp maxtdesign-cookie-consent.php readme.txt LICENSE.txt uninstall.php "$OUT_DIR/"
-cp includes/class-admin-settings.php includes/class-consent-api-bridge.php includes/class-consent-manager.php includes/class-popup-system.php includes/class-shortcodes.php "$OUT_DIR/includes/"
-cp assets/css/admin.css assets/css/admin.min.css assets/css/popup.css assets/css/popup.min.css "$OUT_DIR/assets/css/"
-cp assets/js/admin.js assets/js/admin.min.js assets/js/consent-runtime.js assets/js/consent-runtime.min.js assets/js/popup.js assets/js/popup.min.js "$OUT_DIR/assets/js/"
-cp languages/maxtdesign-cookie-consent.pot languages/README.md "$OUT_DIR/languages/"
+COUNT=0
+while IFS= read -r FILE; do
+  [ -n "$FILE" ] || continue
+  mkdir -p "$OUT_DIR/$(dirname "$FILE")"
+  cp "$FILE" "$OUT_DIR/$FILE"
+  COUNT=$((COUNT + 1))
+done <<< "$FILES"
 
+# The popup is loaded by this file. A trunk without it ships a popup that
+# never appears.
+for REQUIRED in assets/js/popup-loader.js assets/js/popup-loader.min.js; do
+  if [ ! -s "$OUT_DIR/$REQUIRED" ]; then
+    echo "Missing from the staged trunk: $REQUIRED" >&2
+    exit 1
+  fi
+done
+
+echo "Staged $COUNT files."
 echo "Done. Copy to SVN trunk then: svn ci -m \"Update to $VERSION\"; svn cp trunk tags/$VERSION; svn ci -m \"Tagging $VERSION\""
