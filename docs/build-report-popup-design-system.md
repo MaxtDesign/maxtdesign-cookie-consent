@@ -140,7 +140,7 @@ read-only.
 |---|---|
 | L1. Unpublishing the cookie settings page in wp-admin cleared the page selection for good, because the sanitize callback runs again when the plugin refreshes the address | the selection is kept while the page exists as a page. Only the address decides the layout. Test added with the callback registered |
 | L2. `update_option_permalink_structure` fires before WordPress loads the new structure | hook `permalink_structure_changed` |
-| L3. Patterns ending in `$` accept one trailing line break | `z` in both patterns, `trim()` first. Test added |
+| L3. Patterns ending in `$` accept one trailing line break | the end-of-string anchor `\z` in both patterns, `trim()` first. Test added |
 | L4. The template notice printed a full server path for files outside the WordPress folder | path shown relative to the WordPress or content folder, else the file name only |
 
 **Code review.** 0 Block, 6 Fix-before-merge, 9 Nit. Findings 1 and 2 were
