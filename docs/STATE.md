@@ -1,5 +1,27 @@
 # STATE: maxtdesign-cookie-consent
 
+## September 28, 2026 amendment: 1.11.0 source committed, design system planned
+
+- **The 1.11.0 tree is now in git.** It was committed unmodified as `f91fd87`
+  on `feat/country-gpc-consent` and pushed. This supersedes "Shared source
+  remains uncommitted" below. Tests on that tree, run 2026-09-28: 30 of 30
+  functional, 221 of 221 country-consent assertions.
+- **`main` is still 1.10.1 at `7074066`.** Nothing was merged. wordpress.org
+  serves 1.10.0.
+- **Plan written, awaiting operator acceptance:**
+  `docs/plan-popup-design-system.md`. Design settings plus a theme template
+  override, folding into 1.11.0. No code written.
+- **Release blocker found, not yet fixed:** `tools/prepare-svn.sh` does not
+  copy `popup-loader.js` or `popup-loader.min.js`. A wordpress.org release
+  staged with that script would ship a popup that never loads. Plan risk R1,
+  fixed in plan phase 1. `bin/build-zip.php` is not affected.
+- **Budget, measured 2026-09-28:** core 10,101 of 10,240 B (139 B headroom),
+  full dialog 13,797 of 14,336 B (539 B headroom), loader 481 B.
+
+### Next actions
+1. [operator] Accept or change the plan, and answer decisions D1 and D2 in it.
+2. [session] On acceptance, start plan phase 0 (baseline and STATE backfill).
+
 ## September25 production release amendment
 
 Owner approved and exact1.11.0 artifacts are now live on MaxtOffroad, alongside
