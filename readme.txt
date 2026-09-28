@@ -94,6 +94,15 @@ Without proper GCM v2 implementation, your GA4 and Google Ads tracking may be un
 **Color Customization:**
 Primary color picker to match your brand
 
+**Popup Design (1.11.0):**
+* Desktop width: 100, 80, 60 or 50 percent, centered. Always full width on tablets and phones.
+* Background, text and primary button text colors
+* Corner radius from 0 to 24 pixels
+* Buttons in your theme font
+* Compact button layout with a "Manage options" link to your cookie settings page
+* Custom button labels
+* Theme template override for developers who want their own markup
+
 = Shortcodes =
 
 **Display Current Status:**
@@ -318,6 +327,23 @@ This integration is enabled by default and can be turned off under Settings > Co
 
 Yes! Choose from three style presets (Minimal, Modern, Bold), three positions (Top, Bottom, Center), customize the primary color, edit all text, and control animation style.
 
+Since 1.11.0 the Popup Design section adds desktop width, background and text colors, corner radius, theme font on the buttons, custom button labels and a Compact button layout. The plugin does not check your colors for contrast, so make sure the text stays readable on the background you pick.
+
+= How do I set up the Compact button layout? =
+
+Compact shows a "Manage options" link and an "Accept all" button.
+
+1. Create a page, for example "Cookie settings".
+2. Add the shortcode `[mdcc_manage_consent]` to that page and publish it.
+3. Go to Settings > Cookie Consent > Popup Design and select that page under Cookie settings page.
+4. Set Buttons to Compact and save.
+
+Visitors who must give consent before tracking also see a Decline button. Visitors in opt-out regions see the link with the "Do Not Sell or Share My Personal Information" wording and a "Got it" button. If no published page is selected, the popup keeps the standard three buttons.
+
+= Can I change the popup markup from my theme? =
+
+Yes, since 1.11.0. Copy `templates/popup.php` from the plugin folder to `maxtdesign-cookie-consent/popup.php` inside your theme and edit the copy. A child theme is checked before its parent. The comment at the top of the file lists the elements your copy must keep so the buttons keep working. The plugin settings screen shows a notice when your copy is older than the one in the plugin.
+
 = Can I use my own Elementor popup? =
 
 Absolutely. Enter your Elementor Popup ID in settings and the plugin will use your custom popup while maintaining proper consent functionality.
@@ -427,6 +453,14 @@ differ. Anything published under `slaacr` is ours.
 * Optional same-origin country policy endpoint integration; unknown/error responses require opt-in.
 * Load popup presentation assets only when the visitor needs the dialog; keep cached markup independent of visitor cookies.
 * Preserve choices in memory when browser storage is unavailable.
+* New: Popup Design settings. Set the desktop width (100, 80, 60 or 50 percent), background color, text color, primary button text color, corner radius, and let the buttons use your theme font. Every setting is optional. A site that changes nothing looks the same as before.
+* New: Compact button layout. Shows a "Manage options" link to your cookie settings page and an "Accept all" button. Visitors who must give consent before tracking also get a Decline button. The settings screen lists the setup steps. If no published page is selected, the popup keeps the standard three buttons.
+* New: optional custom labels for the popup buttons.
+* New for developers: theme template override. Copy `templates/popup.php` from the plugin to `yourtheme/maxtdesign-cookie-consent/popup.php` to change the popup markup. Child themes are checked first. The settings screen tells you when your copy is older than the plugin's. New filters: `mdcc_popup_template`, `mdcc_manage_url`.
+* New for developers: the popup reads CSS variables (`--mdcc-primary`, `--mdcc-hover`, `--mdcc-btn-fg`, `--mdcc-bg`, `--mdcc-fg`, `--mdcc-r`, `--mdcc-w`), so a theme can style it without overriding plugin rules.
+* Fix: a custom Primary Color is applied again.
+* Changed: the Close button no longer draws an outline on mouse hover, and buttons no longer draw an outline when clicked with a mouse. Keyboard focus is outlined as before.
+* Fix: the wordpress.org package now includes the popup loader script.
 
 = 1.10.1 =
 * New: published security contact and vulnerability disclosure policy. Security issues now have a private reporting route (security@maxtdesign.com) instead of a public support thread, with a 3 business day acknowledgement target.
@@ -574,6 +608,9 @@ differ. Anything published under `slaacr` is ours.
 
 
 == Upgrade Notice ==
+
+= 1.11.0 =
+Adds optional Popup Design settings, a Compact button layout and a theme template override. Global Privacy Control now takes precedence over saved choices. Safe to upgrade: a site that changes no settings shows the same popup as before.
 
 = 1.10.1 =
 Documentation and compatibility only. Adds a private security contact and confirms WordPress 7.1 support. No functional changes.

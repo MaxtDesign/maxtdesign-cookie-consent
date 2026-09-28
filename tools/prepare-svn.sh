@@ -46,6 +46,13 @@ if [ -z "$FILES" ]; then
   exit 1
 fi
 
+# The output folder is deleted first. Refuse anything that is not a folder
+# named "trunk".
+case "$OUT_DIR" in
+  */trunk) ;;
+  *) echo "Refusing to stage into '$OUT_DIR': the path must end in /trunk." >&2; exit 1 ;;
+esac
+
 rm -rf "$OUT_DIR"
 mkdir -p "$OUT_DIR"
 

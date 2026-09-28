@@ -70,8 +70,8 @@
         // decline control, so the notice shows that link and "Got it".
         var manage = popup.querySelector('.mdcc-popup__manage');
 
-        if (manage && decline) {
-            decline.style.display = 'none';
+        if (manage) {
+            if (decline) decline.style.display = 'none';
             decline = manage;
         }
 

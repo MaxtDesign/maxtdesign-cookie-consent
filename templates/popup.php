@@ -27,7 +27,11 @@
  *
  * Escape everything you print. Available in `$args`:
  *
- * - `classes`     string[] CSS classes for the root element
+ * - `classes`     string[] CSS classes for the root element. Print all of
+ *                          them: the stylesheet sizes the title and places
+ *                          the popup through the style and position classes.
+ *                          Keep the control that must come last in the tab
+ *                          order, Accept, last in the markup
  * - `title`       string   popup title
  * - `message`     string   popup message
  * - `privacy_url` string   the site's privacy policy URL, or ''

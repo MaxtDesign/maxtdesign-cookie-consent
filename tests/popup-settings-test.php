@@ -82,7 +82,11 @@ mdcc_check( 'published page: address stored relative to the home URL', '/cookie-
 mdcc_check( 'published page: layout is compact', 'compact' === MDCC_Popup_System::get_button_layout( $s ) );
 mdcc_check( 'published page: full address at render', 'https://example.test/cookie-settings/' === MDCC_Popup_System::get_manage_url( $s ), MDCC_Popup_System::get_manage_url( $s ) );
 
-foreach ( array( 13 => 'draft page', 14 => 'post, not a page', 99 => 'missing page', 0 => 'no page', 'abc' => 'text instead of an id' ) as $id => $what ) {
+$s = $save( array( 'popup_buttons' => 'compact', 'manage_page_id' => 13 ) );
+mdcc_check( 'draft page: the selection is kept, the address is empty', 13 === $s['manage_page_id'] && '' === $s['manage_url'], $s );
+mdcc_check( 'draft page: layout falls back to standard', 'standard' === MDCC_Popup_System::get_button_layout( $s ) );
+
+foreach ( array( 14 => 'post, not a page', 99 => 'missing page', 0 => 'no page', 'abc' => 'text instead of an id' ) as $id => $what ) {
 	$s = $save( array( 'popup_buttons' => 'compact', 'manage_page_id' => $id ) );
 	mdcc_check( "{$what}: nothing stored", 0 === $s['manage_page_id'] && '' === $s['manage_url'], $s );
 	mdcc_check( "{$what}: layout falls back to standard", 'standard' === MDCC_Popup_System::get_button_layout( $s ) );
@@ -100,6 +104,10 @@ foreach ( array( 'javascript:alert(1)', '//evil.test/x', 'data:text/html,x', 'ht
 }
 
 /* ---- the saved address follows the page ------------------------------------ */
+
+// In wp-admin the sanitize callback is registered, so it runs on the whole
+// option each time the plugin refreshes the address. Simulate that.
+add_filter( 'sanitize_option_mdcc_settings', array( $admin, 'sanitize_settings' ) );
 
 $popup = MDCC_Popup_System::get_instance();
 $GLOBALS['mdcc_test']['options']['mdcc_settings'] = array_merge( mdcc_default_settings(), array( 'popup_buttons' => 'compact', 'manage_page_id' => 12, 'manage_url' => '/cookie-settings/' ) );
@@ -133,6 +141,38 @@ add_filter(
 );
 mdcc_check( 'mdcc_manage_url filter replaces the address', 'https://example.test/de/cookie-einstellungen/' === MDCC_Popup_System::get_manage_url( get_option( 'mdcc_settings' ) ) );
 $GLOBALS['mdcc_test']['hooks']['mdcc_manage_url'] = array();
+
+/* ---- no popup on the cookie settings page itself --------------------------- */
+
+$render = function () use ( $popup ) {
+	ob_start();
+	$popup->render_popup();
+	return (string) ob_get_clean();
+};
+$GLOBALS['mdcc_test']['pages'][12] = array( 'page', 'publish', 'https://example.test/cookie-settings/' );
+$popup->refresh_manage_url();
+$GLOBALS['mdcc_test']['current_page'] = 7;
+mdcc_check( 'compact: popup renders on other pages', false !== strpos( $render(), 'mdcc-popup__manage' ) );
+$GLOBALS['mdcc_test']['current_page'] = 12;
+mdcc_check( 'compact: no popup on the cookie settings page', '' === $render() );
+$standard = get_option( 'mdcc_settings' );
+$standard['popup_buttons'] = 'standard';
+$GLOBALS['mdcc_test']['options']['mdcc_settings'] = $standard;
+mdcc_check( 'standard: popup still renders on that page, as before', false !== strpos( $render(), 'data-mdcc-action="analytics-only"' ) );
+$standard['popup_buttons'] = 'compact';
+$GLOBALS['mdcc_test']['options']['mdcc_settings'] = $standard;
+unset( $GLOBALS['mdcc_test']['current_page'] );
+
+$before = get_option( 'mdcc_settings' );
+$popup->refresh_manage_url_for_post( 12 );
+mdcc_check( 'a second pass through the sanitize callback changes nothing', $before === get_option( 'mdcc_settings' ) );
+
+foreach ( array( "#ffffff\n", "https://example.test/x\n" ) as $trailing ) {
+	$tampered = array( 'popup_primary_color' => $trailing, 'popup_bg_color' => $trailing, 'popup_buttons' => 'compact', 'manage_url' => $trailing );
+	mdcc_check( 'a trailing line break never reaches the page: ' . json_encode( $trailing ), false === strpos( MDCC_Popup_System::get_design_css( $tampered ) . MDCC_Popup_System::get_manage_url( $tampered ), "\n" ) );
+}
+$s = $save( array( 'popup_radius' => ' 5 ' ) );
+mdcc_check( 'radius with spaces is 5 on every PHP version', 5 === $s['popup_radius'], $s['popup_radius'] );
 
 /* ---- whitelists, clamps and text -------------------------------------------- */
 

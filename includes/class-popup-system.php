@@ -60,9 +60,12 @@ class MDCC_Popup_System {
         // Keep the saved address of the cookie settings page current. These
         // run when a page or the site address changes, never on a page view.
         add_action('post_updated', array($this, 'refresh_manage_url_for_post'));
-        add_action('deleted_post', array($this, 'refresh_manage_url_for_post'));
+        // Not deleted_post: that fires while the deleted page is still cached.
+        add_action('after_delete_post', array($this, 'refresh_manage_url_for_post'));
         add_action('transition_post_status', array($this, 'refresh_manage_url_on_status'), 10, 3);
-        add_action('update_option_permalink_structure', array($this, 'refresh_manage_url'), 10, 0);
+        // Not update_option_permalink_structure: that fires before WordPress
+        // has loaded the new structure, so the old address would be stored.
+        add_action('permalink_structure_changed', array($this, 'refresh_manage_url'), 10, 0);
         add_action('update_option_home', array($this, 'refresh_manage_url'), 10, 0);
     }
 
@@ -142,7 +145,7 @@ class MDCC_Popup_System {
 
         // Anything that is not a plain web address counts as "no page", and
         // the popup falls back to the standard buttons.
-        return is_string($url) && 1 === preg_match('#^https?://[^\s"\'<>]+$#i', $url) ? $url : '';
+        return is_string($url) && 1 === preg_match('#^https?://[^\s"\'<>]+\z#i', $url) ? $url : '';
     }
 
     /**
@@ -252,6 +255,17 @@ class MDCC_Popup_System {
             return false;
         }
 
+        // Compact: the cookie settings page holds the consent controls
+        // itself. A visitor who followed "Manage options" must not get the
+        // popup on top of them. Decided by the page, not by the visitor, so
+        // it is safe under a page cache. Sites that change the address with
+        // mdcc_manage_url use mdcc_should_show_popup for their own page.
+        if (is_array($settings) && !empty($settings['manage_page_id'])
+            && 'compact' === self::get_button_layout($settings)
+            && is_page(absint($settings['manage_page_id']))) {
+            return false;
+        }
+
         // Don't show if popup shown cookie exists and not expired
         // Visitor cookies are checked in the browser; PHP output is shared by
         // full-page caches and must never omit the popup for later visitors.
@@ -300,11 +314,14 @@ class MDCC_Popup_System {
         // Design settings print as CSS variables, and only the ones that
         // differ from the defaults. A site that changed nothing prints no
         // inline style at all.
+        // The handle is registered either way, so a theme or add-on can still
+        // attach its own inline style to it. Without one it prints nothing.
+        wp_register_style('mdcc-popup', false, array(), MDCC_VERSION, 'all');
+        wp_enqueue_style('mdcc-popup');
+
         $design_css = self::get_design_css($settings);
 
         if ('' !== $design_css) {
-            wp_register_style('mdcc-popup', false, array(), MDCC_VERSION, 'all');
-            wp_enqueue_style('mdcc-popup');
             wp_add_inline_style('mdcc-popup', $design_css);
         }
 
@@ -385,7 +402,7 @@ class MDCC_Popup_System {
             }
         }
 
-        $radius = $settings['popup_radius'] ?? '';
+        $radius = isset($settings['popup_radius']) && is_scalar($settings['popup_radius']) ? trim((string) $settings['popup_radius']) : '';
         if (is_numeric($radius)) {
             $radius          = min(24, absint($radius));
             $vars['--mdcc-r'] = 0 === $radius ? '0' : $radius . 'px';
@@ -444,9 +461,11 @@ class MDCC_Popup_System {
      * @return string
      */
     private static function hex_color($value) {
-        $color = is_string($value) ? sanitize_hex_color($value) : '';
+        $color = is_string($value) ? sanitize_hex_color(trim($value)) : '';
 
-        if (!is_string($color) || '' === $color) {
+        // Checked again with \z: the pattern in sanitize_hex_color() ends in
+        // $, which lets one trailing line break through.
+        if (!is_string($color) || 1 !== preg_match('/^#(?:[0-9a-f]{3}){1,2}\z/i', $color)) {
             return '';
         }
 
@@ -596,7 +615,11 @@ class MDCC_Popup_System {
             'mdcc-popup--animation-' . $animation,
         );
 
-        $buttons = self::get_button_layout($settings);
+        // The address is resolved once here, and the layout follows from it,
+        // so Compact can never render with an empty link.
+        $wanted     = isset($settings['popup_buttons']) ? $settings['popup_buttons'] : 'standard';
+        $manage_url = 'compact' === $wanted ? self::get_manage_url($settings) : '';
+        $buttons    = '' !== $manage_url ? 'compact' : 'standard';
 
         if ('compact' === $buttons) {
             $classes[] = 'mdcc-popup--compact';
@@ -633,7 +656,7 @@ class MDCC_Popup_System {
             'message'     => (string) $message,
             'privacy_url' => function_exists('get_privacy_policy_url') ? (string) get_privacy_policy_url() : '',
             'buttons'     => $buttons,
-            'manage_url'  => 'compact' === $buttons ? self::get_manage_url($settings) : '',
+            'manage_url'  => $manage_url,
             'labels'      => $labels,
             'settings'    => $settings,
         );

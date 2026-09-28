@@ -153,7 +153,7 @@ async function main() {
       return result.result.value;
     };
     const defaultHover = await hoverColor({});
-    check('default hover colour is #005a87', defaultHover === 'rgb(0, 90, 135)', defaultHover);
+    check('default hover colour is #0073aadd, as in 1.10', /^rgba\(0, 115, 170, 0\.86\d*\)$/.test(defaultHover), defaultHover);
     const customHover = await hoverColor({ popup_primary_color: '#c8102e' });
     check('custom hover colour is the primary colour at alpha dd', /^rgba\(200, 16, 46, 0\.86\d*\)$/.test(customHover), customHover);
 

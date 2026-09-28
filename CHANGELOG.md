@@ -6,6 +6,32 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [1.11.0] - Unreleased
+
+Not on wordpress.org yet. The default rendering is unchanged: every new setting defaults to the earlier behavior. Plan and evidence: `docs/plan-popup-design-system.md`, `docs/STATE.md`.
+
+### Added
+- **Country endpoint and GPC** (the 1.11.0 candidate, `f91fd87`): Global Privacy Control takes precedence over saved grants. Optional same-origin country policy endpoint through the `mdcc_country_endpoint` filter; unknown or failed responses require opt-in. Popup CSS and JS load only for visitors who need the dialog, through an inline loader under 1 KB. Choices are kept in memory when browser storage is unavailable.
+- **Popup Design settings**, all stored in `mdcc_settings`: `popup_desktop_width` (100, 80, 60, 50), `popup_bg_color`, `popup_text_color`, `popup_button_text_color`, `popup_radius` (0 to 24), `popup_inherit_font`. They print as CSS variables on `.mdcc-popup`, and only when they differ from the defaults.
+- **CSS variables** the stylesheet reads, each with the earlier value as fallback: `--mdcc-primary`, `--mdcc-hover`, `--mdcc-btn-fg`, `--mdcc-bg`, `--mdcc-fg`, `--mdcc-r`, `--mdcc-w`.
+- **Compact button layout**: `popup_buttons` (`standard` or `compact`), `manage_page_id`, and the labels `label_accept`, `label_manage`, `label_decline`, `label_analytics`. Per visitor, from `mdccConsent.bannerMode()`: `optin` sees Manage options, Decline and Accept; `optout` sees the link with the opt-out wording and Got it; `none` sees no popup. Without a published cookie settings page the popup renders Standard.
+- **Theme template override**: `templates/popup.php`, overridden by `yourtheme/maxtdesign-cookie-consent/popup.php`. Filters `mdcc_popup_template` and `mdcc_manage_url`. The settings screen reports an override and warns when it is older than the bundled template.
+- Tests: `tests/popup-baseline.cjs`, `popup-design.cjs`, `popup-visitor-modes.cjs`, `popup-template-test.php`, `popup-settings-test.php`, `packaging-test.php`.
+
+### Changed
+- The inline primary-colour block (345 B on every page) is gone. A default site prints no inline style for the popup.
+- In the Compact layout the popup does not open on the cookie settings page itself.
+- The Close button no longer draws an outline on mouse hover. Buttons no longer draw the 2 px outline on mouse focus. Keyboard focus keeps the 3 px `:focus-visible` outline.
+- `tools/prepare-svn.sh` stages the trunk from `php bin/build-zip.php --list`, the same allow-list the zip uses.
+
+### Fixed
+- A custom Primary Color is applied again. In the candidate the inline block printed before the lazily loaded stylesheet and lost to it.
+- `tools/prepare-svn.sh` left `popup-loader.js` and `popup-loader.min.js` out of the staged trunk.
+- `npm run prepare-svn` called a missing `tools/prepare-svn.ps1` on Windows.
+
+### Footprint
+- Caps unchanged. Core (popup.min.css + consent-runtime.min.js) 10,168 of 10,240 B. Full dialog 13,942 of 14,336 B. Inline loader 481 B. Inline design block 0 B by default, 267 B with every field set.
+
 ## [1.10.0] - Unreleased
 
 Ships together with the never-released 1.9.0 extensibility work (below). The default behavior is unchanged: the new **Consent Model** setting defaults to *Opt-in everywhere*, so existing sites upgrade with no change until the owner opts in.

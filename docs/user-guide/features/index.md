@@ -13,6 +13,7 @@ version: 1.7.0
 
 - Core Consent Manager (Google Consent Mode v2)
 - Standalone Popup System (Minimal/Modern/Bold, accessible)
+- Popup Design (design settings, Compact layout, theme template override; 1.11.0)
 - Admin Settings (Settings > Cookie Consent)
 - Shortcodes (Consent status and manage interface)
 

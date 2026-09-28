@@ -434,9 +434,13 @@ class MDCC_Admin_Settings {
 
         // Cookie settings page: must be a published page, else none. Its
         // address is resolved here, never taken from the form.
-        $manage_url = MDCC_Popup_System::resolve_manage_url($input['manage_page_id'] ?? 0);
-        $sanitized['manage_page_id'] = '' !== $manage_url ? absint($input['manage_page_id']) : 0;
-        $sanitized['manage_url']     = $manage_url;
+        // The selection is kept while the page is a draft or in the trash, so
+        // Compact returns when the page is published again. Only the address
+        // decides whether Compact renders. This callback also runs when the
+        // plugin refreshes the address from a post hook in wp-admin.
+        $manage_page_id = isset($input['manage_page_id']) && is_scalar($input['manage_page_id']) ? absint($input['manage_page_id']) : 0;
+        $sanitized['manage_page_id'] = $manage_page_id > 0 && 'page' === get_post_type($manage_page_id) ? $manage_page_id : 0;
+        $sanitized['manage_url']     = MDCC_Popup_System::resolve_manage_url($sanitized['manage_page_id']);
 
         // Button labels (text, or empty to use the translated default)
         foreach (array('label_accept', 'label_manage', 'label_decline', 'label_analytics') as $key) {
@@ -456,9 +460,8 @@ class MDCC_Admin_Settings {
         }
 
         // Corner radius (0 to 24 px, or empty to keep the style preset's own)
-        $sanitized['popup_radius'] = isset($input['popup_radius']) && is_numeric($input['popup_radius'])
-            ? min(24, absint($input['popup_radius']))
-            : '';
+        $radius = isset($input['popup_radius']) && is_scalar($input['popup_radius']) ? trim((string) $input['popup_radius']) : '';
+        $sanitized['popup_radius'] = is_numeric($radius) ? min(24, absint($radius)) : '';
 
         // Buttons follow the theme font (boolean)
         $sanitized['popup_inherit_font'] = !empty($input['popup_inherit_font']);
@@ -656,10 +659,37 @@ class MDCC_Admin_Settings {
         return array(
             'override'        => $override,
             'outdated'        => $override && ('' === $theirs || version_compare($theirs, $ours, '<')),
-            'path'            => str_replace(wp_normalize_path(ABSPATH), '', wp_normalize_path($active)),
+            'path'            => self::short_path($active),
             'version'         => $theirs,
             'bundled_version' => $ours,
         );
+    }
+
+    /**
+     * A file path for display, without the server's directory layout.
+     *
+     * Relative to the WordPress folder or the content folder. A file outside
+     * both shows its name only.
+     *
+     * @since 1.11.0
+     * @param string $path Full path.
+     * @return string
+     */
+    private static function short_path($path) {
+        $path  = wp_normalize_path($path);
+        $roots = array(wp_normalize_path(ABSPATH));
+
+        if (defined('WP_CONTENT_DIR')) {
+            $roots[] = trailingslashit(wp_normalize_path(dirname(WP_CONTENT_DIR)));
+        }
+
+        foreach ($roots as $root) {
+            if ('' !== $root && 0 === strpos($path, $root)) {
+                return substr($path, strlen($root));
+            }
+        }
+
+        return basename($path);
     }
 
     /**
@@ -677,7 +707,7 @@ class MDCC_Admin_Settings {
             return;
         }
 
-        $version = '' !== $status['version'] ? $status['version'] : __('none', 'maxtdesign-cookie-consent');
+        $version = '' !== $status['version'] ? $status['version'] : _x('none', 'template version: the file has no version tag', 'maxtdesign-cookie-consent');
         ?>
         <div class="notice inline <?php echo $status['outdated'] ? 'notice-warning' : 'notice-info'; ?>">
             <p>
@@ -894,8 +924,13 @@ class MDCC_Admin_Settings {
             </div>
         <?php endif; ?>
         <p class="description">
-            <strong><?php esc_html_e('Compact', 'maxtdesign-cookie-consent'); ?></strong>
-            <?php esc_html_e('shows a "Manage options" link and an "Accept all" button. To use it:', 'maxtdesign-cookie-consent'); ?>
+            <?php
+            printf(
+                /* translators: %s: the name of the button layout, "Compact", in bold */
+                esc_html__('%s shows a "Manage options" link and an "Accept all" button. To use it:', 'maxtdesign-cookie-consent'),
+                '<strong>' . esc_html__('Compact', 'maxtdesign-cookie-consent') . '</strong>'
+            );
+            ?>
         </p>
         <ol class="description">
             <li><?php esc_html_e('Create a page, for example "Cookie settings".', 'maxtdesign-cookie-consent'); ?></li>

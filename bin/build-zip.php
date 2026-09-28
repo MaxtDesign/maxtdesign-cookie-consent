@@ -163,9 +163,7 @@ foreach ( $files as $rel ) {
 
 /* ---- --list: hand the verified allow-list to tools/prepare-svn.sh --------- */
 if ( $list_only ) {
-	echo implode( "
-", $files ) . "
-";
+	echo implode( "\n", $files ) . "\n";
 	exit( 0 );
 }
 

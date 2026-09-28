@@ -3,7 +3,8 @@
  * settings, or by a theme. Every fallback is the value used before 1.11.0.
  *
  *   --mdcc-primary  primary button background and border
- *   --mdcc-hover    primary button background and border on hover and focus
+ *   --mdcc-hover    primary button background and border on hover and focus.
+ *                   The fallback is the 1.10 colour, the primary at alpha dd
  *   --mdcc-btn-fg   primary button text
  *   --mdcc-bg       popup background
  *   --mdcc-fg       title, message, close and decline text
@@ -145,8 +146,8 @@
 
 .mdcc-popup__button--primary:hover,
 .mdcc-popup__button--primary:focus {
-    background-color: var(--mdcc-hover, #005a87);
-    border-color: var(--mdcc-hover, #005a87);
+    background-color: var(--mdcc-hover, #0073aadd);
+    border-color: var(--mdcc-hover, #0073aadd);
 }
 
 .mdcc-popup__button--secondary {

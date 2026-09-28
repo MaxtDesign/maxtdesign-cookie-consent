@@ -94,6 +94,14 @@ function get_option( $name, $default = false ) {
 	return array_key_exists( $name, $GLOBALS['mdcc_test']['options'] ) ? $GLOBALS['mdcc_test']['options'][ $name ] : $default;
 }
 
+function is_page( $page = '' ) {
+	return isset( $GLOBALS['mdcc_test']['current_page'] ) && (int) $page === (int) $GLOBALS['mdcc_test']['current_page'];
+}
+
+function _x( $text, $context, $domain = 'default' ) {
+	return $text;
+}
+
 function get_privacy_policy_url() {
 	return $GLOBALS['mdcc_test']['privacy_url'];
 }
@@ -125,7 +133,8 @@ function get_permalink( $id ) {
 }
 
 function update_option( $name, $value ) {
-	$GLOBALS['mdcc_test']['options'][ $name ] = $value;
+	// As in WordPress: a registered sanitize callback runs on every save.
+	$GLOBALS['mdcc_test']['options'][ $name ] = apply_filters( 'sanitize_option_' . $name, $value );
 	return true;
 }
 

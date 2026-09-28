@@ -403,7 +403,59 @@ The consent manager initializes automatically when the script loads:
 
 ---
 
+## Popup Template Contract (1.11.0)
+
+The popup markup lives in `templates/popup.php`. A theme overrides it with `yourtheme/maxtdesign-cookie-consent/popup.php` (child theme first), or a site returns a path from the `mdcc_popup_template` filter. The markup is rendered once and cached for every visitor, so a template must not print anything that depends on who is visiting.
+
+`popup.js` finds elements by the items below and by nothing else. An override must keep them.
+
+| Item | Selector `popup.js` uses | Needed for |
+|---|---|---|
+| Root element, printed with `style="display: none;"` | `.mdcc-popup` | show, hide, focus trap, click delegation |
+| Title | `#mdcc-popup-title` | opt-out title swap |
+| Message | `#mdcc-popup-message` | opt-out message swap |
+| Accept control | `[data-mdcc-action="accept-all"]` | `mdccConsent.acceptAll()`, "Got it" label for opt-out visitors |
+| Decline control | `[data-mdcc-action="decline-all"]` | `mdccConsent.declineAll()`, opt-out wording in the Standard layout |
+| Analytics control, Standard layout only | `[data-mdcc-action="analytics-only"]` | `mdccConsent.acceptAnalyticsOnly()`, hidden for opt-out visitors |
+| Close control | `.mdcc-popup__close` | close without a choice |
+| Manage link, Compact layout only | `.mdcc-popup__manage` | its presence tells `popup.js` the layout is Compact |
+
+A missing control does not throw. The behaviour tied to it stops.
+
+### What `popup.js` changes per visitor
+
+`mdccConsent.bannerMode()` decides. The template prints the `optin` version.
+
+| Visitor | Standard layout | Compact layout |
+|---|---|---|
+| `optin` | as printed | as printed: Manage options, Decline, Accept |
+| `optout` | title, message, "Got it", decline gets the opt-out wording, analytics hidden | title, message, "Got it", the manage link gets the opt-out wording and `aria-label`, decline hidden |
+| `none` | popup stays hidden, its CSS and JS are not requested | same |
+
+### Template arguments
+
+`$args` holds `classes` (string[]), `title`, `message`, `privacy_url`, `buttons` (`standard` or `compact`), `manage_url`, `labels` (`close`, `accept`, `accept_aria`, `analytics`, `analytics_aria`, `decline`, `decline_aria`, `manage`) and `settings`. The template escapes what it prints.
+
+### CSS variables
+
+Set on `.mdcc-popup`. Each fallback is the value used before 1.11.0.
+
+| Variable | Styles | Fallback |
+|---|---|---|
+| `--mdcc-primary` | primary button background and border | `#0073aa` |
+| `--mdcc-hover` | primary button background and border on hover and focus | `#0073aadd` |
+| `--mdcc-btn-fg` | primary button text | `#fff` |
+| `--mdcc-bg` | popup background | `#fff` |
+| `--mdcc-fg` | title, message, close and decline text | per element |
+| `--mdcc-r` | corner radius of the popup and its buttons | per style preset |
+| `--mdcc-w` | width from 1025px up, Top and Bottom positions | `100%` |
+
+Do not set a variable to `inherit`, `initial` or `unset`. Those are CSS-wide keywords: the variable takes the keyword's meaning itself, and the fallback is used.
+
+---
+
 ## Version History
 
+- **1.11.0** - Popup template contract and CSS variables documented. `popup.js` handles the Compact layout. Runtime API unchanged by the design system
 - **1.7.0** - Build system, minified assets, consent-runtime optimization; API unchanged
 - **1.6.0** - Initial release with GCM v2 support
