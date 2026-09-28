@@ -1,0 +1,237 @@
+{
+  "minimal-top": {
+    "settings": {
+      "popup_style": "minimal",
+      "popup_position": "top"
+    },
+    "privacyUrl": "",
+    "markupBytes": 2444,
+    "inlineCssBytes": 345,
+    "inlineLoaderBytes": 481,
+    "config": {
+      "cookieName": "mdcc_popup_shown",
+      "cookieDuration": 7,
+      "repromptDecline": false,
+      "scriptUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/js/popup.min.js?ver=1.11.0",
+      "styleUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/css/popup.min.css?ver=1.11.0"
+    }
+  },
+  "minimal-bottom": {
+    "settings": {
+      "popup_style": "minimal",
+      "popup_position": "bottom"
+    },
+    "privacyUrl": "",
+    "markupBytes": 2447,
+    "inlineCssBytes": 345,
+    "inlineLoaderBytes": 481,
+    "config": {
+      "cookieName": "mdcc_popup_shown",
+      "cookieDuration": 7,
+      "repromptDecline": false,
+      "scriptUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/js/popup.min.js?ver=1.11.0",
+      "styleUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/css/popup.min.css?ver=1.11.0"
+    }
+  },
+  "minimal-center": {
+    "settings": {
+      "popup_style": "minimal",
+      "popup_position": "center"
+    },
+    "privacyUrl": "",
+    "markupBytes": 2447,
+    "inlineCssBytes": 345,
+    "inlineLoaderBytes": 481,
+    "config": {
+      "cookieName": "mdcc_popup_shown",
+      "cookieDuration": 7,
+      "repromptDecline": false,
+      "scriptUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/js/popup.min.js?ver=1.11.0",
+      "styleUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/css/popup.min.css?ver=1.11.0"
+    }
+  },
+  "modern-top": {
+    "settings": {
+      "popup_style": "modern",
+      "popup_position": "top"
+    },
+    "privacyUrl": "",
+    "markupBytes": 2443,
+    "inlineCssBytes": 345,
+    "inlineLoaderBytes": 481,
+    "config": {
+      "cookieName": "mdcc_popup_shown",
+      "cookieDuration": 7,
+      "repromptDecline": false,
+      "scriptUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/js/popup.min.js?ver=1.11.0",
+      "styleUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/css/popup.min.css?ver=1.11.0"
+    }
+  },
+  "modern-bottom": {
+    "settings": {
+      "popup_style": "modern",
+      "popup_position": "bottom"
+    },
+    "privacyUrl": "",
+    "markupBytes": 2446,
+    "inlineCssBytes": 345,
+    "inlineLoaderBytes": 481,
+    "config": {
+      "cookieName": "mdcc_popup_shown",
+      "cookieDuration": 7,
+      "repromptDecline": false,
+      "scriptUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/js/popup.min.js?ver=1.11.0",
+      "styleUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/css/popup.min.css?ver=1.11.0"
+    }
+  },
+  "modern-center": {
+    "settings": {
+      "popup_style": "modern",
+      "popup_position": "center"
+    },
+    "privacyUrl": "",
+    "markupBytes": 2446,
+    "inlineCssBytes": 345,
+    "inlineLoaderBytes": 481,
+    "config": {
+      "cookieName": "mdcc_popup_shown",
+      "cookieDuration": 7,
+      "repromptDecline": false,
+      "scriptUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/js/popup.min.js?ver=1.11.0",
+      "styleUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/css/popup.min.css?ver=1.11.0"
+    }
+  },
+  "bold-top": {
+    "settings": {
+      "popup_style": "bold",
+      "popup_position": "top"
+    },
+    "privacyUrl": "",
+    "markupBytes": 2441,
+    "inlineCssBytes": 345,
+    "inlineLoaderBytes": 481,
+    "config": {
+      "cookieName": "mdcc_popup_shown",
+      "cookieDuration": 7,
+      "repromptDecline": false,
+      "scriptUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/js/popup.min.js?ver=1.11.0",
+      "styleUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/css/popup.min.css?ver=1.11.0"
+    }
+  },
+  "bold-bottom": {
+    "settings": {
+      "popup_style": "bold",
+      "popup_position": "bottom"
+    },
+    "privacyUrl": "",
+    "markupBytes": 2444,
+    "inlineCssBytes": 345,
+    "inlineLoaderBytes": 481,
+    "config": {
+      "cookieName": "mdcc_popup_shown",
+      "cookieDuration": 7,
+      "repromptDecline": false,
+      "scriptUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/js/popup.min.js?ver=1.11.0",
+      "styleUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/css/popup.min.css?ver=1.11.0"
+    }
+  },
+  "bold-center": {
+    "settings": {
+      "popup_style": "bold",
+      "popup_position": "center"
+    },
+    "privacyUrl": "",
+    "markupBytes": 2444,
+    "inlineCssBytes": 345,
+    "inlineLoaderBytes": 481,
+    "config": {
+      "cookieName": "mdcc_popup_shown",
+      "cookieDuration": 7,
+      "repromptDecline": false,
+      "scriptUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/js/popup.min.js?ver=1.11.0",
+      "styleUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/css/popup.min.css?ver=1.11.0"
+    }
+  },
+  "fresh-install": {
+    "settings": {},
+    "privacyUrl": "",
+    "markupBytes": 2447,
+    "inlineCssBytes": 345,
+    "inlineLoaderBytes": 481,
+    "config": {
+      "cookieName": "mdcc_popup_shown",
+      "cookieDuration": 7,
+      "repromptDecline": false,
+      "scriptUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/js/popup.min.js?ver=1.11.0",
+      "styleUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/css/popup.min.css?ver=1.11.0"
+    }
+  },
+  "privacy-link": {
+    "settings": {
+      "popup_style": "minimal"
+    },
+    "privacyUrl": "https://example.test/privacy-policy/",
+    "markupBytes": 2692,
+    "inlineCssBytes": 345,
+    "inlineLoaderBytes": 481,
+    "config": {
+      "cookieName": "mdcc_popup_shown",
+      "cookieDuration": 7,
+      "repromptDecline": false,
+      "scriptUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/js/popup.min.js?ver=1.11.0",
+      "styleUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/css/popup.min.css?ver=1.11.0"
+    }
+  },
+  "custom-primary": {
+    "settings": {
+      "popup_primary_color": "#c8102e"
+    },
+    "privacyUrl": "",
+    "markupBytes": 2447,
+    "inlineCssBytes": 345,
+    "inlineLoaderBytes": 481,
+    "config": {
+      "cookieName": "mdcc_popup_shown",
+      "cookieDuration": 7,
+      "repromptDecline": false,
+      "scriptUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/js/popup.min.js?ver=1.11.0",
+      "styleUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/css/popup.min.css?ver=1.11.0"
+    }
+  },
+  "animation-none": {
+    "settings": {
+      "popup_animation": "none"
+    },
+    "privacyUrl": "",
+    "markupBytes": 2446,
+    "inlineCssBytes": 345,
+    "inlineLoaderBytes": 481,
+    "config": {
+      "cookieName": "mdcc_popup_shown",
+      "cookieDuration": 7,
+      "repromptDecline": false,
+      "scriptUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/js/popup.min.js?ver=1.11.0",
+      "styleUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/css/popup.min.css?ver=1.11.0"
+    }
+  },
+  "model-regional": {
+    "settings": {
+      "consent_model": "regional"
+    },
+    "privacyUrl": "",
+    "markupBytes": 2447,
+    "inlineCssBytes": 345,
+    "inlineLoaderBytes": 481,
+    "config": {
+      "cookieName": "mdcc_popup_shown",
+      "cookieDuration": 7,
+      "repromptDecline": false,
+      "scriptUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/js/popup.min.js?ver=1.11.0",
+      "styleUrl": "https://example.test/wp-content/plugins/maxtdesign-cookie-consent/assets/css/popup.min.css?ver=1.11.0",
+      "optoutTitle": "Your privacy choices",
+      "optoutMessage": "We use cookies and analytics to improve the store and measure our advertising. You can opt out of the sale or sharing of your personal information at any time.",
+      "optoutAcceptLabel": "Got it",
+      "optoutDeclineLabel": "Do Not Sell or Share My Personal Information"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+        <div class="mdcc-popup mdcc-popup--style-modern mdcc-popup--position-center mdcc-popup--animation-slide" 
+             role="dialog" 
+             aria-modal="true" 
+             aria-labelledby="mdcc-popup-title"
+             aria-describedby="mdcc-popup-message"
+             style="display: none;">
+            
+            <div class="mdcc-popup__overlay" aria-hidden="true"></div>
+            
+            <div class="mdcc-popup__container">
+                <div class="mdcc-popup__content">
+                    
+                    <button type="button" 
+                            class="mdcc-popup__close" 
+                            aria-label="Close consent popup">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    
+                    <h2 id="mdcc-popup-title" class="mdcc-popup__title">
+                        Cookie Consent                    </h2>
+                    
+                    <p id="mdcc-popup-message" class="mdcc-popup__message">
+                        We use cookies to enhance your browsing experience and analyze our traffic.                    </p>
+
+                    
+                    
+                    <div class="mdcc-popup__actions">
+                        <button type="button" 
+                                class="mdcc-popup__button mdcc-popup__button--primary" 
+                                data-mdcc-action="accept-all"
+                                aria-label="Accept all cookies">
+                            Accept All                        </button>
+                        
+                        <button type="button" 
+                                class="mdcc-popup__button mdcc-popup__button--secondary" 
+                                data-mdcc-action="analytics-only"
+                                aria-label="Accept analytics cookies only">
+                            Analytics Only                        </button>
+                        
+                        <button type="button" 
+                                class="mdcc-popup__button mdcc-popup__button--tertiary" 
+                                data-mdcc-action="decline-all"
+                                aria-label="Decline all cookies">
+                            Decline All                        </button>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        

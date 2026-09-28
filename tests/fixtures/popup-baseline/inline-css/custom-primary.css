@@ -1,0 +1,11 @@
+
+            .mdcc-popup__button--primary {
+                background-color: #c8102e;
+                border-color: #c8102e;
+            }
+            .mdcc-popup__button--primary:hover,
+            .mdcc-popup__button--primary:focus {
+                background-color: #c8102edd;
+                border-color: #c8102edd;
+            }
+        
