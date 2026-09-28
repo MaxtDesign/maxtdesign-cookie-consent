@@ -226,10 +226,138 @@ class MDCC_Popup_System {
     }
 
     /**
+     * Path of the theme override, relative to the theme folder.
+     *
+     * @since 1.11.0
+     * @var string
+     */
+    const TEMPLATE_NAME = 'maxtdesign-cookie-consent/popup.php';
+
+    /**
+     * Full path of the popup template bundled with the plugin.
+     *
+     * @since 1.11.0
+     * @return string
+     */
+    public static function bundled_template() {
+        return MDCC_PLUGIN_DIR . 'templates/popup.php';
+    }
+
+    /**
+     * Full path of the theme's popup template, or '' when the theme has none.
+     *
+     * locate_template() checks the child theme before the parent theme.
+     *
+     * @since 1.11.0
+     * @return string
+     */
+    public static function theme_template() {
+        return (string) locate_template(array(self::TEMPLATE_NAME));
+    }
+
+    /**
+     * Full path of the popup template to render.
+     *
+     * Order: the theme override, then the bundled template. The result passes
+     * through the `mdcc_popup_template` filter. A filtered path that cannot be
+     * read is ignored, so a wrong path never removes the popup.
+     *
+     * @since 1.11.0
+     * @return string
+     */
+    public static function locate_popup_template() {
+        $template = self::theme_template();
+
+        if ('' === $template) {
+            $template = self::bundled_template();
+        }
+
+        /**
+         * Filter the path of the popup template.
+         *
+         * For sites that keep templates outside the theme folder. The file
+         * must keep the contract documented at the top of the bundled
+         * templates/popup.php.
+         *
+         * @since 1.11.0
+         * @param string $template Full path of the template about to be used.
+         */
+        $filtered = apply_filters('mdcc_popup_template', $template);
+
+        if (is_string($filtered) && '' !== $filtered && is_readable($filtered)) {
+            return $filtered;
+        }
+
+        return $template;
+    }
+
+    /**
+     * Read the `@version` tag from the header of a popup template.
+     *
+     * @since 1.11.0
+     * @param string $path Full path of a template file.
+     * @return string The version, or '' when the file has none or cannot be read.
+     */
+    public static function template_version($path) {
+        if (!is_readable($path)) {
+            return '';
+        }
+
+        // Reading the header of a local template file, not a remote fetch.
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+        $head = file_get_contents($path, false, null, 0, 8192);
+
+        if (false === $head || !preg_match('/^[ \t\/*#]*@version[ \t]+([0-9][0-9A-Za-z.\-]*)/m', $head, $matches)) {
+            return '';
+        }
+
+        return $matches[1];
+    }
+
+    /**
+     * Build the data handed to the popup template.
+     *
+     * @since 1.11.0
+     * @param array<string, mixed> $settings Plugin settings.
+     * @return array<string, mixed>
+     */
+    private function get_template_args($settings) {
+        // Get settings values with defaults
+        $style     = sanitize_text_field($settings['popup_style'] ?? 'minimal');
+        $position  = sanitize_text_field($settings['popup_position'] ?? 'bottom');
+        $animation = sanitize_text_field($settings['popup_animation'] ?? 'slide');
+        $title     = !empty($settings['popup_title']) ? $settings['popup_title'] : __('Cookie Consent', 'maxtdesign-cookie-consent');
+        $message   = !empty($settings['popup_message']) ? $settings['popup_message'] : __('We use cookies to enhance your browsing experience and analyze our traffic.', 'maxtdesign-cookie-consent');
+
+        return array(
+            'classes'     => array(
+                'mdcc-popup',
+                'mdcc-popup--style-' . $style,
+                'mdcc-popup--position-' . $position,
+                'mdcc-popup--animation-' . $animation,
+            ),
+            'title'       => (string) $title,
+            'message'     => (string) $message,
+            'privacy_url' => function_exists('get_privacy_policy_url') ? (string) get_privacy_policy_url() : '',
+            'labels'      => array(
+                'close'          => __('Close consent popup', 'maxtdesign-cookie-consent'),
+                'accept'         => __('Accept All', 'maxtdesign-cookie-consent'),
+                'accept_aria'    => __('Accept all cookies', 'maxtdesign-cookie-consent'),
+                'analytics'      => __('Analytics Only', 'maxtdesign-cookie-consent'),
+                'analytics_aria' => __('Accept analytics cookies only', 'maxtdesign-cookie-consent'),
+                'decline'        => __('Decline All', 'maxtdesign-cookie-consent'),
+                'decline_aria'   => __('Decline all cookies', 'maxtdesign-cookie-consent'),
+            ),
+            'settings'    => $settings,
+        );
+    }
+
+    /**
      * Render popup HTML in footer
      *
-     * Outputs the popup markup with proper ARIA attributes,
-     * keyboard navigation support, and responsive design.
+     * Prints templates/popup.php, or the theme's override of it. The markup
+     * carries ARIA attributes, keyboard navigation support and the responsive
+     * layout.
      *
      * @since 1.6.0
      */
@@ -237,106 +365,14 @@ class MDCC_Popup_System {
         if (!$this->should_show_popup()) {
             return;
         }
-        
+
         $settings = get_option('mdcc_settings', mdcc_default_settings());
-        
-        // Get settings values with defaults
-        $style     = sanitize_text_field($settings['popup_style'] ?? 'minimal');
-        $position  = sanitize_text_field($settings['popup_position'] ?? 'bottom');
-        $animation = sanitize_text_field($settings['popup_animation'] ?? 'slide');
-        $title     = !empty($settings['popup_title']) ? $settings['popup_title'] : __('Cookie Consent', 'maxtdesign-cookie-consent');
-        $message   = !empty($settings['popup_message']) ? $settings['popup_message'] : __('We use cookies to enhance your browsing experience and analyze our traffic.', 'maxtdesign-cookie-consent');
-        
-        // Build CSS classes
-        $classes = array(
-            'mdcc-popup',
-            'mdcc-popup--style-' . $style,
-            'mdcc-popup--position-' . $position,
-            'mdcc-popup--animation-' . $animation,
-        );
-        
-        ?>
-        <div class="<?php echo esc_attr(implode(' ', $classes)); ?>" 
-             role="dialog" 
-             aria-modal="true" 
-             aria-labelledby="mdcc-popup-title"
-             aria-describedby="mdcc-popup-message"
-             style="display: none;">
-            
-            <div class="mdcc-popup__overlay" aria-hidden="true"></div>
-            
-            <div class="mdcc-popup__container">
-                <div class="mdcc-popup__content">
-                    
-                    <button type="button" 
-                            class="mdcc-popup__close" 
-                            aria-label="<?php esc_attr_e('Close consent popup', 'maxtdesign-cookie-consent'); ?>">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    
-                    <h2 id="mdcc-popup-title" class="mdcc-popup__title">
-                        <?php echo esc_html($title); ?>
-                    </h2>
-                    
-                    <p id="mdcc-popup-message" class="mdcc-popup__message">
-                        <?php echo esc_html($message); ?>
-                    </p>
 
-                    <?php
-                    // Link the site's designated Privacy Policy (Settings → Privacy)
-                    // when one is set. A consent notice should point users to the
-                    // policy that explains the cookies; renders nothing otherwise.
-                    $mdcc_privacy_url = function_exists('get_privacy_policy_url') ? get_privacy_policy_url() : '';
-                    if ($mdcc_privacy_url) :
-                    ?>
-                    <p class="mdcc-popup__privacy-link">
-                        <a href="<?php echo esc_url($mdcc_privacy_url); ?>">
-                            <?php esc_html_e('Privacy Policy', 'maxtdesign-cookie-consent'); ?>
-                        </a>
-                    </p>
-                    <?php endif; ?>
+        if (!is_array($settings)) {
+            $settings = mdcc_default_settings();
+        }
 
-                    <?php
-                    /**
-                     * Fires inside the popup, before the action buttons.
-                     *
-                     * Add-ons (e.g. Pro granular consent) echo their own markup
-                     * here — e.g. per-category toggle checkboxes. Callbacks are
-                     * responsible for escaping their own output.
-                     *
-                     * @since 1.9.0
-                     * @param array $settings Current plugin settings.
-                     */
-                    do_action('mdcc_popup_before_actions', $settings);
-                    ?>
-
-                    <div class="mdcc-popup__actions">
-                        <button type="button" 
-                                class="mdcc-popup__button mdcc-popup__button--primary" 
-                                data-mdcc-action="accept-all"
-                                aria-label="<?php esc_attr_e('Accept all cookies', 'maxtdesign-cookie-consent'); ?>">
-                            <?php esc_html_e('Accept All', 'maxtdesign-cookie-consent'); ?>
-                        </button>
-                        
-                        <button type="button" 
-                                class="mdcc-popup__button mdcc-popup__button--secondary" 
-                                data-mdcc-action="analytics-only"
-                                aria-label="<?php esc_attr_e('Accept analytics cookies only', 'maxtdesign-cookie-consent'); ?>">
-                            <?php esc_html_e('Analytics Only', 'maxtdesign-cookie-consent'); ?>
-                        </button>
-                        
-                        <button type="button" 
-                                class="mdcc-popup__button mdcc-popup__button--tertiary" 
-                                data-mdcc-action="decline-all"
-                                aria-label="<?php esc_attr_e('Decline all cookies', 'maxtdesign-cookie-consent'); ?>">
-                            <?php esc_html_e('Decline All', 'maxtdesign-cookie-consent'); ?>
-                        </button>
-                    </div>
-                    
-                </div>
-            </div>
-        </div>
-        <?php
+        load_template(self::locate_popup_template(), false, $this->get_template_args($settings));
     }
 }
 

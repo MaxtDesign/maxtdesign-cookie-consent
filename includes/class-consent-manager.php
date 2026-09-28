@@ -472,6 +472,9 @@ class MDCC_Consent_Manager {
      * Optional same-origin, uncached policy endpoint supplied by a site adapter.
      * Returns JSON {mode:"none"|"optin"}; failures require explicit consent.
      * Never put visitor country in cacheable page markup. No lookup by default.
+     *
+     * @since 1.11.0
+     * @return string Root-relative path, or '' when no endpoint is configured.
      */
     public static function country_endpoint() {
         $path = apply_filters('mdcc_country_endpoint', '');

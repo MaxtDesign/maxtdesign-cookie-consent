@@ -158,6 +158,16 @@ function delete_transient( string $transient ): bool { return true; }
  * ---------------------------------------------------------------------- */
 function wp_add_privacy_policy_content( string $plugin_name, string $policy_text ): void {}
 function get_privacy_policy_url(): string { return ''; }
+/**
+ * @param string|string[]      $template_names
+ * @param array<string, mixed> $args
+ */
+function locate_template( string|array $template_names, bool $load = false, bool $load_once = true, array $args = array() ): string { return ''; }
+/**
+ * @param array<string, mixed> $args
+ */
+function load_template( string $_template_file, bool $load_once = true, array $args = array() ): void {}
+function wp_normalize_path( string $path ): string { return $path; }
 function load_plugin_textdomain( string $domain, string|false $deprecated = false, string|false $plugin_rel_path = false ): bool { return true; }
 
 /* -------------------------------------------------------------------------

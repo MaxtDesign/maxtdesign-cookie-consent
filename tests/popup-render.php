@@ -98,6 +98,29 @@ function get_privacy_policy_url() {
 	return $GLOBALS['mdcc_test']['privacy_url'];
 }
 
+/* ---- templates (MDCC_THEME_DIRS: child theme first, separated by "|") ------ */
+
+function locate_template( $names, $load = false, $load_once = true, $args = array() ) {
+	$dirs = array_filter( explode( '|', (string) getenv( 'MDCC_THEME_DIRS' ) ) );
+	foreach ( (array) $names as $name ) {
+		foreach ( $dirs as $dir ) {
+			$candidate = rtrim( str_replace( '\\', '/', $dir ), '/' ) . '/' . $name;
+			if ( file_exists( $candidate ) ) {
+				return $candidate;
+			}
+		}
+	}
+	return '';
+}
+
+function load_template( $_template_file, $load_once = true, $args = array() ) {
+	if ( $load_once ) {
+		require_once $_template_file;
+	} else {
+		require $_template_file;
+	}
+}
+
 /* ---- i18n (no translation loaded: source strings) ------------------------- */
 
 function __( $text, $domain = 'default' ) {
@@ -202,6 +225,16 @@ if ( $mdcc_overrides ) {
 	$GLOBALS['mdcc_test']['options']['mdcc_settings'] = array_merge( mdcc_default_settings(), $mdcc_overrides );
 }
 
+// MDCC_TEMPLATE_FILTER makes the mdcc_popup_template filter return that path.
+if ( getenv( 'MDCC_TEMPLATE_FILTER' ) ) {
+	add_filter(
+		'mdcc_popup_template',
+		function () {
+			return (string) getenv( 'MDCC_TEMPLATE_FILTER' );
+		}
+	);
+}
+
 $mdcc_popup = MDCC_Popup_System::get_instance();
 $mdcc_popup->enqueue_popup_assets();
 
@@ -215,6 +248,7 @@ echo json_encode(
 		'inline_css'      => str_replace( "\r\n", "\n", implode( "\n", $GLOBALS['mdcc_test']['inline_css'] ) ),
 		'config'          => isset( $GLOBALS['mdcc_test']['localized']['mdccPopupConfig'] ) ? $GLOBALS['mdcc_test']['localized']['mdccPopupConfig'] : null,
 		'inline_js_bytes' => strlen( implode( '', $GLOBALS['mdcc_test']['inline_js'] ) ),
+		'template'        => method_exists( 'MDCC_Popup_System', 'locate_popup_template' ) ? str_replace( '\\', '/', MDCC_Popup_System::locate_popup_template() ) : '',
 	),
 	JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
 );

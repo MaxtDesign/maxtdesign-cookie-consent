@@ -493,6 +493,8 @@ class MDCC_Admin_Settings {
                 </p>
             </div>
 
+            <?php $this->render_template_notice(); ?>
+
             <form method="post" action="options.php">
                 <?php
                 settings_fields(self::OPTION_GROUP);
@@ -525,6 +527,71 @@ class MDCC_Admin_Settings {
                     </ul>
                 </div>
             </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * State of the popup template in use, for the settings screen.
+     *
+     * @since 1.11.0
+     * @return array{override: bool, outdated: bool, path: string, version: string, bundled_version: string}
+     */
+    public static function template_status() {
+        $bundled = MDCC_Popup_System::bundled_template();
+        $active  = MDCC_Popup_System::locate_popup_template();
+        $ours    = MDCC_Popup_System::template_version($bundled);
+        $theirs  = MDCC_Popup_System::template_version($active);
+
+        $override = wp_normalize_path($active) !== wp_normalize_path($bundled);
+
+        return array(
+            'override'        => $override,
+            'outdated'        => $override && ('' === $theirs || version_compare($theirs, $ours, '<')),
+            'path'            => str_replace(wp_normalize_path(ABSPATH), '', wp_normalize_path($active)),
+            'version'         => $theirs,
+            'bundled_version' => $ours,
+        );
+    }
+
+    /**
+     * Tell the site owner when a popup template override is in use, and warn
+     * when it is older than the template bundled with the plugin.
+     *
+     * Runs on this settings screen only. Nothing is checked on the frontend.
+     *
+     * @since 1.11.0
+     */
+    private function render_template_notice(): void {
+        $status = self::template_status();
+
+        if (!$status['override']) {
+            return;
+        }
+
+        $version = '' !== $status['version'] ? $status['version'] : __('none', 'maxtdesign-cookie-consent');
+        ?>
+        <div class="notice inline <?php echo $status['outdated'] ? 'notice-warning' : 'notice-info'; ?>">
+            <p>
+                <?php
+                if ($status['outdated']) {
+                    printf(
+                        /* translators: 1: version of the override, 2: version of the bundled template, 3: file path */
+                        esc_html__('Your popup template override is older than the template in the plugin. Your version: %1$s. Plugin version: %2$s. Compare your copy with templates/popup.php in the plugin folder and update it. File: %3$s', 'maxtdesign-cookie-consent'),
+                        esc_html($version),
+                        esc_html($status['bundled_version']),
+                        '<code>' . esc_html($status['path']) . '</code>'
+                    );
+                } else {
+                    printf(
+                        /* translators: 1: file path, 2: version of the override */
+                        esc_html__('The popup markup comes from a template override: %1$s (version %2$s).', 'maxtdesign-cookie-consent'),
+                        '<code>' . esc_html($status['path']) . '</code>',
+                        esc_html($version)
+                    );
+                }
+                ?>
+            </p>
         </div>
         <?php
     }
