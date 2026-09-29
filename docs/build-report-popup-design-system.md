@@ -169,3 +169,41 @@ The fixes after the reviews were not reviewed again.
 - `release-gate.php`. It was not run, so no release marker exists.
 - PHP 7.4 and WordPress 5.8 at runtime.
 - Field Core Web Vitals.
+
+## Addendum 2026-09-29: checked on WordPress
+
+With the operator's go the main checkout was switched to
+`feat/popup-design-system`, so LocalWP serves this work to `plugin-test` and
+to `razorback2`. The worktree was removed. All 8 suites pass in the main
+checkout.
+
+`node tests/wp-site-check.cjs` against `plugin-test`, WordPress 7.1.2: 33 of
+33 checks pass.
+
+- WordPress prints the popup markup byte for byte as the baseline, 2,687 B.
+  The site has a privacy policy page, so the link prints. Only its address
+  differs from the fixture.
+- A default site prints no inline style, and no popup stylesheet or script
+  tag in the HTML.
+- The popup CSS and JS are requested once each, by the loader. A visitor in
+  the no-banner mode requests neither.
+- Compact shows the right controls in each of the three visitor modes.
+- Design settings apply with the theme stylesheet on the page: 60% wide and
+  centered at 1440 px, full width at 1024, 768 and 375 px, no sideways
+  scroll, colours, 12 px radius, theme font on the buttons.
+- 0 console errors or exceptions from this plugin.
+- The settings screen renders all 12 new fields, the setup steps, the page
+  picker and the nonce field, with no PHP error text.
+
+How: a temporary mu-plugin on `plugin-test` applied setting presets to
+requests that carried a random token, and rendered the settings screen for
+the same token. It was deleted after the run and a request with the token
+now returns the normal page. Nothing was saved to the database.
+
+One finding. On this theme the popup buttons already use the theme font,
+because the theme sets the font of every button. The Button Font setting
+changes nothing there. It matters on themes that leave buttons alone.
+
+Still not verified: the look of the settings screen, saving through the
+form, the colour pickers, Plugin Check, `release-gate.php`, PHP 7.4 and
+WordPress 5.8 at runtime.
